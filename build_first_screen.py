@@ -1,5 +1,13 @@
+
+from tkinter import *
+root=Tk()
+
+def log_in_function():
+    pass
+
+
+
 def build_first_screen(log_in):  
-    global text_box
     label = Label(text = "", width=3, height=3)
     label1 = Label(text = "insert username")
     label_space = Label(text = "", width=1, height=1)
@@ -13,3 +21,6 @@ def build_first_screen(log_in):
     text_box.pack()
     label_space1.pack()
     button_log.pack()
+
+build_first_screen("sssss")
+root.mainloop()
