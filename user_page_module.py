@@ -1,7 +1,7 @@
 from tkinter import *
 import sqlite3
 import io
-from retrieve_user_image import retrieve_image
+#from retrieve_user_image import retrieve_image
 
 def build_user_page(name):
     base_window = Toplevel()
@@ -11,7 +11,7 @@ def build_user_page(name):
     frame_pic.grid(row=0, col=0)
     frame_buttons.grid(row=0, col=1)
     label_player_name = Label(text=name, width=7)
-    retrieve_image(name)
+    #retrieve_image(name)
     
    
     

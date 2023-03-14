@@ -1,10 +1,18 @@
-
 from tkinter import *
+from tkinter import messagebox
+from sql_queries import checking_credentials
 
 
-def log_in_function():
-    pass
-
+def logging_in(text_box):
+    #need to add a connection to the list of users here 
+    name_input = str(text_box.get("1.0", "end")).strip()
+    #should look here into the users table
+    print(checking_credentials(name_input))
+    if checking_credentials(name_input):
+        messagebox.showinfo("log_info", "log in successful")
+        build_user_page()
+    else:
+        messagebox.showwarning("log_info", "wrong credentials")
 
 
 def build_first_screen():  
@@ -16,7 +24,8 @@ def build_first_screen():
     label_space = Label(text = "", width=1, height=1)
     label_space1 = Label(text = "", width=1, height=1)
     text_box = Text(height=1,width=10)
-    button_log = Button(text = "log in", command = log_in_function)
+    #giving the function som earguments without executing it directly with lambda
+    button_log = Button(text = "log in", command = lambda: logging_in(text_box))
     label.pack()
     label1.pack()
     label_space.pack()
@@ -26,3 +35,4 @@ def build_first_screen():
     root.mainloop()
 
 
+build_first_screen()
