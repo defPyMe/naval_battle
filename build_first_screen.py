@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from sql_queries import checking_credentials
+from user_page_module import build_user_page
 
 
 def logging_in(text_box):
@@ -10,7 +11,7 @@ def logging_in(text_box):
     print(checking_credentials(name_input))
     if checking_credentials(name_input):
         messagebox.showinfo("log_info", "log in successful")
-        build_user_page()
+        build_user_page(name_input)
     else:
         messagebox.showwarning("log_info", "wrong credentials")
 
