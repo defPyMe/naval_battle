@@ -3,25 +3,46 @@ import sqlite3
 import io
 from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
-from sql_queries import insert_image
+from sql_queries import insert_image, retrieve_image, check_if_image
 from tkinter import messagebox
 
 def open(name):
     file = filedialog.askopenfilename(title='search images' , filetypes=(('png','*.png'),('jpeg', '*.jpg')))
-    if file:
+    if file!= None:
         insert_image(file, name)
     else:
         messagebox.showwarning("log_info", "wrong credentials")
+
+#this will be make editable both the button of the picture and the text field 
+def make_editable(text, button):
+        text["state"] = NORMAL
+        button["state"] = NORMAL
 
 
 def build_modify_profile(name):
     base_window = Toplevel()
     base_window.title("Profile detail : "+ name)
     label_username = Label(text="Name of the user")
+    label_picture = Label(text="picture of the user")
     username = Text(height=1,width=10)
     username.insert("1.0", name)
     pic_to_change = Button(text="Select picture to change", command=lambda: open(name))
-    #needs to show the pic here 
+    #these two should stay as not editable until we press button
+    pic_to_change["state"] = DISABLED 
+    username.state = DISABLED
+    button_edit = Button(text="edit", command=lambda: make_editable(username, pic_to_change))
+    #adding a default if none is present 
+    check_if_image(name)
+    #now i have to display the image here as well
+    label_picture.grid(row=0, column=0)
+    retrieve_image(name, base_window)
+    pic_to_change.grid(row=2, column=0)
+    #all the widgets in the second column 
+    label_username.grid(row=0, column=1)
+    username.grid(row=1, column=1)
+    
+    
+    
     
     
 

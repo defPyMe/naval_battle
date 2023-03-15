@@ -1,6 +1,8 @@
 import sqlite3
 import io 
-from PIL import ImageTk, Image, ImageFont, ImageDraw
+from PIL import ImageTk,  ImageFont, ImageDraw
+#this addresses some display issues when it comes ot the picture of the user
+import PIL.Image
 from tkinter import *
 
 
@@ -33,17 +35,40 @@ def insert_image(filename, name):
                         command = "UPDATE users SET user_pic = (?)  WHERE name = (?)"
                         conn.execute(command, (empPhoto, name))
                         conn.commit()
-
+                        
+                        
+#checking here if i have any picture loaded for a certain name 
+def check_if_image(name):
+    with sqlite3.connect(path_to_db) as conn:
+        command = "SELECT user_pic FROM users WHERE  name = (?)"
+        img = conn.execute(command, (name,))
+        #returns a tuple here
+        photo_tuple = img.fetchone()
+    if photo_tuple == None:
+        pass
+        #need to add a default pic
+    else:
+        img="download.png"
+        empPhoto = convertToBinaryData(img)
+        #here i update a different pic
+        with sqlite3.connect(path_to_db) as conn:
+            #needs changes in the query
+                command = "UPDATE users SET user_pic = (?)  WHERE name = (?)"
+                conn.execute(command, (empPhoto, name))
+                conn.commit()  
+            
 #retrieving the image
-def retieve_image(name, current_window ):
+def retrieve_image(name, current_window ):
     with sqlite3.connect(path_to_db) as conn:
                             command = "SELECT user_pic FROM users WHERE  name = (?)"
                             img = conn.execute(command, (name,))
                             #returns a tuple here
                             photo_tuple = img.fetchone()
-                            photo = photo_tuple[3]
+                            print("photo tuple", photo_tuple)
+                            
+                            photo = photo_tuple[0]
     fp = io.BytesIO(photo)
-    image = Image.open(fp)
+    image = PIL.Image.open(fp)
                     # convert the image : ata to file object
     render = ImageTk.PhotoImage(image)
                     #displaying it 
@@ -51,4 +76,5 @@ def retieve_image(name, current_window ):
     label_picture = Label( current_window, image = render)
                     #needs to be recalled here as well
     label_picture.image = render # keep a reference!
-    label_picture.pack()
+    #should i grid always in the same position so that i do not have any problems when using this in different screens 
+    label_picture.grid(row=1, column=0)
