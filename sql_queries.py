@@ -4,6 +4,7 @@ from PIL import ImageTk,  ImageFont, ImageDraw
 #this addresses some display issues when it comes ot the picture of the user
 import PIL.Image
 from tkinter import *
+from tkinter import messagebox
 
 
 path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\naval_battle.db"
@@ -23,6 +24,8 @@ def convertToBinaryData(filename):
                 blobData = file.read()
         return blobData
     
+
+            
 #inserting new image
 def insert_image(filename, name):
         #returns a path
@@ -73,7 +76,7 @@ def retrieve_image(name, current_window ):
     render = ImageTk.PhotoImage(image)
                     #displaying it 
                     # Create a Label Widget to display the text or Image
-    label_picture = Label( current_window, image = render)
+    label_picture = Label( current_window, image = render, width=350, height=350)
                     #needs to be recalled here as well
     label_picture.image = render # keep a reference!
     #should i grid always in the same position so that i do not have any problems when using this in different screens 

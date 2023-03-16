@@ -8,7 +8,7 @@ def logging_in(text_box):
     #need to add a connection to the list of users here 
     name_input = str(text_box.get("1.0", "end")).strip()
     #should look here into the users table
-    print(checking_credentials(name_input))
+    print("name input --> ",name_input)
     if checking_credentials(name_input):
         messagebox.showinfo("log_info", "log in successful")
         build_user_page(name_input)
