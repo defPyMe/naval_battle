@@ -3,7 +3,7 @@ import sqlite3
 import io
 from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
-from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db
+from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db, check_users
 from tkinter import messagebox
 
 
@@ -33,6 +33,61 @@ def update_name(new_name, name, toplevel ):
     messagebox.showinfo("update info", "Username successfully updated")
 
 
+def create_field(frame):
+    for i in range(10):
+        for j in range(10):
+            button = Button(frame, text=str(i)+ "," +str(j), command="")
+            button.grid(row=i, column=j)
+
+#needs the frame so as to get the grid slaves 
+def ship_button(frame):
+    #sets the command with the number of greys in the argument as fixed number
+    pass
+
+
+
+def new_battle(name):
+    base_window = Toplevel()
+    frame_field = Frame(base_window)
+    player_frame = Frame(base_window)
+    #frame_ships = Frame(base_window)
+    #creating the buttons 
+    create_field(frame_field)
+    frame_field.grid(row=0, column=0, padx=10, pady=10)
+    player_frame.grid(row=0, column=1)
+    #frame_ships.grid(row=1, column=1)
+    label_opponent = Label(player_frame, text="Opponent", width=10)
+    label_name_battle = Label(player_frame, text="add a name for the battle", width=10)
+    insert_battle_name = Text(player_frame, height=1, width=10)
+    #need to get the users here, is it  alist
+    options = [""]+[check_users(name)]
+    # create a variable to store the selected option
+    selected_option = StringVar()
+    # set the default option
+    selected_option.set(options[0])
+# create the option menu widget
+    option_menu = OptionMenu(player_frame, selected_option, *options)
+    label_name_battle.grid(row=0, column=0)
+    insert_battle_name.grid(row=0, column=1) 
+    label_opponent.grid(row=1, column=0)
+    option_menu.grid(row=1, column=1)
+    #creating the buttons 
+    ship_1 = Button(player_frame, text="ship 1", command="", width=10)
+    ship_2 = Button(player_frame, text="ship 1", command="", width=10)
+    ship_3 = Button(player_frame, text="ship 1", command="", width=10)
+    ship_4 = Button(player_frame, text="ship 1", command="", width=10)
+    ship_1.grid(row=2, column=0, columnspan=2)
+    ship_2.grid(row=3, column=0, columnspan=2)
+    ship_3.grid(row=4, column=0, columnspan=2)
+    ship_4.grid(row=5, column=0, columnspan=2)
+    save_button = Button(player_frame, text="Save", bg="green", command="")
+    save_button.grid(row=6, column=1, pady=(30,))
+
+
+
+
+
+
 def build_modify_profile(name):
     base_window = Toplevel()
     base_window.title("Profile detail : "+ name)
@@ -57,10 +112,15 @@ def build_modify_profile(name):
     username.grid(row=1, column=1)
     button_edit.grid(row=2, column=1)
     button_save_changes.grid(row=3, column=1)
+
+
+    
+def buld_champion_interface():
+    base_window = Toplevel()
+    label_champions = Label(text="Player Classification")
+    #GETTING ALL THE PLAYERS 
     
     
-def buld_champions_interface():
-    pass
 
 def build_user_page(name):
     base_window = Toplevel()
@@ -72,7 +132,7 @@ def build_user_page(name):
     frame_buttons.grid(row=0, column=1)
     label_player_name = Label(frame_pic, text=name, width=7, padx=(70, ))
     #retrieve_image(name)
-    button_new_battle = Button(frame_buttons, text="new battle",width=15, height=2,bg="red", command="")
+    button_new_battle = Button(frame_buttons, text="new battle",width=15, height=2,bg="red", command =lambda: new_battle(name))
     button_old_battles = Button(frame_buttons, text="show old battles",width=15, height=2,bg="red", command="")
     button_show_champions = Button(frame_buttons, text="show champions",width=15, height=2,bg="red", command="")
     button_change_profile = Button(frame_buttons, text="change profile",width=15, height=2,bg="red", command=lambda: build_modify_profile(name))

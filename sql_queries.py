@@ -24,7 +24,15 @@ def convertToBinaryData(filename):
                 blobData = file.read()
         return blobData
     
-
+def check_users(name):
+    with sqlite3.connect(path_to_db) as conn:
+            #needs changes in the query
+        command = "SELECT name FROM users WHERE name IS NOT (?)"
+        users = conn.execute(command, (name,))
+        conn.commit()
+        user_list = users.fetchall()
+        
+    return user_list
             
 #inserting new image
 def insert_image(filename, name):

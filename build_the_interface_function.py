@@ -1,24 +1,20 @@
-from tkinter import filedialog
+"""from tkinter import filedialog
 from tkinter import *
 
 root = Tk()
-root.title("ddddd")
+frame = Frame(root)
 
-def open(button):
-    button["state"]=DISABLED
-
-
-def opentop():
-    f = Toplevel()
-    g = f.title(root.title())
-    return g
-
-button = Button(text="open", command=opentop)
-
-button_open = Button(text="open butt", command=lambda: open(button))
-
-button_open.pack()
-button.pack()
+for i in range(10):
+    for j in range(10):
+        button = Button(frame, text=str(i)+ "," +str(j), command="")
+        button.grid(row=i, column=j)
+        
+frame.grid(row=0, column=0)
 
 
-root.mainloop()
+
+
+
+root.mainloop()"""
+l = [""] + ["emma"]
+print(l)
