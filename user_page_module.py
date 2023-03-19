@@ -21,7 +21,7 @@ def make_editable(text, button):
         text["state"] = NORMAL
         button["state"] = NORMAL
 
-def update_name(new_name, name, toplevel ):
+def update_name(new_name, name, toplevel):
     updated_name = (new_name.get("1.0", "end")).strip()
     #needs to update the name and show us a message 
     with sqlite3.connect(path_to_db) as conn:
@@ -33,16 +33,23 @@ def update_name(new_name, name, toplevel ):
     messagebox.showinfo("update info", "Username successfully updated")
 
 
+
 def create_field(frame):
     for i in range(10):
         for j in range(10):
             button = Button(frame, text=str(i)+ "," +str(j), command="")
             button.grid(row=i, column=j)
 
-#needs the frame so as to get the grid slaves 
-def ship_button(frame):
-    #sets the command with the number of greys in the argument as fixed number
+#button in grid 
+def button_click(button_grid, color, total_ships):
     pass
+
+#button of the ships
+def ship_click(color, frame, button):
+    total_ships = button["text"]
+    #needs here to add the button config attribute and add the other argumnets as well
+    [i.config(command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves()]
+    
 
 
 
@@ -72,10 +79,11 @@ def new_battle(name):
     label_opponent.grid(row=1, column=0)
     option_menu.grid(row=1, column=1)
     #creating the buttons 
-    ship_1 = Button(player_frame, text="ship 1", command="", width=10)
-    ship_2 = Button(player_frame, text="ship 1", command="", width=10)
-    ship_3 = Button(player_frame, text="ship 1", command="", width=10)
-    ship_4 = Button(player_frame, text="ship 1", command="", width=10)
+    #the fieldswhere we have the buttons is the frame field
+    ship_1 = Button(player_frame, text="ship 1", command=lambda button=ship_1: ship_click("orange", frame_field, button), width=10, bg="orange")
+    ship_2 = Button(player_frame, text="ship 2", command=lambda button=ship_1: ship_click("blue", frame_field, button), width=10, bg="blue")
+    ship_3 = Button(player_frame, text="ship 3", command=lambda button=ship_1: ship_click("purple", frame_field, button), width=10, bg="purple")
+    ship_4 = Button(player_frame, text="ship 4", command=lambda button=ship_1: ship_click("pink", frame_field, button), width=10, bg="pink")
     ship_1.grid(row=2, column=0, columnspan=2)
     ship_2.grid(row=3, column=0, columnspan=2)
     ship_3.grid(row=4, column=0, columnspan=2)
