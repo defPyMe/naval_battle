@@ -32,27 +32,6 @@ def update_name(new_name, name, toplevel):
     toplevel.title(updated_name)
     messagebox.showinfo("update info", "Username successfully updated")
 
-
-
-def create_field(frame):
-    for i in range(10):
-        for j in range(10):
-            button = Button(frame, text=str(i)+ "," +str(j), command="")
-            button.grid(row=i, column=j)
-
-#button in grid 
-def button_click(button_grid, color, total_ships):
-    pass
-
-#button of the ships
-def ship_click(color, frame, button):
-    total_ships = button["text"]
-    #needs here to add the button config attribute and add the other argumnets as well
-    [i.config(command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves()]
-    
-
-
-
 def new_battle(name):
     base_window = Toplevel()
     frame_field = Frame(base_window)
@@ -80,16 +59,60 @@ def new_battle(name):
     option_menu.grid(row=1, column=1)
     #creating the buttons 
     #the fieldswhere we have the buttons is the frame field
-    ship_1 = Button(player_frame, text="ship 1", command=lambda button=ship_1: ship_click("orange", frame_field, button), width=10, bg="orange")
-    ship_2 = Button(player_frame, text="ship 2", command=lambda button=ship_1: ship_click("blue", frame_field, button), width=10, bg="blue")
-    ship_3 = Button(player_frame, text="ship 3", command=lambda button=ship_1: ship_click("purple", frame_field, button), width=10, bg="purple")
-    ship_4 = Button(player_frame, text="ship 4", command=lambda button=ship_1: ship_click("pink", frame_field, button), width=10, bg="pink")
+    ship_1 = Button(player_frame, text="ship 1", width=10, bg="orange")
+    # ret
+    ship_1.configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button))
+    ship_2 = Button(player_frame, text="ship 2", width=10, bg="blue")
+    ship_2.configure(command=lambda color="blue",frame = frame_field,  button=ship_2, : ship_click(color, frame, button))
+    ship_3 = Button(player_frame, text="ship 3", width=10, bg="purple")
+    ship_3.configure(command=lambda color="purple",frame = frame_field,  button=ship_3, : ship_click(color, frame, button))
+    
+    ship_4 = Button(player_frame, text="ship 4", width=10, bg="pink")
+    ship_4.configure(command=lambda color="pink",frame = frame_field,  button=ship_4, : ship_click(color, frame, button))
     ship_1.grid(row=2, column=0, columnspan=2)
     ship_2.grid(row=3, column=0, columnspan=2)
     ship_3.grid(row=4, column=0, columnspan=2)
     ship_4.grid(row=5, column=0, columnspan=2)
     save_button = Button(player_frame, text="Save", bg="green", command="")
     save_button.grid(row=6, column=1, pady=(30,))
+
+def create_field(frame):
+    for i in range(10):
+        for j in range(10):
+            button = Button(frame, text=str(i)+ "," +str(j), command="")
+            button.grid(row=i, column=j)
+
+#button in grid 
+def button_click(button_grid, color, total_ships, frame):#need to start adding here 
+    text = tuple(button_grid["text"])
+    x = int(text[0])
+    y = int(text[2]) 
+    print("all x, y ---------------> ", x, y)
+    all_cases = {bool(y-1>0):(x, y-1), bool(x+1<10):(x+1, y),
+                 bool(y+1<10):(x, y+1),bool(x-1>0):(x-1, y)}
+    colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
+    #cases in which we have no colored buttons 
+    if len(colored_buttons)==0:
+        button_grid["bg"]=color
+    elif len(colored_buttons)==1:
+        colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
+        possible_options = [all_cases[i] for i in all_cases if i == True]# tuples here
+        #now i need to disable the buttons
+        [i.config(state = DISABLED) for i in frame.grid_slaves() if i["text"] not in possible_options ]
+        
+        
+    
+
+#button of the ships
+def ship_click(color, frame, button):
+    total_ships = button["text"]
+    #needs here to add the button config attribute and add the other argumnets as well
+    [i.config(command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves()]
+    button["bg"]=color
+
+
+
+
 
 
 
@@ -131,6 +154,7 @@ def buld_champion_interface():
     
 
 def build_user_page(name):
+    print("name", name)
     base_window = Toplevel()
     base_window.geometry("500x300")
     base_window.title("Military Base : " + name )
