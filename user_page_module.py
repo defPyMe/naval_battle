@@ -79,37 +79,58 @@ def new_battle(name):
 def create_field(frame):
     for i in range(10):
         for j in range(10):
-            button = Button(frame, text=str(i)+ "," +str(j), command="")
+            button = Button(frame, text=str(i)+str(j), command="")
             button.grid(row=i, column=j)
+
+def calculate_cases(x, y):
+    all_cases = {(x, y-1): (bool(y-1>0)),  (x+1, y): (bool(x+1<10)), (x, y+1):(bool(y+1<10)), (x-1, y):(bool(x-1>0))}
+    cases = {key: value for key, value in all_cases.items() if value == True}
+    cases_list = [i for i in cases.keys()]
+    cases_list_str = [(str(x), str(y)) for x, y in cases_list]
+    return cases_list_str
 
 #button in grid 
 def button_click(button_grid, color, total_ships, frame):#need to start adding here 
     text = tuple(button_grid["text"])
     x = int(text[0])
-    y = int(text[2]) 
-    print("all x, y ---------------> ", x, y)
-    all_cases = {bool(y-1>0):(x, y-1), bool(x+1<10):(x+1, y),
-                 bool(y+1<10):(x, y+1),bool(x-1>0):(x-1, y)}
+    y =  int(text[1])
+    possible_actions =  calculate_cases(x, y)
     colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
+    #should keep the things as they are here to better index
+    all_buttons = [i["text"] for i in frame.grid_slaves()]
     #cases in which we have no colored buttons 
     if len(colored_buttons)==0:
         button_grid["bg"]=color
-    elif len(colored_buttons)==1:
-        colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
-        possible_options = [all_cases[i] for i in all_cases if i == True]# tuples here
-        #now i need to disable the buttons
-        [i.config(state = DISABLED) for i in frame.grid_slaves() if i["text"] not in possible_options ]
+        #possible_options = [value for key, value in cases.items() if key]
+        #print("possinle_options",possible_actions)
         
+        
+        
+        
+    elif len(colored_buttons)==1:
+        #[(3, 7), (4, 8), (3, 9), (2, 8)]
+        #colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
+        #all_buttons = [tuple((i["text"])) for i in frame.grid_slaves()]
+        #print("all_buttons_text", all_buttons)
+        #now i need to disable the buttons
+        #[i.config(state = DISABLED, bg="grey") for i in frame.grid_slaves() if ((int(x), int(y)) for x, y in tuple(i["text"])) not in possible_actions.keys ]
+        pass
         
     
 
 #button of the ships
 def ship_click(color, frame, button):
-    total_ships = button["text"]
+    #removes the color from the button 
+    colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
+    if len(colored_buttons) == 0:
+        total_ships = button["text"]
     #needs here to add the button config attribute and add the other argumnets as well
-    [i.config(command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves()]
-    button["bg"]=color
+        [i.config(command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves()]
+        button["bg"]=color
+    else:
+        [i.config(command="", bg="#f0f0f0") for i in frame.grid_slaves() if i["bg"]==color] 
 
+      
 
 
 

@@ -1,21 +1,9 @@
-from tkinter import filedialog
-from tkinter import *
+def calculate_cases(x, y):
+    all_cases = {(x, y-1): (bool(y-1>0)),  (x+1, y): (bool(x+1<10)), (x, y+1):(bool(y+1<10)), (x-1, y):(bool(x-1>0))}
+    cases = {key: value for key, value in all_cases.items() if value == True}
+    cases_list = [i for i in cases.keys()]
+    return cases_list
 
-root = Tk()
-frame = Frame(root)
-def check_color(frame):
-    colored = [i for i in frame.grid_slaves() if i["bg"]=="red"]
-    print(len(colored))
-    return colored
-for i in range(10):
-    for j in range(10):
-        button = Button(frame, text=str(i)+ "," +str(j), command=lambda: check_color(frame), bg="red")
-        button.grid(row=i, column=j)
-        
-frame.grid(row=0, column=0)
-
-
-
-
-
-root.mainloop()
+# example usage
+cases = calculate_cases(5, 4)
+print(cases)  
