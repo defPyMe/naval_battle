@@ -5,5 +5,16 @@ def calculate_cases(x, y):
     return cases_list
 
 # example usage
-cases = calculate_cases(5, 4)
-print(cases)  
+
+
+
+l = ['03','02', '00', '79', '78']
+l.sort()
+print(l)
+
+
+cars = ['Ford', 'BMW', 'Volvo']
+
+cars.sort()
+
+print(cars)
