@@ -86,57 +86,87 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
     #need to add here the cases where the colored are more than one or one 
     #needs to take into account the x and y to see how to position
     #where to put this?????
-    #it will be at least one
-    """
-    #generating the list of numbers
+    #will be at least one.
+    print("x,y in the ==1 function", x,y)
+        #generating the list of numbers
     all_values_allowed = [i for i in range(0, 11)]
     #all buttons need to be only the single colored buttons
-    if len(colored_buttons_singular) == 1 and len(colored_buttons_singular) < total:
+    if len(colored_buttons_singular) == 1 and len(colored_buttons_singular) < total_ships:
+        print("case of len colored buttons ==1 ")
         #one already positioned
-        diff = total - 1
+        diff = total_ships - 1
         #creating a list of all the buttons that are possible on the x
         all_x = [(str(int(x+i))+str(y)) for i in range (-diff, diff+1) if x+i in all_values_allowed]
         #do the same for y, getting here a list so we just pass it below --> should be something like ['46', '57', '48', '37', '47']
         all_y = [(str(x) + str(int(y+i))) for i in range (-diff, diff+1) if y+i in all_values_allowed]
+        print("all_x, all_y in the len==1 option", all_x, all_y)
         #needs to check here if there is teh possibility to go all teh way, checking the buttons that are already present 
         trying_x = [i for i in all_x if i in all_colored]
         #checking if the buttons are in the colored ones 
         trying_y = [i for i in all_y if i in all_colored]
-        if trying_x == 0 and trying_y !=0:#case of x
+        print("trying x and trying y to see which one i higher in the first function", trying_x, trying_y)
+        if len(trying_x) == 0 and len(trying_y) !=0:#case of x
+            print("entering trying_x == 0 and trying_y !=0")
             #returning the all_x list, should be something we can pass
             cases_list_str = all_x
-        elif trying_x != 0 and trying_y ==0:#case of y
+        elif len(trying_x) != 0 and len(trying_y) ==0:#case of y
+            print("trying_x != 0 and trying_y ==0")
             cases_list_str = all_y
-        elif trying_x != 0 and trying_y !=0: #impossible to position
-            cases_str_list = []
-        elif trying_x == 0 and trying_y ==0:#coast is clear 
-            cases_str_list = all_x + all_y 
-    elif len(colored_buttons_singular) > 1 and len(colored_buttons_singular) < total: #case in which we have more than one button of the same color 
+        elif len(trying_x) != 0 and len(trying_y) !=0: #impossible to position
+            print("trying_x != 0 and trying_y !=0")
+            cases_list_str = []
+        elif len(trying_x) == 0 and len(trying_y) == 0:#coast is clear
+             
+            print("entering cosat is clear")
+            all_values = all_x + all_y 
+            cases_list_str = list(set(all_values ))
+        print("all cases tr in the > 1 function", cases_list_str)
+    elif len(colored_buttons_singular) > 1 and len(colored_buttons_singular) < total_ships: #case in which we have more than one button of the same color 
         #changing the diff as we have more buttons here
-        diff = total - len(colored_buttons_singular)
+        diff = total_ships - len(colored_buttons_singular)
+        print("entering the second option where len > 1, printing diff, ",diff )
         all_current_ships_values = [i["text"] for i in colored_buttons_singular]
         if all_current_ships_values[0][:1] == all_current_ships_values[1][:1]: #case of x so that the ship is horizontal
             #here i should have to try only for teh case of x to see if we can get the values 
             all_x_right = [(str(int(x+i))+str(y)) for i in range ( diff+1) if x+i in all_values_allowed]
             #i cannot have the -diff in range, need tp act on the sum
             all_x_left = [(str(int(x-i))+str(y)) for i in range (diff) if x+i in all_values_allowed]
+            print("printing all_x_eft, all_x_right in the len() > 1",all_x_left, all_x_right )
             #need to get a left or right difference here to avoid overlap
             trying_x_left = [i for i in all_x_left if i in all_colored]
             trying_x_right = [i for i in all_x_right if i in all_colored]
-                    if trying_x == 0 and trying_y !=0:#case of x
+            print("printing trying_x_left, trying_x_right in the len() > 1",trying_x_left, trying_x_right )
+            if len(trying_x_left) == 0 and len(trying_x_right) !=0:#case of x
             #returning the all_x list, should be something we can pass
-            cases_list_str = all_x
-            elif trying_x != 0 and trying_y ==0:#case of y
-                cases_list_str = all_y
-            elif trying_x != 0 and trying_y !=0: #impossible to position
-                cases_str_list = []
-            elif trying_x == 0 and trying_y ==0:#coast is clear 
-                cases_str_list = all_x + all_y 
-        
+                cases_list_str = all_x_left
+            elif len(trying_x_left) != 0 and len(trying_x_right) ==0:#case of y
+                cases_list_str = all_x_right
+            elif len(trying_x_left) != 0 and len(trying_x_right) !=0: #impossible to position
+                cases_list_str = []
+            elif len(trying_x_left) == 0 and len(trying_x_right) ==0:#coast is clear 
+                cases_list_str =  all_x_left + all_x_right
+        else:#case of y
+            all_y_down = [(x+str(int(y)+i)) for i in range ( diff+1) if y+i in all_values_allowed]
+            #i cannot have the -diff in range, need tp act on the sum
+            all_y_up = [(x+str(int(y)-i)) for i in range (diff) if y-i in all_values_allowed]
+            trying_y_down = [i for i in all_y_down if i in all_colored]
+            #getting the difference 
+            trying_y_up = [i for i in all_y_up if i in all_colored]
+            if len(trying_y_down) == 0 and len(trying_y_up) !=0:#case of x
+            #returning the all_x list, should be something we can pass
+                cases_list_str = all_y_down
+            elif  len(trying_y_down) != 0 and len(trying_y_up) ==0:#case of y
+                cases_list_str = all_y_up
+            elif len(trying_y_down) != 0 and len(trying_y_up) !=0: #impossible to position
+                cases_list_str = []
+            elif  len(trying_y_down) == 0 and len(trying_y_up) ==0:#coast is clear 
+                cases_list_str=  all_y_up + all_y_down 
+    elif len(colored_buttons_singular) == total_ships:
+        cases_list_str = []
+                 
 
     
     
-    """
     
     
     
@@ -146,30 +176,31 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
     
     
     
-    if len(colored_buttons)==1:
-        all_cases = {(x, y-1): (bool(y-1>0)),  (x+1, y): (bool(x+1<10)), (x, y+1):(bool(y+1<10)), (x-1, y):(bool(x-1>0))}
-        cases = {key: value for key, value in all_cases.items() if value == True}
-        cases_list = [i for i in cases.keys()]
-        cases_list_str = [(str(x)+str(y)) for x, y in cases_list]
-    else:
+    
+    #if len(colored_buttons)==1:
+        #all_cases = {(x, y-1): (bool(y-1>0)),  (x+1, y): (bool(x+1<10)), (x, y+1):(bool(y+1<10)), (x-1, y):(bool(x-1>0))}
+        #cases = {key: value for key, value in all_cases.items() if value == True}
+        #cases_list = [i for i in cases.keys()]
+        #cases_list_str = [(str(x)+str(y)) for x, y in cases_list]
+    #else:
         #gettinmg if we are talking about an x or a y
         #checking only the forst element and then procee
         #missing a part here where we check if we are x or y
-        texts = []
-        first_element = [int(i["text"][0]) for i in colored_buttons]#all_x
-        second_element = [int(i["text"][1]) for i in colored_buttons]#all_y
-        zipped_function = [(i["text"][0])for i in colored_buttons]
-        print("first_element", "second_element", first_element, second_element, zipped_function)
+        #texts = []
+        #first_element = [int(i["text"][0]) for i in colored_buttons]#all_x
+        #second_element = [int(i["text"][1]) for i in colored_buttons]#all_y
+        #zipped_function = [(i["text"][0])for i in colored_buttons]
+        #print("first_element", "second_element", first_element, second_element, zipped_function)
         
-        if zipped_function[0][:1]==zipped_function[1][:1]:#case of y changing
+        #if zipped_function[0][:1]==zipped_function[1][:1]:#case of y changing
             
             
-            min_all_y = min(second_element)
-            cases_list_str = [(str(first_element[0])+str(i)) for i in range(min_all_y,total)]
-        else:
+        #    min_all_y = min(second_element)
+        #    cases_list_str = [(str(first_element[0])+str(i)) for i in range(min_all_y,total)]
+        #else:
             #doing the x part
-            min_all_x = min(first_element)
-            cases_list_str = [(str(i)+str(second_element[0])) for i in range(min_all_x,total)]
+            #min_all_x = min(first_element)
+            #cases_list_str = [(str(i)+str(second_element[0])) for i in range(min_all_x,total)]
     return cases_list_str
 
 #need to  add a new function to check the multiple button cases 
@@ -200,7 +231,7 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
         
         
         
-            possible_actions =  calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships) 
+            possible_actions =  calculate_cases(x, y,colored_buttons, all_colored, total_ships) 
         #adding the pressed button to make it colored 
             possible_actions.append(str(button_grid["text"]))
             print("possible actions", possible_actions)
@@ -211,7 +242,7 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
             button_grid["bg"]=color
         #needs to be recalculated here 
             colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
-            possible_actions = calculate_cases(x, y,colored_buttons, total_ships)
+            possible_actions = calculate_cases(x, y,colored_buttons,all_colored,  total_ships)
         #if the max has been reached we recolor all but the blue ones and reset the command 
             print("possible actions second button", possible_actions)
             if len(colored_buttons)==total_ships:
