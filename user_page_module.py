@@ -88,10 +88,12 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
     #where to put this?????
     #will be at least one.
     print("x,y in the ==1 function", x,y)
+    print("all the things plugged in the function")
+    print(x, y,colored_buttons_singular, all_colored, total_ships)
         #generating the list of numbers
     all_values_allowed = [i for i in range(0, 11)]
     #all buttons need to be only the single colored buttons
-    if len(colored_buttons_singular) == 1 and len(colored_buttons_singular) < total_ships:
+    if len(colored_buttons_singular) < 2 and len(colored_buttons_singular) < total_ships:
         print("case of len colored buttons ==1 ")
         #one already positioned
         diff = total_ships - 1
@@ -101,7 +103,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
         all_y = [(str(x) + str(int(y+i))) for i in range (-diff, diff+1) if y+i in all_values_allowed]
         print("all_x, all_y in the len==1 option", all_x, all_y)
         #needs to check here if there is teh possibility to go all teh way, checking the buttons that are already present 
-        trying_x = [i for i in all_x if i in all_colored]
+        trying_x = [i for i in all_x if i in all_colored ]
         #checking if the buttons are in the colored ones 
         trying_y = [i for i in all_y if i in all_colored]
         print("trying x and trying y to see which one i higher in the first function", trying_x, trying_y)
@@ -119,13 +121,15 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
              
             print("entering cosat is clear")
             all_values = all_x + all_y 
-            cases_list_str = list(set(all_values ))
+            cases_list_str = list(set(all_values))
         print("all cases tr in the > 1 function", cases_list_str)
-    elif len(colored_buttons_singular) > 1 and len(colored_buttons_singular) < total_ships: #case in which we have more than one button of the same color 
+    elif len(colored_buttons_singular) > 2 and len(colored_buttons_singular) < total_ships: #case in which we have more than one button of the same color 
         #changing the diff as we have more buttons here
         diff = total_ships - len(colored_buttons_singular)
         print("entering the second option where len > 1, printing diff, ",diff )
+        #getting the created buttons
         all_current_ships_values = [i["text"] for i in colored_buttons_singular]
+        print("all_current_ships_values ", all_current_ships_values )
         if all_current_ships_values[0][:1] == all_current_ships_values[1][:1]: #case of x so that the ship is horizontal
             #here i should have to try only for teh case of x to see if we can get the values 
             all_x_right = [(str(int(x+i))+str(y)) for i in range ( diff+1) if x+i in all_values_allowed]
@@ -146,6 +150,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             elif len(trying_x_left) == 0 and len(trying_x_right) ==0:#coast is clear 
                 cases_list_str =  all_x_left + all_x_right
         else:#case of y
+            print("all cases of y")
             all_y_down = [(x+str(int(y)+i)) for i in range ( diff+1) if y+i in all_values_allowed]
             #i cannot have the -diff in range, need tp act on the sum
             all_y_up = [(x+str(int(y)-i)) for i in range (diff) if y-i in all_values_allowed]
@@ -162,7 +167,9 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             elif  len(trying_y_down) == 0 and len(trying_y_up) ==0:#coast is clear 
                 cases_list_str=  all_y_up + all_y_down 
     elif len(colored_buttons_singular) == total_ships:
-        cases_list_str = []
+        print("entering the last function")
+        #all ship positioned 
+        cases_list_str = all_colored
                  
 
     
@@ -211,51 +218,83 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
 def button_click(button_grid, color, total_ships, frame):#need to start adding here 
     #only accessed if the ships are not positioned 
     text = tuple(button_grid["text"])
+    print("text when pressing the button", text)
     x = int(text[0])
     y =  int(text[1])
+    
     colors = ["orange", "blue", "purple", "pink"]
     #checks how many there are
     colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
-    all_colored = [i["text"] for i in frame.grid_slaves() if i["bg"] in colors]
+    all_colored = [i["text"] for i in frame.grid_slaves() if i["bg"] in colors and i["bg"]!=color]
+    print("all colored buttons after the first there should be something", all_colored)
     #should keep the things as they are here to better index
-
-    if len(colored_buttons) < total_ships:
+    #getting the possible actions 
+    possible_actions =  calculate_cases(x, y,colored_buttons, all_colored, total_ships) 
+    #it is a list so if we have an empty list we display a message
+    print("possible actions considering the buttons", possible_actions)
+    if len(possible_actions)==0:
+        messagebox.showerror("impossible to position", "cant find a suitable place please choose another spot")
+        #choosing a big enough value to show we have positioned all the values 
+    elif len(possible_actions)> 20:
+        [i.config(state = ACTIVE, bg="#f0f0f0", command="") for i in frame.grid_slaves() if i["text"] not in all_colored]
+        
+    #case here where we can position
+    else: 
+        #needs full text
+        text_str = button_grid["text"]
+        if text_str in possible_actions:
+            print("ok button allowed")
+            button_grid["bg"]=color 
+            [i.config(state = DISABLED, bg="grey") for i in frame.grid_slaves() if i["text"] not in possible_actions]
+            
+            
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   #if len(colored_buttons) < total_ships:
     #cases in which we have no colored buttons 
-        if len(colored_buttons)==0:
+    #    if len(colored_buttons)==0:
         #print("possinle_options",possible_actions)
-            button_grid["bg"]=color
+      #      button_grid["bg"]=color
         #NEEDS TO BE THE ALL COLORS
-            colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
+     #       colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
         #NEEDS COMPREHENSIVE CHECKING HERE
         
         
         
         
-            possible_actions =  calculate_cases(x, y,colored_buttons, all_colored, total_ships) 
+            
         #adding the pressed button to make it colored 
-            possible_actions.append(str(button_grid["text"]))
-            print("possible actions", possible_actions)
-            [i.config(state = DISABLED, bg="grey") for i in frame.grid_slaves() if i["text"] not in possible_actions]
+        #    possible_actions.append(str(button_grid["text"]))
+        #    print("possible actions", possible_actions)
+        #    [i.config(state = DISABLED, bg="grey") for i in all_colored if i["text"] not in possible_actions]
         
         
-        elif len(colored_buttons)>=1:
-            button_grid["bg"]=color
+        #elif len(colored_buttons)>=1:
+        #    button_grid["bg"]=color
         #needs to be recalculated here 
-            colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
-            possible_actions = calculate_cases(x, y,colored_buttons,all_colored,  total_ships)
+          #  colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
+         #   possible_actions = calculate_cases(x, y,colored_buttons,all_colored,  total_ships)
         #if the max has been reached we recolor all but the blue ones and reset the command 
-            print("possible actions second button", possible_actions)
-            if len(colored_buttons)==total_ships:
-                [i.config(state = ACTIVE, bg="#f0f0f0", command="") for i in frame.grid_slaves() if i["bg"]!=color]
-            else:
-                pass
-    else:
+        #    print("possible actions second button", possible_actions)
+        #    if len(colored_buttons)==total_ships:
+       #         [i.config(state = ACTIVE, bg="#f0f0f0", command="") for i in frame.grid_slaves() if i["bg"]!=color]
+      #      else:
+     #           pass
+    #else:
         #case in which we are at the level of ships
         #this should reset all the other buttons if not of the color 
 
         #knows if there are any other buttons 
-        colored_buttons = [i for i in frame.grid_slaves() if i["bg"] in colors]      
-        [i.config(command="", bg="#f0f0f0") for i in frame.grid_slaves() if i not in colored_buttons ] 
+        #colored_buttons = [i for i in frame.grid_slaves() if i["bg"] in colors]      
+       # [i.config(command="", bg="#f0f0f0") for i in frame.grid_slaves() if i not in all_colored ] 
         
         
         
@@ -281,10 +320,11 @@ def ship_click(color, frame, button, total):
     #gets the total number of units
     total_ships = total
     #there are no other buttons 
+    print("all the buttons that are the same color clicked from the ships", colored_buttons_specific , color)
     if len(colored_buttons_specific) == 0:
     #needs here to add the button config attribute and add the other argumnets as well
     #configuring all of the buttons
-        [i.config(command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves()]
+        [i.config(state = ACTIVE, bg="#f0f0f0", command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves() if i not in colored_buttons]
     else:
         #this should reset all the other buttons if not of the color 
         [i.config(command="", bg="#f0f0f0") for i in frame.grid_slaves() if i not in colored_buttons ] 
