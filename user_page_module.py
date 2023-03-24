@@ -118,11 +118,63 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
                 cases_list_str = all_x + all_y
             #the first time we access it should be equal to 0 while the second to something bigger than 0
         elif len(colored_buttons_singular) > 0:
+            #need to get here if we are in a case of x or y
+            #the obstacles should have been taken care by the above. here we need to consider the min and max and if there are any obstacles in both parts 
+            #if there are obstacles we need to choose either one or teh other
+            #here i get all the values i have that share the same (chosen in button) color
+            all_current_ships_values = [i["text"] for i in colored_buttons_singular]
+        #getting the smallest value and the highest 
+        #if the below passes we are moving horizontally so case of x
+            if(str(all_current_ships_values[0]))[:1] != str(all_current_ships_values[1])[:1]:
+                #all the x are the same 
+                all_x = [int((i[0:1])) for i in all_current_ships_values]
+                #getting the minimum and m,ax
+                min_x = min(all_x)
+                max_x = max(all_x)
+                #now i need to expand in both directions if there is space
+                #i expand one more because there might be some 
+                all_x_right = [(str(int(max_x+i))+str(y)) for i in range (diff, diff +2) if max_x+i in all_values_allowed]
+                all_x_left = [(str(int(min_x+i))+str(y)) for i in range (-diff-1, 0) if min_x+i in all_values_allowed]
+                #OBSTACLE AND LIMITS?
+                #needs to check if tehre are any units in the all colored buttons 
+                #obstacles case
+                #trying_x_right = [i for i in all_x_right if i in all_colored]  
+                #trying_x_left = [i for i in all_x_left if i in all_colored]
+                #i know it is a case of x, i can unite the two lists and remove values that are in all colored
+                all_x_right_and_left = all_x_right + all_x_left
+                #exclusing collisions
+                all_x_no_collisions = [i for i in all_x_right_and_left if i not in all_colored]
+                #returning the value here
+                cases_list_str = all_x_no_collisions
+            else:
+                all_y = [int((i[1:])) for i in all_current_ships_values]
+                #getting the minimum and m,ax
+                min_y = min(all_y)
+                max_y = max(all_y)
+                #now i need to expand in both directions if there is space
+                #i expand one more because there might be some 
+                all_y_up = [(str(x)+str(int(max_x+i))) for i in range (diff, diff +2) if max_x+i in all_values_allowed]
+                all_y_down = [(str(int(min_x+i))+str(y)) for i in range (-diff-1, 0) if min_x+i in all_values_allowed]
+                #OBSTACLE AND LIMITS?
+                #needs to check if tehre are any units in the all colored buttons 
+                #obstacles case
+                #trying_x_right = [i for i in all_x_right if i in all_colored]  
+                #trying_x_left = [i for i in all_x_left if i in all_colored]
+                #i know it is a case of x, i can unite the two lists and remove values that are in all colored
+                all_y_up_and_down = all_y_up + all_y_down
+                #exclusing collisions
+                all_y_no_collisions = [i for i in  all_y_up_and_down if i not in all_colored]
+                #returning the value here
+                cases_list_str = all_y_no_collisions
+        #now i need to consider the case in which i have a diff == 0 that means we have positioned all
+        else:
+            cases_list_str = []
+    #returns the list and the diff
+    return cases_list_str, diff
+            #i check only the x so that if it is not verified it is a y 
             
             
-            
-            
-            
+#to delete afterwards
             
             
             

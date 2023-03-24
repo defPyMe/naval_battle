@@ -1,24 +1,22 @@
-x = 2
-y = 3
 all_values_allowed = [i for i in range(0, 11)]
-tot = 3 
-diff = 3 - 1
-all_colored = ["13"]
-all_x = [(str(int(x+i))+str(y)) for i in range (-diff, diff+1) if x+i in all_values_allowed]
-all_y = [(str(x) + str(int(y+i))) for i in range (-diff, diff+1) if y+i in all_values_allowed]
+x = 2
+#case of x
+all_current_ships_values = ["22", "23", "24"]
 
+if (str(all_current_ships_values[0]))[:1] == str(all_current_ships_values[1])[:1]:
+    print("comparison operation",(str(all_current_ships_values[0]))[:1],str(all_current_ships_values[1])[:1] )
+    
+    all_y = [int((i[1:])) for i in all_current_ships_values]
+                #getting the minimum and m,ax
+    print("all_y",all_y)
+    min_x = min(all_y)
+    max_x = max(all_y)
+    diff = 1
+    print("min_x, max_x", min_x, max_x)
+                #now i need to expand in both directions if there is space
+    all_y_up = [(str(x)+str(int(max_x+i))) for i in range (diff, diff +2) if max_x+i in all_values_allowed]
+    all_y_down = [(str(x)+str(int(min_x+i))) for i in range (-diff -1 , 0) if min_x+i in all_values_allowed]
 
-trying_x = [i for i in all_x if i in all_colored ]
-trying_y = [i for i in all_y if i in all_colored]
-
-
-
-
-
-print(all_x, all_y)
-print(len(trying_x), len(trying_y))
-
-
-
-
+    print("all_x_right, all_x_left", all_y_up, all_y_down)
+else : print("not entering")
 
