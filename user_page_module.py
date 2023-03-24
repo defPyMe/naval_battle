@@ -83,17 +83,51 @@ def create_field(frame):
             button.grid(row=i, column=j)
 
 def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
-    #need to add here the cases where the colored are more than one or one 
-    #needs to take into account the x and y to see how to position
-    #where to put this?????
-    #will be at least one.
+    #here x,y are integers
     print("x,y in the ==1 function", x,y)
     print("all the things plugged in the function")
     print(x, y,colored_buttons_singular, all_colored, total_ships)
         #generating the list of numbers
     all_values_allowed = [i for i in range(0, 11)]
+    diff = total_ships - (len(colored_buttons_singular) + 1)
+    
+    #here i have cases of 2,3,4 ships as the first get inteccepted right away 
+    if diff > 0:
+        #now i need to model what happens when we have a len==1 of the colored buttons
+        #need to consider that there can be obstacles or not 
+        if len(colored_buttons_singular) == 0:
+            #now i expand in all directions(x,y) with the diff
+            all_x = [(str(int(x+i))+str(y)) for i in range (-diff, diff+1) if x+i in all_values_allowed]
+            all_y = [(str(x) + str(int(y+i))) for i in range (-diff, diff+1) if y+i in all_values_allowed]
+            #here in case i press 23 i will get respectively all_x = ['03', '13', '23', '33', '43'] all_y = ['21', '22', '23', '24', '25']
+            #now i need to check if any of the options is in the already colored buttons
+            trying_x = [i for i in all_x if i in all_colored ]
+            trying_y = [i for i in all_y if i in all_colored]
+            #if one is longer than the other then it needsa to be discarded 
+            if len(trying_x) > 0 and len(trying_y)==0:
+                #case of obstacle on teh x axis 
+                cases_list_str = all_y 
+            elif len(trying_x) == 0 and len(trying_y)> 0:
+                #here there is an obstace on the y axis 
+                cases_list_str = all_y 
+            elif len(trying_x) > 0 and len(trying_y)> 0:
+                #case of unpositionable ship, returns an empty list as we cannot position 
+                cases_list_str = []
+            elif len(trying_x) == 0 and len(trying_y) == 0:
+                #here i can go all the way in both directions 
+                cases_list_str = all_x + all_y
+            #the first time we access it should be equal to 0 while the second to something bigger than 0
+        elif len(colored_buttons_singular) > 0:
+            
+            
+            
+            
+            
+            
+            
+            
     #all buttons need to be only the single colored buttons
-    if len(colored_buttons_singular) < 2 and len(colored_buttons_singular) < total_ships:
+    if len(colored_buttons_singular) <=1 and len(colored_buttons_singular) < total_ships:
         print("case of len colored buttons ==1 ")
         #one already positioned
         diff = total_ships - 1
@@ -123,18 +157,34 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             all_values = all_x + all_y 
             cases_list_str = list(set(all_values))
         print("all cases tr in the > 1 function", cases_list_str)
-    elif len(colored_buttons_singular) > 2 and len(colored_buttons_singular) < total_ships: #case in which we have more than one button of the same color 
-        #changing the diff as we have more buttons here
-        diff = total_ships - len(colored_buttons_singular)
-        print("entering the second option where len > 1, printing diff, ",diff )
+        
+        
+        #SOMETHING WRONG HERE 
+    elif len(colored_buttons_singular) >= 1 and len(colored_buttons_singular) < total_ships: #case in which we have more than one button of the same color 
+        #changing the diff as we have more buttons here, i use the diff her eto select if the buttons are colored or not
+        diff = total_ships - (len(colored_buttons_singular) + 1)
+        print("entering the second option where len > 2, printing diff, ",diff )
         #getting the created buttons
         all_current_ships_values = [i["text"] for i in colored_buttons_singular]
-        print("all_current_ships_values ", all_current_ships_values )
-        if all_current_ships_values[0][:1] == all_current_ships_values[1][:1]: #case of x so that the ship is horizontal
+        #getting the smallest value and the highest 
+        
+        print("all_current_ships_values ", all_current_ships_values)
+        if all_current_ships_values[0][:0] == all_current_ships_values[1][:0]: #case of x so that the ship is horizontal
+            #sorting the values
+            all_x = [int((i[0:1])) for i in all_current_ships_values]
+            min_x = min(all_x)
+            max_x = max(all_x)
+            
+            
+            
+            
+            
+            
+            #it is two here !! need to consider that 
             #here i should have to try only for teh case of x to see if we can get the values 
-            all_x_right = [(str(int(x+i))+str(y)) for i in range ( diff+1) if x+i in all_values_allowed]
+            all_x_right = [(str(int(max_x+i))+str(y)) for i in range ( diff+1) if max_x+i in all_values_allowed]
             #i cannot have the -diff in range, need tp act on the sum
-            all_x_left = [(str(int(x-i))+str(y)) for i in range (diff) if x+i in all_values_allowed]
+            all_x_left = [(str(int(min_x+i))+str(y)) for i in range (-diff, 0) if min_x+i in all_values_allowed]
             print("printing all_x_eft, all_x_right in the len() > 1",all_x_left, all_x_right )
             #need to get a left or right difference here to avoid overlap
             trying_x_left = [i for i in all_x_left if i in all_colored]
@@ -151,9 +201,9 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
                 cases_list_str =  all_x_left + all_x_right
         else:#case of y
             print("all cases of y")
-            all_y_down = [(x+str(int(y)+i)) for i in range ( diff+1) if y+i in all_values_allowed]
+            all_y_down = [(str(x)+str(int(y)+i)) for i in range ( diff+1) if (int(y)+i) in all_values_allowed]
             #i cannot have the -diff in range, need tp act on the sum
-            all_y_up = [(x+str(int(y)-i)) for i in range (diff) if y-i in all_values_allowed]
+            all_y_up = [(str(x)+str(int(y)-i)) for i in range (diff) if (int(y)-i) in all_values_allowed]
             trying_y_down = [i for i in all_y_down if i in all_colored]
             #getting the difference 
             trying_y_up = [i for i in all_y_up if i in all_colored]
@@ -239,13 +289,17 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
         [i.config(state = ACTIVE, bg="#f0f0f0", command="") for i in frame.grid_slaves() if i["text"] not in all_colored]
         
     #case here where we can position
+    elif len(colored_buttons)==total_ships and :
+        #getting the buttons that are not in all colored colored of default color 
+        [i.config(state = ACTIVE, bg="#f0f0f0", command="") for i in frame.grid_slaves() if i["text"] not in all_colored]
+        
     else: 
         #needs full text
         text_str = button_grid["text"]
-        if text_str in possible_actions:
+        if text_str in possible_actions and len(colored_buttons)<total_ships:
             print("ok button allowed")
             button_grid["bg"]=color 
-            [i.config(state = DISABLED, bg="grey") for i in frame.grid_slaves() if i["text"] not in possible_actions]
+            [i.config(state = DISABLED, bg="grey") for i in frame.grid_slaves() if i["text"] not in possible_actions and i["text"] not in all_colored]
             
             
     
@@ -327,9 +381,8 @@ def ship_click(color, frame, button, total):
         [i.config(state = ACTIVE, bg="#f0f0f0", command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves() if i not in colored_buttons]
     else:
         #this should reset all the other buttons if not of the color 
-        [i.config(command="", bg="#f0f0f0") for i in frame.grid_slaves() if i not in colored_buttons ] 
+        [i.config(command="", bg="#f0f0f0") for i in frame.grid_slaves() if i not in colored_buttons and i["bg"]==color ] 
         #changes the color of the buttons selected by our ship to reset
-        [i.config(command="", bg="#f0f0f0") for i in frame.grid_slaves() if i["bg"]==color] 
 
       
 
