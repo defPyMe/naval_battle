@@ -131,15 +131,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
         #getting the smallest value and the highest 
         #if the below passes we are moving horizontally so case of x
             if(str(all_current_ships_values[0]))[:1] == str(all_current_ships_values[1])[:1]:
-                #all the y are the same
-                
-                
-                
-                
-                
-                # are here all the ys to consider?
-                
-                 
+                #all the y are the sa
                 print("case of all y equals")
                 all_x = [int((i[1:])) for i in all_current_ships_values]
                 #getting the minimum and m,ax
@@ -148,7 +140,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
                 #now i need to expand in both directions if there is space
                 #i expand one more because there might be some 
                 all_x_right = [(str(y)+ str(int(max_x+i))) for i in range (0, diff +1) if max_x+i in all_values_allowed]
-                all_x_left = [str(y) + (str(int(min_x+i))) for i in range (-diff-1, 0) if min_x+i in all_values_allowed]
+                all_x_left = [str(y) + (str(int(min_x+i))) for i in range (-diff, 0) if min_x+i in all_values_allowed]
                 print("all_x_left, all_x_right", all_x_left, all_x_right)
                 #OBSTACLE AND LIMITS?
                 #needs to check if tehre are any units in the all colored buttons 
@@ -162,13 +154,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
                 #returning the value here
                 cases_list_str = all_x_no_collisions
             else:
-                #check here 
-                
-                
-                
-                
-                
-                
+                #check here             
                 all_y = [int((i[0:1])) for i in all_current_ships_values]
                 print("entering vertical all the y are + the x we have in the button --> ", all_y, x )
                 #getting the minimum and m,ax
