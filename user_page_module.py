@@ -3,7 +3,7 @@ import sqlite3
 import io
 from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
-from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db, check_users
+from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db, check_users, SaveBattle
 from tkinter import messagebox
 
 
@@ -32,10 +32,18 @@ def update_name(new_name, name, toplevel):
     toplevel.title(updated_name)
     messagebox.showinfo("update info", "Username successfully updated")
 
+
+
+
+
+
+
+
 def new_battle(name):
     base_window = Toplevel()
     frame_field = Frame(base_window)
     player_frame = Frame(base_window)
+    base_window.title("New Battle of player : " + name )
     #frame_ships = Frame(base_window)
     #creating the buttons 
     create_field(frame_field)
@@ -73,7 +81,8 @@ def new_battle(name):
     ship_2.grid(row=3, column=0, columnspan=2)
     ship_3.grid(row=4, column=0, columnspan=2)
     ship_4.grid(row=5, column=0, columnspan=2)
-    save_button = Button(player_frame, text="Save", bg="green", command="")
+    #in the save button i can pass the name as argument so that i get teh db save
+    save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name))
     save_button.grid(row=6, column=1, pady=(30,))
 
 def create_field(frame):
@@ -84,13 +93,13 @@ def create_field(frame):
 
 def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
     #here x,y are integers
-    print("x,y in the ==1 function", x,y)
-    print("all the things plugged in the function")
-    print(x, y,colored_buttons_singular, all_colored, total_ships)
+    #print("x,y in the ==1 function", x,y)
+    #print("all the things plugged in the function")
+    #print(x, y,colored_buttons_singular, all_colored, total_ships)
         #generating the list of numbers
     all_values_allowed = [i for i in range(0, 11)]
     diff = total_ships - (len(colored_buttons_singular) + 1)
-    print("diff----->", diff)
+    #print("diff----->", diff)
     #here i have cases of 2,3,4 ships as the first get inteccepted right away 
     if diff > 0:
         #now i need to model what happens when we have a len==1 of the colored buttons
@@ -101,12 +110,12 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             all_y = [ str(int(y+i))+(str(x)) for i in range (-diff, diff+1) if y+i in all_values_allowed]
             #here in case i press 23 i will get respectively all_x = ['03', '13', '23', '33', '43'] all_y = ['21', '22', '23', '24', '25']
             #now i need to check if any of the options is in the already colored buttons
-            print("diff, all x and ally in the no previously colored buttons", diff, all_x, all_y)
-            print("all_colored in the no previously colored buttons", all_colored)
+            #print("diff, all x and ally in the no previously colored buttons", diff, all_x, all_y)
+            #print("all_colored in the no previously colored buttons", all_colored)
             trying_x = [i for i in all_x if i in all_colored ]
             trying_y = [i for i in all_y if i in all_colored]
             #if one is longer than the other then it needsa to be discarded 
-            print("trying x and trying y", trying_x, trying_y)
+            #print("trying x and trying y", trying_x, trying_y)
             if len(trying_x) > 0 and len(trying_y)==0:
                 #case of obstacle on teh x axis 
                 cases_list_str = all_y
@@ -127,56 +136,70 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             #here i get all the values i have that share the same (chosen in button) color
             #passing here the clicked button as well
             all_current_ships_values = [i["text"] for i in colored_buttons_singular] + [str(y)+str(x)]
-            print("all current ships values + evaluation that should be  ", all_current_ships_values,str(all_current_ships_values[0])[:1], str(all_current_ships_values[1])[:1])
+            #print("all current ships values + evaluation that should be  ", all_current_ships_values,str(all_current_ships_values[0])[:1], str(all_current_ships_values[1])[:1])
         #getting the smallest value and the highest 
         #if the below passes we are moving horizontally so case of x
-            if(str(all_current_ships_values[0]))[:1] == str(all_current_ships_values[1])[:1]:
-                #all the y are the sa
-                print("case of all y equals")
-                all_x = [int((i[1:])) for i in all_current_ships_values]
-                #getting the minimum and m,ax
-                min_x = min(all_x)
-                max_x = max(all_x)
-                #now i need to expand in both directions if there is space
-                #i expand one more because there might be some 
-                all_x_right = [(str(y)+ str(int(max_x+i))) for i in range (0, diff +1) if max_x+i in all_values_allowed]
-                all_x_left = [str(y) + (str(int(min_x+i))) for i in range (-diff, 0) if min_x+i in all_values_allowed]
-                print("all_x_left, all_x_right", all_x_left, all_x_right)
-                #OBSTACLE AND LIMITS?
-                #needs to check if tehre are any units in the all colored buttons 
-                #obstacles case
-                #trying_x_right = [i for i in all_x_right if i in all_colored]  
-                #trying_x_left = [i for i in all_x_left if i in all_colored]
-                #i know it is a case of x, i can unite the two lists and remove values that are in all colored
-                all_x_right_and_left = all_x_right + all_x_left
-                #exclusing collisions
-                all_x_no_collisions = [i for i in all_x_right_and_left if i not in all_colored] + [str(y)+str(x)]
-                #returning the value here
-                cases_list_str = all_x_no_collisions
+        #need some checking here to see if the pressed buttin iso of 
+        #the below could be x or y --> [(01), (11)] or (0,1), (0,2)
+            all_x = [int((i[1:])) for i in all_current_ships_values]
+            #getting all the x and y 
+            all_y = [int((i[0:1])) for i in all_current_ships_values]
+            #needs the min anad max of both
+            min_max_x = (min(all_x), max(all_x))
+            min_max_y = (min(all_y), max(all_y))
+            #getting the len of one of the two 
+            len_of_one = len(all_x)
+            if (min_max_x[0]+(len_of_one-1)) == (min_max_x[1]) or (min_max_y[0]+(len_of_one-1)) == min_max_y[1]:
+                #after i have sorted it 
+                if(str(all_current_ships_values[0]))[:1] == str(all_current_ships_values[1])[:1]:
+                    #all the y are the sa
+                    #print("case of all y equals")
+                    all_x = [int((i[1:])) for i in all_current_ships_values]
+                    #getting the minimum and m,ax
+                    min_x = min(all_x)
+                    max_x = max(all_x)
+                    #now i need to expand in both directions if there is space
+                    #i expand one more because there might be some 
+                    all_x_right = [(str(y)+ str(int(max_x+i))) for i in range (0, diff +1) if max_x+i in all_values_allowed]
+                    all_x_left = [str(y) + (str(int(min_x+i))) for i in range (-diff, 0) if min_x+i in all_values_allowed]
+                    #print("all_x_left, all_x_right", all_x_left, all_x_right)
+                    #OBSTACLE AND LIMITS?
+                    #needs to check if tehre are any units in the all colored buttons 
+                    #obstacles case
+                    #trying_x_right = [i for i in all_x_right if i in all_colored]  
+                    #trying_x_left = [i for i in all_x_left if i in all_colored]
+                    #i know it is a case of x, i can unite the two lists and remove values that are in all colored
+                    all_x_right_and_left = all_x_right + all_x_left
+                    #exclusing collisions
+                    all_x_no_collisions = [i for i in all_x_right_and_left if i not in all_colored] + [str(y)+str(x)]
+                    #returning the value here
+                    cases_list_str = all_x_no_collisions
+                else:
+                    #check here             
+                    all_y = [int((i[0:1])) for i in all_current_ships_values]
+                    #print("entering vertical all the y are + the x we have in the button --> ", all_y, x )
+                    #getting the minimum and m,ax
+                    min_y = min(all_y)
+                    max_y = max(all_y)
+                    #print("min and maz y", min_y, max_y)
+                    #now i need to expand in both directions if there is space
+                    #i expand one more because there might be some 
+                    all_y_down = [(str(int(max_y+i))+str(x)) for i in range (0, diff+1) if min_y+i in all_values_allowed]
+                    all_y_up = [(str(int(min_y+i))+str(x)) for i in range (-diff, 0) if max_y+i in all_values_allowed]
+                    #OBSTACLE AND LIMITS?
+                    #print("all ups and downs", all_y_up, all_y_down)
+                    #needs to check if tehre are any units in the all colored buttons 
+                    #obstacles case
+                    #trying_x_right = [i for i in all_x_right if i in all_colored]  
+                    #trying_x_left = [i for i in all_x_left if i in all_colored]
+                    #i know it is a case of x, i can unite the two lists and remove values that are in all colored
+                    all_y_up_and_down = all_y_up + all_y_down + [str(y)+str(x)]
+                    #exclusing collisions
+                    all_y_no_collisions = [i for i in  all_y_up_and_down if i not in all_colored] 
+                    #returning the value here
+                    cases_list_str = all_y_no_collisions
             else:
-                #check here             
-                all_y = [int((i[0:1])) for i in all_current_ships_values]
-                print("entering vertical all the y are + the x we have in the button --> ", all_y, x )
-                #getting the minimum and m,ax
-                min_y = min(all_y)
-                max_y = max(all_y)
-                print("min and maz y", min_y, max_y)
-                #now i need to expand in both directions if there is space
-                #i expand one more because there might be some 
-                all_y_down = [(str(int(max_y+i))+str(x)) for i in range (0, diff+1) if min_y+i in all_values_allowed]
-                all_y_up = [(str(int(min_y+i))+str(x)) for i in range (-diff, 0) if max_y+i in all_values_allowed]
-                #OBSTACLE AND LIMITS?
-                print("all ups and downs", all_y_up, all_y_down)
-                #needs to check if tehre are any units in the all colored buttons 
-                #obstacles case
-                #trying_x_right = [i for i in all_x_right if i in all_colored]  
-                #trying_x_left = [i for i in all_x_left if i in all_colored]
-                #i know it is a case of x, i can unite the two lists and remove values that are in all colored
-                all_y_up_and_down = all_y_up + all_y_down + [str(y)+str(x)]
-                #exclusing collisions
-                all_y_no_collisions = [i for i in  all_y_up_and_down if i not in all_colored] 
-                #returning the value here
-                cases_list_str = all_y_no_collisions
+                cases_list_str = []
         #now i need to consider the case in which i have a diff == 0 that means we have positioned all
     else:
         cases_list_str = []
@@ -331,7 +354,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
 def button_click(button_grid, color, total_ships, frame):#need to start adding here 
     #only accessed if the ships are not positioned 
     text = tuple(button_grid["text"])
-    print("text when pressing the button", text)
+    #print("text when pressing the button", text)
     x = int(text[1])
     y =  int(text[0])
     
@@ -339,16 +362,16 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
     #checks how many there are
 
     colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
-    print("secopnd time here should be the prevbioud button", colored_buttons)
+    #print("secopnd time here should be the prevbioud button", colored_buttons)
     all_colored = [i["text"] for i in frame.grid_slaves() if i["bg"] in colors]
-    print("all colored buttons , if firts ok with nothing", all_colored)
-    print("colored_buttons", colored_buttons)
+    #print("all colored buttons , if firts ok with nothing", all_colored)
+    #print("colored_buttons", colored_buttons)
     #should keep the things as they are here to better index
     #getting the possible actions 
     #the below returns a list and a tuple 
     possible_actions =  calculate_cases(x, y,colored_buttons, all_colored, total_ships) 
     #lets see it printed 
-    print("possible actions + color", possible_actions, color)
+    #print("possible actions + color", possible_actions, color)
     #diff  != 0 and list =[] cannot position
     diff = possible_actions[1]
     if diff !=0 and len(possible_actions[0]) == 0:
@@ -356,9 +379,9 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
         #case in which i can position
     elif diff !=0 and len(possible_actions[0]) != 0:
         text_str = str(y)+str(x)
-        print("text on the button", text_str)
+        #print("text on the button", text_str)
         if text_str in possible_actions[0]:
-            print("ok button allowed")
+            #print("ok button allowed")
             button_grid["bg"]=color 
             [i.config(state = DISABLED, bg="grey") for i in frame.grid_slaves() if i["text"] not in possible_actions[0] and i["text"] not in all_colored]
         else: print("not entering")
@@ -370,7 +393,7 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
          colored_buttons_2 =   possible_actions[2]+ [button_grid["text"]]
     
          all_colored_total = all_colored + colored_buttons_2
-         print("all colored should be alll teh èpresssed", all_colored_total)
+         #print("all colored should be alll teh èpresssed", all_colored_total)
          [i.config(state = ACTIVE, bg="#f0f0f0", command="") for i in frame.grid_slaves() if i["text"] not in all_colored_total ]
         
         
@@ -474,14 +497,18 @@ def ship_click(color, frame, button, total):
     #gets the total number of units
     total_ships = total
     #there are no other buttons 
-    print("all the buttons that are the same color clicked from the ships", colored_buttons_specific , color)
+    #print("all the buttons that are the same color clicked from the ships", colored_buttons_specific , color)
     if len(colored_buttons_specific) == 0:
     #needs here to add the button config attribute and add the other argumnets as well
     #configuring all of the buttons
         [i.config(state = ACTIVE, bg="#f0f0f0", command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves() if i not in colored_buttons]
     else:
+        print("entering resetting")
+        #i can truy to remove the color dinamically 
         #this should reset all the other buttons if not of the color 
-        [i.config(command="", bg="#f0f0f0") for i in frame.grid_slaves() if i not in colored_buttons and i["bg"]==color ] 
+        colors.remove(color)
+        colored_buttons_removed_clicked = [i for i in frame.grid_slaves() if i["bg"] in colors]
+        [i.config(state = ACTIVE, command="", bg="#f0f0f0") for i in frame.grid_slaves() if i not in colored_buttons_removed_clicked] 
         #changes the color of the buttons selected by our ship to reset
 
       

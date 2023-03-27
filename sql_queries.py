@@ -89,3 +89,7 @@ def retrieve_image(name, current_window ):
     label_picture.image = render # keep a reference!
     #should i grid always in the same position so that i do not have any problems when using this in different screens 
     label_picture.grid(row=1, column=0)
+    
+    
+def SaveBattle(name):
+    pass
