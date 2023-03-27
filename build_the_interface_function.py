@@ -31,33 +31,36 @@
 #all_y_up = [(str(int(min_y+i))+str(x)) for i in range (0, diff+1) if min_y+i in all_values_allowed]
 #all_y_down = [(str(int(max_y+i))+str(x)) for i in range (-diff-1, 0) if max_y+i in all_values_allowed]
 
-#print("down, up", all_y_down, all_y_up)
-all_current_ships_values = ["39", "49"]
-all_y = [int((i[0:1])) for i in all_current_ships_values]
-diff = 1
-#getting the minimum and m,ax
-min_y = min(all_y)
-max_y = max(all_y)
-x = 9
-#now i need to expand in both directions if there is space
-#i expand one more because there might be some 
-#expected result == 29, 59
-all_y_down = [(str(int(max_y+i))+str(x)) for i in range (0, diff+1) ]
-all_y_up = [(str(int(min_y+i))+str(x)) for i in range (-diff-1, 0) ]
-#OBSTACLE AND LIMITS?
-print("all ups and downs", all_y_up, all_y_down)
+# #print("down, up", all_y_down, all_y_up)
+# all_current_ships_values = ["39", "49"]
+# all_y = [int((i[0:1])) for i in all_current_ships_values]
+# diff = 1
+# #getting the minimum and m,ax
+# min_y = min(all_y)
+# max_y = max(all_y)
+# x = 9
+# #now i need to expand in both directions if there is space
+# #i expand one more because there might be some 
+# #expected result == 29, 59
+# all_y_down = [(str(int(max_y+i))+str(x)) for i in range (0, diff+1) ]
+# all_y_up = [(str(int(min_y+i))+str(x)) for i in range (-diff-1, 0) ]
+# #OBSTACLE AND LIMITS?
+# print("all ups and downs", all_y_up, all_y_down)
 #needs to check if tehre are any units in the all colored buttons 
 #obstacles case
 #trying_x_right = [i for i in all_x_right if i in all_colored]  
 #trying_x_left = [i for i in all_x_left if i in all_colored]
 #i know it is a case of x, i can unite the two lists and remove values that are in all colored
-all_y_up_and_down = all_y_up + all_y_down
-#exclusing collisions
-print("all y up amnd down", all_y_up_and_down)
+# all_y_up_and_down = all_y_up + all_y_down
+# #exclusing collisions
+# print("all y up amnd down", all_y_up_and_down)
 
 
+checking_the_ship = {"ship1": True, "ship2": False, "ship3":True}
 
+cases = {key: value for key, value in checking_the_ship.items() if value == True}
+cases_negative = {key: value for key, value in checking_the_ship.items() if value == False}
 
-
-
+#needs to be alist to have single values 
+print(list(cases_negative.keys()))
 

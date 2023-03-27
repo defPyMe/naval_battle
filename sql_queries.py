@@ -91,5 +91,24 @@ def retrieve_image(name, current_window ):
     label_picture.grid(row=1, column=0)
     
     
-def SaveBattle(name):
+def SaveBattle(name, frame_field, text, option):
+    #should get the different ships we have placed
+    ship_1 = [i for i in frame_field if i["bg"]=="orange"]
+    ship_2 = [i for i in frame_field if i["bg"]=="blue"]
+    ship_3 = [i for i in frame_field if i["bg"]=="purple"]
+    ship_4 = [i for i in frame_field if i["bg"]=="pink"]
+    
+    checking_the_ship = {"ship_1": (bool(len(ship_1)==1)),  "ship_2": (bool(len(ship_2)==2)),
+                         "ship_3":(bool(len(ship_3)==3)), "ship_4":(bool(len(ship_4)==4))}
+    #i check for the trues in the dict 
+    cases = {key: value for key, value in checking_the_ship.items() if value == True}
+    cases_negative = {key: value for key, value in checking_the_ship.items() if value == False}
+    #the conditions are that the elements on the textbox are taken and the list of the negative is ==0
+    name_battle_and_opponent = list(text.get("1.0", "end"),option.get())
+    
+    if len(list(cases_negative.keys())) == 0 and len( name_battle_and_opponent)==2:
+        #here i save to the db
+        pass
+    else:
+        print("reqiorement not satisfied")
     pass

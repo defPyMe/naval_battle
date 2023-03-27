@@ -82,7 +82,7 @@ def new_battle(name):
     ship_3.grid(row=4, column=0, columnspan=2)
     ship_4.grid(row=5, column=0, columnspan=2)
     #in the save button i can pass the name as argument so that i get teh db save
-    save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name))
+    save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, option_menu))
     save_button.grid(row=6, column=1, pady=(30,))
 
 def create_field(frame):
