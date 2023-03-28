@@ -5,7 +5,7 @@ from PIL import ImageTk,  ImageFont, ImageDraw
 import PIL.Image
 from tkinter import *
 from tkinter import messagebox
-
+import string
 import sys , os
 
 
@@ -96,10 +96,10 @@ def retrieve_image(name, current_window ):
 def SaveBattle(name_battle, field, text, options):
     #should get the different ships we have placed
     try:
-        ship_1 = [i for i in field.grid_slaves() if i["bg"]=="orange"]
-        ship_2 = [i for i in field.grid_slaves() if i["bg"]=="blue"]
-        ship_3 = [i for i in field.grid_slaves() if i["bg"]=="purple"]
-        ship_4 = [i for i in field.grid_slaves() if i["bg"]=="pink"]
+        ship_1 = [i["text"] for i in field.grid_slaves() if i["bg"]=="orange"]
+        ship_2 = [i["text"]  for i in field.grid_slaves() if i["bg"]=="blue"]
+        ship_3 = [i["text"]  for i in field.grid_slaves() if i["bg"]=="purple"]
+        ship_4 = [i["text"]  for i in field.grid_slaves() if i["bg"]=="pink"]
         
         checking_the_ship = {"ship_1": (bool(len(ship_1)==1)),  "ship_2": (bool(len(ship_2)==2)),
                             "ship_3":(bool(len(ship_3)==3)), "ship_4":(bool(len(ship_4)==4))}
@@ -107,14 +107,19 @@ def SaveBattle(name_battle, field, text, options):
         cases = {key: value for key, value in checking_the_ship.items() if value == True}
         cases_negative = {key: value for key, value in checking_the_ship.items() if value == False}
         #the conditions are that the elements on the textbox are taken and the list of the negative is ==0
-        name_battle_and_opponent = list(text.get("1.0", "end")) + list(options.get())
-        
+        #now i clean the string building a translator
+        #the first two are empty strings as we do not want to map any characters, the third is the constant containing what we want to remove 
+        translator = str.maketrans("","", string.punctuation)
+        selection_var = options.get().translate(translator)
+        print("selection_var", selection_var, type(selection_var))
+        name_battle_and_opponent = (selection_var + "  " +  text.get("1.0", "end")).split()
+        print( name_battle_and_opponent)
         if len(list(cases_negative.keys())) == 0 and len( name_battle_and_opponent)==2:
             #here i save to the db 
             
             pass
         else:
-            print("reqiorement not satisfied")
+            print(cases, cases_negative, name_battle_and_opponent)
         pass
     except Exception as e :
                     

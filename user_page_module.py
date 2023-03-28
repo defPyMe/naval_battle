@@ -137,6 +137,8 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             #passing here the clicked button as well
             all_current_ships_values = [i["text"] for i in colored_buttons_singular] + [str(y)+str(x)]
             #print("all current ships values + evaluation that should be  ", all_current_ships_values,str(all_current_ships_values[0])[:1], str(all_current_ships_values[1])[:1])
+            #getting the set so we do not have duplicates 
+            #len_set = set(all_current_ships_values)
         #getting the smallest value and the highest 
         #if the below passes we are moving horizontally so case of x
         #need some checking here to see if the pressed buttin iso of 
@@ -201,6 +203,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             else:
                 cases_list_str = []
         #now i need to consider the case in which i have a diff == 0 that means we have positioned all
+        #cannot press the same button twice, case of x and of y
     else:
         cases_list_str = []
     #returns the list and the diff
