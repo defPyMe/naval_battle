@@ -93,9 +93,10 @@ def retrieve_image(name, current_window ):
     label_picture.grid(row=1, column=0)
     
     
-def SaveBattle(name_battle, field, text, options):
+def SaveBattle(name_creator, field, text, options):
     #should get the different ships we have placed
     try:
+        #her ei get the texts to save in the database
         ship_1 = [i["text"] for i in field.grid_slaves() if i["bg"]=="orange"]
         ship_2 = [i["text"]  for i in field.grid_slaves() if i["bg"]=="blue"]
         ship_3 = [i["text"]  for i in field.grid_slaves() if i["bg"]=="purple"]
@@ -111,12 +112,29 @@ def SaveBattle(name_battle, field, text, options):
         #the first two are empty strings as we do not want to map any characters, the third is the constant containing what we want to remove 
         translator = str.maketrans("","", string.punctuation)
         selection_var = options.get().translate(translator)
-        print("selection_var", selection_var, type(selection_var))
         name_battle_and_opponent = (selection_var + "  " +  text.get("1.0", "end")).split()
-        print( name_battle_and_opponent)
         if len(list(cases_negative.keys())) == 0 and len( name_battle_and_opponent)==2:
             #here i save to the db 
-            
+            #fist i update the table of the players and then the battle
+            with sqlite3.connect(path_to_db) as conn:
+            #needs to get the player id if the two players involved
+                        values_to_search = (selection_var + "  " + name_creator).split()
+                        #looking for the ids in teh table
+                        print("values_to_search", values_to_search)
+                        query = 'SELECT user_id FROM users WHERE name IN ({})'.format(', '.join('?' for _ in values_to_search))
+                        ids = conn.execute(query, values_to_search)
+                        ids_int =ids.fetchall()
+                        #now i can update the battle_table ith what i have 
+                        
+
+                        command = "UPDATE battle_table SET name = (?),  player1 = (?), player2 = (?)"
+                        conn.execute(command, (name_battle_and_opponent[1], name_creator,  selection_var ))
+                        #yhen i need to save the battle with the formation
+                        # here I have to pass lists as some ships have mpre than one value
+                        command = """UPDATE Ships_1 SET ship_1 = (?) , ship_2 = (?) , ship_3 = (?) , ship_4 = (?), player_now_playing = (?)
+                        WHERE battle_id =(?) AND user_id = (?)"""
+                        conn.execute(command , (ship_1, ship_2, ship_3, ship_4, ids_int[1]))
+                        conn.commit()
             pass
         else:
             print(cases, cases_negative, name_battle_and_opponent)

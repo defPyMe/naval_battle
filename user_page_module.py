@@ -7,6 +7,7 @@ from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db
 from tkinter import messagebox
 
 
+
 #this opens the image and displays it
 def open(name, base_window):
     file = filedialog.askopenfilename(title='search images' , filetypes=(('png','*.png'),('jpeg', '*.jpg')))
@@ -34,7 +35,10 @@ def update_name(new_name, name, toplevel):
 
 
 
-
+def update(window):
+    print("refresh!!!!!!")
+    window.after(5000, lambda: update(window))
+    
 
 
 
@@ -106,17 +110,30 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
         #need to consider that there can be obstacles or not 
         if len(colored_buttons_singular) == 0:
             #now i expand in all directions(x,y) with the diff
-            all_x = [str(y)+(str(int(x+i))) for i in range (-diff, diff+1) if x+i in all_values_allowed] + []
-            all_y = [ str(int(y+i))+(str(x)) for i in range (-diff, diff+1) if y+i in all_values_allowed]
+            #i type cast here again to get a list of integers
+            #the below includes the pressed button
+            all_x = [int(str(y)+(str(int(x+i)))) for i in range (-diff, diff+1) if x+i in all_values_allowed] 
+            all_y = [ int(str(int(y+i))+(str(x))) for i in range (-diff, diff+1) if y+i in all_values_allowed]
             #here in case i press 23 i will get respectively all_x = ['03', '13', '23', '33', '43'] all_y = ['21', '22', '23', '24', '25']
             #now i need to check if any of the options is in the already colored buttons
-            #print("diff, all x and ally in the no previously colored buttons", diff, all_x, all_y)
-            #print("all_colored in the no previously colored buttons", all_colored)
+            #here i make the all_colored list in integers
+            all_colored_int = [int(i) for i in all_colored]
+            #the below should work as we have all integers in both
             trying_x = [i for i in all_x if i in all_colored ]
             trying_y = [i for i in all_y if i in all_colored]
-            #if one is longer than the other then it needsa to be discarded 
-            #print("trying x and trying y", trying_x, trying_y)
-            if len(trying_x) > 0 and len(trying_y)==0:
+            #now i need to get the minimum and maximum to see where we touch first, if we touch at all, they can be tuples
+            min_max_trying_x = (min(trying_x), max(trying_x))
+            min_max_trying_y = (min(trying_y), max(trying_y))
+            #getting the different elements in all_x, all_y in teh interval
+            correct_collision_interval_x = [i for i in all_x if i > min_max_trying_x[0] and i < min_max_trying_x[1]]
+            correct_collision_interval_y = [i for i in all_y if i > min_max_trying_y[0] and i < min_max_trying_y[1]]
+            #converting all the values to strings as that is what the below expects
+            correct_collision_interval_x_str = [str(i) for i in  correct_collision_interval_x]
+            correct_collision_interval_y_str = [str(i) for i in  correct_collision_interval_y]
+            
+            
+            
+            if len( correct_collision_interval_x_str) >= diff and len( correct_collision_interval_y_str)==0:
                 #case of obstacle on teh x axis 
                 cases_list_str = all_y
             elif len(trying_x) == 0 and len(trying_y)> 0:
@@ -198,6 +215,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
                     all_y_up_and_down = all_y_up + all_y_down + [str(y)+str(x)]
                     #exclusing collisions
                     all_y_no_collisions = [i for i in  all_y_up_and_down if i not in all_colored] 
+                    print("allowed values in case f x staying the same")
                     #returning the value here
                     cases_list_str = all_y_no_collisions
             else:
@@ -556,7 +574,8 @@ def buld_champion_interface():
     label_champions = Label(text="Player Classification")
     #GETTING ALL THE PLAYERS 
     
-    
+
+
 
 def build_user_page(name):
    
@@ -579,4 +598,5 @@ def build_user_page(name):
     button_old_battles.grid(row=1, column=0,padx=(150,10), pady=10 )
     button_show_champions.grid(row=2, column=0,padx=(150,10), pady=10)
     button_change_profile.grid(row=3, column=0,padx=(150,10), pady=10)
+    update(base_window)
     

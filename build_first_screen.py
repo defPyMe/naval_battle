@@ -4,6 +4,7 @@ from sql_queries import checking_credentials
 from user_page_module import build_user_page
 
 
+
 def logging_in(text_box):
     #need to add a connection to the list of users here 
     name_input = str(text_box.get("1.0", "end")).strip()
@@ -14,6 +15,7 @@ def logging_in(text_box):
         build_user_page(name_input)
     else:
         messagebox.showwarning("log_info", "wrong credentials")
+
 
 
 def build_first_screen():  
