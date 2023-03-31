@@ -132,19 +132,21 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             correct_collision_interval_y_str = [str(i) for i in  correct_collision_interval_y]
             
             
-            
-            if len( correct_collision_interval_x_str) >= diff and len( correct_collision_interval_y_str)==0:
-                #case of obstacle on teh x axis 
-                cases_list_str = all_y
-            elif len(trying_x) == 0 and len(trying_y)> 0:
-                #here there is an obstace on the y axis 
-                cases_list_str = all_x 
-            elif len(trying_x) > 0 and len(trying_y)> 0:
+            #if the lenght is equal or above == ok that list, if it is below --> not equal
+            if len( correct_collision_interval_x_str) >= diff and len( correct_collision_interval_y_str) < diff:
+                #case of obstacle on the x and y but only x feasible
+                cases_list_str = correct_collision_interval_x_str
+            elif len( correct_collision_interval_x_str) < diff and len( correct_collision_interval_y_str) >= diff :
+                #case of obstacle on the x and y but only y feasible
+                cases_list_str = correct_collision_interval_y_str 
+                #here we can have the two are feasible
+            elif len( correct_collision_interval_x_str) >= diff and len( correct_collision_interval_y_str) >= diff:
                 #case of unpositionable ship, returns an empty list as we cannot position 
-                cases_list_str = []
-            elif len(trying_x) == 0 and len(trying_y) == 0:
+                cases_list_str = correct_collision_interval_y_str + correct_collision_interval_x_str 
+            #in case both are strictly less then we know we cannot position and we return an empty string
+            elif len( correct_collision_interval_x_str) < diff and len( correct_collision_interval_y_str) < diff:
                 #here i can go all the way in both directions 
-                cases_list_str = all_x + all_y
+                cases_list_str = []
             #the first time we access it should be equal to 0 while the second to something bigger than 0
         elif len(colored_buttons_singular) > 0:
             #need to get here if we are in a case of x or y
