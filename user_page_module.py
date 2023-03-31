@@ -119,12 +119,24 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             #here i make the all_colored list in integers
             all_colored_int = [int(i) for i in all_colored]
             #the below should work as we have all integers in both
-            trying_x = [i for i in all_x if i in all_colored ]
-            trying_y = [i for i in all_y if i in all_colored]
+            trying_x = [i for i in all_x if i in all_colored_int ]
+            trying_y = [i for i in all_y if i in all_colored_int]
             #now i need to get the minimum and maximum to see where we touch first, if we touch at all, they can be tuples
-            min_max_trying_x = (min(trying_x), max(trying_x))
-            min_max_trying_y = (min(trying_y), max(trying_y))
+            #need to consider all the following cases 
+            if len(trying_x)!=0 and len(trying_y)==0:
+                min_max_trying_x = (min(trying_x), max(trying_x))
+                min_max_trying_y = (0, 100)
+            elif len(trying_y)!=0 and len(trying_x)==0:
+                min_max_trying_y = (min(trying_y), max(trying_y))
+                min_max_trying_x = (0, 100)
+            elif len(trying_y)==0 and len(trying_x)==0:
+                min_max_trying_x = (0, 100)
+                min_max_trying_y = (0, 100)
+            elif len(trying_y)!=0 and len(trying_x)!=0:
+                min_max_trying_y = (min(trying_y), max(trying_y))
+                min_max_trying_x = (min(trying_x), max(trying_x))
             #getting the different elements in all_x, all_y in teh interval
+            print("min_max_trying_y", min_max_trying_y, min_max_trying_x)
             correct_collision_interval_x = [i for i in all_x if i > min_max_trying_x[0] and i < min_max_trying_x[1]]
             correct_collision_interval_y = [i for i in all_y if i > min_max_trying_y[0] and i < min_max_trying_y[1]]
             #converting all the values to strings as that is what the below expects
