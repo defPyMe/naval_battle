@@ -131,6 +131,7 @@ def SaveBattle(name_creator, field, text, options):
                         conn.execute(command, (name_battle_and_opponent[1], name_creator,  selection_var ))
                         #yhen i need to save the battle with the formation
                         # here I have to pass lists as some ships have mpre than one value
+                        #need the battle id here
                         command = """UPDATE Ships_1 SET ship_1 = (?) , ship_2 = (?) , ship_3 = (?) , ship_4 = (?), player_now_playing = (?)
                         WHERE battle_id =(?) AND user_id = (?)"""
                         conn.execute(command , (ship_1, ship_2, ship_3, ship_4, ids_int[1]))

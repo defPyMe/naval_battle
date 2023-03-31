@@ -121,8 +121,10 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             #the below should work as we have all integers in both
             trying_x = [i for i in all_x if i in all_colored_int ]
             trying_y = [i for i in all_y if i in all_colored_int]
+            print("all_x, all_y", all_x, all_y)
             #now i need to get the minimum and maximum to see where we touch first, if we touch at all, they can be tuples
             #need to consider all the following cases 
+            # 1) trying_x != zer trying y == 0, 2) trying_x == 0 trying y != 0, 3) trying_x == 0 trying y == 0, 4) trying_x != zer trying y != 0
             if len(trying_x)!=0 and len(trying_y)==0:
                 min_max_trying_x = (min(trying_x), max(trying_x))
                 min_max_trying_y = (0, 100)
@@ -130,8 +132,8 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
                 min_max_trying_y = (min(trying_y), max(trying_y))
                 min_max_trying_x = (0, 100)
             elif len(trying_y)==0 and len(trying_x)==0:
-                min_max_trying_x = (0, 100)
-                min_max_trying_y = (0, 100)
+                min_max_trying_x = (-1, 100)
+                min_max_trying_y = (-1, 100)
             elif len(trying_y)!=0 and len(trying_x)!=0:
                 min_max_trying_y = (min(trying_y), max(trying_y))
                 min_max_trying_x = (min(trying_x), max(trying_x))
@@ -140,9 +142,9 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             correct_collision_interval_x = [i for i in all_x if i > min_max_trying_x[0] and i < min_max_trying_x[1]]
             correct_collision_interval_y = [i for i in all_y if i > min_max_trying_y[0] and i < min_max_trying_y[1]]
             #converting all the values to strings as that is what the below expects
-            correct_collision_interval_x_str = [str(i) for i in  correct_collision_interval_x]
-            correct_collision_interval_y_str = [str(i) for i in  correct_collision_interval_y]
-            
+            correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  correct_collision_interval_x]
+            correct_collision_interval_y_str = ['{:02d}'.format(i) for i in  correct_collision_interval_y]
+            print("correct_collision_interval_y_str, correct_collision_interval_x_str", correct_collision_interval_y_str,correct_collision_interval_x_str)
             
             #if the lenght is equal or above == ok that list, if it is below --> not equal
             if len( correct_collision_interval_x_str) >= diff and len( correct_collision_interval_y_str) < diff:
