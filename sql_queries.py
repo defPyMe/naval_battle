@@ -112,7 +112,9 @@ def SaveBattle(name_creator, field, text, options):
         #the first two are empty strings as we do not want to map any characters, the third is the constant containing what we want to remove 
         translator = str.maketrans("","", string.punctuation)
         selection_var = options.get().translate(translator)
+        #the first is the name of the opponent while the second is the name of the battle
         name_battle_and_opponent = (selection_var + "  " +  text.get("1.0", "end")).split()
+        #here we pass the test if all the fields are filled and all the ships positioned 
         if len(list(cases_negative.keys())) == 0 and len( name_battle_and_opponent)==2:
             #here i save to the db 
             #fist i update the table of the players and then the battle
@@ -121,17 +123,27 @@ def SaveBattle(name_creator, field, text, options):
                         values_to_search = (selection_var + "  " + name_creator).split()
                         #looking for the ids in teh table
                         print("values_to_search", values_to_search)
+                        #i get the two users_ids here 
                         query = 'SELECT user_id FROM users WHERE name IN ({})'.format(', '.join('?' for _ in values_to_search))
                         ids = conn.execute(query, values_to_search)
                         ids_int =ids.fetchall()
-                        #now i can update the battle_table ith what i have 
-                        
-
-                        command = "UPDATE battle_table SET name = (?),  player1 = (?), player2 = (?)"
-                        conn.execute(command, (name_battle_and_opponent[1], name_creator,  selection_var ))
+                        #once the players ids have beeen inserted i can proceed with the retrieving of the battle id as it was created
+                        #how do i upgrade the user_id? the one creating the table?
+                        command = "INSERT INTO battle_table(name, player1, player2) VALUES (?,?,?)"
+                        conn.execute(command, (name_battle_and_opponent[1], values_to_search[1], values_to_search[0]))
+                        #committing the results
+                        conn.commit()
                         #yhen i need to save the battle with the formation
                         # here I have to pass lists as some ships have mpre than one value
-                        #need the battle id here
+                        #need the battle id here and the user id
+                        command = "SELECT battle_id, user_id FROM battle_table WHERE battle_id = (?) AND user_id = (?)"
+                        #getting the values for the next query
+                        battle_id_user_id = conn.execute(command, (name_battle_and_opponent[1], values_to_search[0]))
+                        #can i condense this in one 
+                        battle_id_user_id_fetched = battle_id_user_id.fetchall()
+                        #now i should have all the elements i need 
+                        
+                        
                         command = """UPDATE Ships_1 SET ship_1 = (?) , ship_2 = (?) , ship_3 = (?) , ship_4 = (?), player_now_playing = (?)
                         WHERE battle_id =(?) AND user_id = (?)"""
                         conn.execute(command , (ship_1, ship_2, ship_3, ship_4, ids_int[1]))
