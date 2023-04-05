@@ -1,6 +1,6 @@
 #here i need also the pressed x and y as i need to get where itis positioned in case it is one
 #needs to return the values of the x and y
-def checking_first_button(trial_x, trial_y, x, y,all_x, all_y,  diff):
+def checking_first_button(trial_x, trial_y, x, y,all_x, all_y):
     #getting the two lenghts of the lists
     #ex (0, 3)
     len_x_y = [len(trial_x), len(trial_y)]
@@ -8,45 +8,67 @@ def checking_first_button(trial_x, trial_y, x, y,all_x, all_y,  diff):
     len_x_y_cleaned = [i if i<2 else 2 for i in len_x_y]
     #creating the reference dictionary
     #need to include both parts in the dictionary with min x and min y
+    #I have to put here the differenvce in y and x
     
-    # SHOULD I ADD THE Y HERE?????
+    # SHOULD I add one with the variable and iterate
+    print("trial_x, trial_y, len_x_y_cleaned", trial_x, trial_y, len_x_y_cleaned)
     
-    cases =  {1: (max(trial_x)), 0: ((0, 100), (0, 100)), 2:((min(trial_x), max(trial_x)))}
-    result = [cases[i] for i in len_x_y_cleaned]
+    [i.append(0) for i in [trial_x, trial_y] if i== []]
+    
+    cases_x =  {1: [max(trial_x)], 0: [0, 100], 2:[min(trial_x), max(trial_x)]}
+    cases_y = {1: [max(trial_y)], 0: [0, 100], 2:[min(trial_y), max(trial_y)]}
+
+    
+    #is this returning two separate things?
+    results = [[],[]]
+    #trying to crteate the wo entities with a two element list 
+    results[0].append(cases_x[len_x_y_cleaned[0]])
+    results[1].append(cases_y[len_x_y_cleaned[1]]) 
+    print("results", results)
+
     #needs the calculaition now if len (i(0))==1 --> needs if left or right
     #they are ints
-    for i in result:
-        if len(i)==1:
-            pressed_button = int(str(y)+str(x))
-            #if it is lower than the pressed button
-            if i[0] < pressed_button:
-                #uniting the two here
-                correct_collision_interval = [i for i in all_x if i > i[0] ] + [i for i in all_y if i > i[0] ]
-            elif i[0] < pressed_button:
-                #calling it the same so that i have to return one thing onluy 
-                correct_collision_interval_x = [i for i in all_x if i < i[0] ] + [i for i in all_y if i < i[0] ]
-        else:
-            correct_collision_interval_x = [i for i in all_x if i > min_max_trying_x[0] and i < min_max_trying_x[1]]
-            correct_collision_interval_y = [i for i in all_y if i > min_max_trying_y[0] and i < min_max_trying_y[1]]
-    
-    
-    
-    
-    correct_collision_interval_x = [i for i in all_x if i > min_max_trying_x[0] and i < min_max_trying_x[1]]
-    correct_collision_interval_y = [i for i in all_y if i > min_max_trying_y[0] and i < min_max_trying_y[1]]
-    
-    
-    
-    
-    
-    pass
-    
+    for i in range(len(results)):
+        pressed_button = int(str(y)+str(x))
+        #identifying if it is a max or min
+        #the second needs to take the first thing in the list
+        if len(results[0][0])==1 and len(results[1][0])!=1:
+            #here x is equal to 1
+            #going down the line and getting the single list item
+            if pressed_button > results[0][0][0]:
+                #the part that i smore tha one in leght shouldn t really change 
+                #need to return two here 
+                correct_collision_interval_x =  [i for i in all_x if i > results[0][0][0]] 
+                #needds to go a step further down
+                correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
 
+            else:
+                correct_collision_interval_x =  [i for i in all_x if i < results[0][0][0]] 
+                correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
+ 
+        elif len(results[0][0])!=1 and len(results[1][0])==1:
+            if pressed_button > results[0]:
+                
+                correct_collision_interval_x =   [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]] 
+                correct_collision_interval_y = [i for i in all_y if i > results[1][1]] 
 
+            else:
+                 correct_collision_interval_x =   [i for i in all_x if i > results[0][0] and i < results[0][1]] 
+                 correct_collision_interval_y = [i for i in all_y if i < results[1][0][0]] 
 
+        #now the case where we have all the values above the chosen threshold            
+        elif len(results[0][0])!=1 and len(results[1][1])!=1:
+            print(results[0][0], results[0][1])
+            correct_collision_interval_x = [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]]
+            correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
+    #outside of all the ifs i use a conversion
+    print("what the correct collisons are", correct_collision_interval_x, correct_collision_interval_y)
+    correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  correct_collision_interval_x]
+    correct_collision_interval_y_str = ['{:02d}'.format(i) for i in  correct_collision_interval_y]
+    #this is a list with all the chosen values 
+    return correct_collision_interval_x_str, correct_collision_interval_y_str
 
-
-
+    
 
 
 def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
@@ -77,35 +99,45 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             trying_x = [i for i in all_x if i in all_colored_int]
             trying_y = [i for i in all_y if i in all_colored_int]
             #pressed buttons
-            print("all_x, all_y", all_x, all_y)
-            print("trying_x, trying_y", trying_x, trying_y)
+            #should put the new function here as the elements are all calculated , here an obj is returned 
+            tuple_result = checking_first_button(trying_x, trying_y, x, y,all_x, all_y)
+            
+            
+            
+            
+            
+            
+            #print("all_x, all_y", all_x, all_y)
+            #print("trying_x, trying_y", trying_x, trying_y)
             #now i need to get the minimum and maximum to see where we touch first, if we touch at all, they can be tuples
             #need to consider all the following cases 
             # 1) trying_x != zer trying y == 0, 2) trying_x == 0 trying y != 0, 3) trying_x == 0 trying y == 0, 4) trying_x != zer trying y != 0
             #need to consider here the possible collisions with other ships 
             #as of now not moving in all directions , i have t try to 
             #if it is 54 anything different than that might work, but need to check if the lenght is 
-            if len(trying_x)==0 and len(trying_y)!=0:
-                min_max_trying_x = (min(trying_x), max(trying_x))
-                min_max_trying_y = (0, 100)
-            elif len(trying_y)!=0 and len(trying_x)==0:
-                min_max_trying_y = (min(trying_y), max(trying_y))
-                min_max_trying_x = (0, 100)
-            elif len(trying_y)==0 and len(trying_x)==0:
-                min_max_trying_x = (-1, 100)
-                min_max_trying_y = (-1, 100)
-            elif len(trying_y)!=0 and len(trying_x)!=0:
-                min_max_trying_y = (min(trying_y), max(trying_y))
-                min_max_trying_x = (min(trying_x), max(trying_x))
+            #if len(trying_x)==0 and len(trying_y)!=0:
+            #    min_max_trying_x = (min(trying_x), max(trying_x))
+            #    min_max_trying_y = (0, 100)
+            #elif len(trying_y)!=0 and len(trying_x)==0:
+            #    min_max_trying_y = (min(trying_y), max(trying_y))
+            #    min_max_trying_x = (0, 100)
+            #elif len(trying_y)==0 and len(trying_x)==0:
+            #    min_max_trying_x = (-1, 100)
+            #    min_max_trying_y = (-1, 100)
+            #elif len(trying_y)!=0 and len(trying_x)!=0:
+            #    min_max_trying_y = (min(trying_y), max(trying_y))
+            #    min_max_trying_x = (min(trying_x), max(trying_x))
             #getting the different elements in all_x, all_y in teh interval
-            print("min_max_trying_y", min_max_trying_y, min_max_trying_x)
-            correct_collision_interval_x = [i for i in all_x if i > min_max_trying_x[0] and i < min_max_trying_x[1]]
-            correct_collision_interval_y = [i for i in all_y if i > min_max_trying_y[0] and i < min_max_trying_y[1]]
+            #print("min_max_trying_y", min_max_trying_y, min_max_trying_x)
+            #correct_collision_interval_x = [i for i in all_x if i > min_max_trying_x[0] and i < min_max_trying_x[1]]
+            #correct_collision_interval_y = [i for i in all_y if i > min_max_trying_y[0] and i < min_max_trying_y[1]]
             #converting all the values to strings as that is what the below expects
-            correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  correct_collision_interval_x]
-            correct_collision_interval_y_str = ['{:02d}'.format(i) for i in  correct_collision_interval_y]
-            print("correct_collision_interval_y_str, correct_collision_interval_x_str", correct_collision_interval_y_str,correct_collision_interval_x_str)
-            
+            #correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  correct_collision_interval_x]
+            #correct_collision_interval_y_str = ['{:02d}'.format(i) for i in  correct_collision_interval_y]
+            #print("correct_collision_interval_y_str, correct_collision_interval_x_str", correct_collision_interval_y_str,correct_collision_interval_x_str)
+            correct_collision_interval_x_str = tuple_result[0]
+            correct_collision_interval_y_str = tuple_result [1]
+            print( "correct tuple collision",  correct_collision_interval_x_str,    correct_collision_interval_y_str)
             #if the lenght is equal or above == ok that list, if it is below --> not equal
             if len( correct_collision_interval_x_str) >= diff and len( correct_collision_interval_y_str) < diff:
                 #case of obstacle on the x and y but only x feasible
@@ -201,6 +233,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
     else:
         cases_list_str = []
     #returns the list and the diff
+    
     return cases_list_str, diff, colored_buttons_singular
             #i check only the x so t
             # 

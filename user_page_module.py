@@ -5,7 +5,7 @@ from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
 from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db, check_users, SaveBattle
 from tkinter import messagebox
-import checking_function
+from checking_function import calculate_cases
 
 
 
@@ -97,7 +97,7 @@ def create_field(frame):
             button.grid(row=i, column=j)
 
 
-            
+
 
 
 
@@ -135,7 +135,7 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
             #print("ok button allowed")
             button_grid["bg"]=color 
             [i.config(state = DISABLED, bg="grey") for i in frame.grid_slaves() if i["text"] not in possible_actions[0] and i["text"] not in all_colored]
-        else: print("not entering")
+        else: print("not entering", possible_actions[0], type(possible_actions[0][0]))
     elif diff ==0 and len(possible_actions[0]) == 0:
         #case when we have finished the options
          button_grid["bg"]=color 
