@@ -47,18 +47,18 @@ def checking_first_button(trial_x, trial_y, x, y,all_x, all_y):
                 correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
  
         elif len(results[0][0])!=1 and len(results[1][0])==1:
-            if pressed_button > results[0]:
+            if pressed_button > results[1][0][0]:
                 
                 correct_collision_interval_x =   [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]] 
-                correct_collision_interval_y = [i for i in all_y if i > results[1][1]] 
+                correct_collision_interval_y = [i for i in all_y if i > results[1][0][0]] 
 
             else:
-                 correct_collision_interval_x =   [i for i in all_x if i > results[0][0] and i < results[0][1]] 
+                 correct_collision_interval_x =   [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]] 
                  correct_collision_interval_y = [i for i in all_y if i < results[1][0][0]] 
 
         #now the case where we have all the values above the chosen threshold            
-        elif len(results[0][0])!=1 and len(results[1][1])!=1:
-            print(results[0][0], results[0][1])
+        elif len(results[0][0])!=1 and len(results[1][0])!=1:
+            
             correct_collision_interval_x = [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]]
             correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
     #outside of all the ifs i use a conversion

@@ -132,10 +132,13 @@ def SaveBattle(name_creator, field, text, options):
                         ids_int =[str(i) for i in list(ids.fetchall())]
                         #once the players ids have beeen inserted i can proceed with the retrieving of the battle id as it was created
                         #how do i upgrade the user_id? the one creating the table?
-                        command = "INSERT INTO battle_table(name, creator, opponent) VALUES (?,?,?)"
-                        conn.execute(command, (name_opponent_and_battle[0], str(ids_int[1]).translate(translator), str(ids_int[0]).translate(translator)))
+                        try:
+                            command = "INSERT INTO battle_table(name, creator, opponent) VALUES (?,?,?)"
+                            conn.execute(command, (name_opponent_and_battle[0], str(ids_int[1]).translate(translator), str(ids_int[0]).translate(translator)))
                         #committing the results
-                        conn.commit()
+                            conn.commit()
+                        except:
+                            messagebox.showinfo("insert error", "battle already created")
                         #yhen i need to save the battle with the formation
                         # here I have to pass lists as some ships have mpre than one value
                         #need the battle id here + creator id) used above and the  
@@ -162,3 +165,5 @@ def SaveBattle(name_creator, field, text, options):
                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                     print(e, exc_type, fname, exc_tb.tb_lineno)
                     messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
+                    
+                    
