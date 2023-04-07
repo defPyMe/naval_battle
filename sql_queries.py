@@ -134,7 +134,7 @@ def SaveBattle(name_creator, field, text, options):
                         #how do i upgrade the user_id? the one creating the table?
                         try:
                             command = "INSERT INTO battle_table(name, creator, opponent) VALUES (?,?,?)"
-                            conn.execute(command, (name_opponent_and_battle[0], str(ids_int[1]).translate(translator), str(ids_int[0]).translate(translator)))
+                            conn.execute(command, (name_opponent_and_battle[1], str(ids_int[1]).translate(translator), str(ids_int[0]).translate(translator)))
                         #committing the results
                             conn.commit()
                         except:
@@ -144,15 +144,16 @@ def SaveBattle(name_creator, field, text, options):
                         #need the battle id here + creator id) used above and the  
                         command = "SELECT battle_id FROM battle_table WHERE name = (?)"
                         #getting the values for the next query
-                        battle_id_creator_id = conn.execute(command, (ids_int[1]))
+                        print("what will be inserted", name_opponent_and_battle[0])
+                        battle_id_creator_id = conn.execute(command, (str(name_opponent_and_battle[1]),))
                         #can i condense this in one 
                         battle_id_creator_id_fetched =  battle_id_creator_id.fetchall()
                         #now i should have all the elements i need 
                         #now i update using the created value of the battle id so i insert when creating
                         #user_id is te one of the creator that palys first
-                        command = "INSERT INTO Ships_1(user_id, ship_1, ship_2, ship_3, ship_4, player_now_playing) VALUES (?,?,?,?,?,?)"
-                        print("taking a look at")
-                        conn.execute(command , (ids_int[1], ship_1, ship_2, ship_3, ship_4, ids_int[1]))
+                        print(" battle_id_creator_id_fetched",  battle_id_creator_id_fetched)
+                        command = "INSERT INTO Ships_1(battle_id, user_id, ship_1, ship_2, ship_3, ship_4, player_now_playing) VALUES (?,?,?,?,?,?, ?)"
+                        conn.execute(command, (str(battle_id_creator_id_fetched).translate(translator), str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator)))
                         conn.commit()
             pass
         else:
