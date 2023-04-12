@@ -115,7 +115,13 @@ def SaveBattle(name_creator, field, text, options):
         #the first is the name of the opponent while the second is the name of the battle
         name_opponent_and_battle = (selection_var + "  " +  text.get("1.0", "end")).split()
         #here we pass the test if all the fields are filled and all the ships positioned 
-        if len(list(cases_negative.keys())) == 0 and len( name_opponent_and_battle)==2:
+        #need to check here for teh battle name 
+        with sqlite3.connect(path_to_db) as conn:
+            query = 'SELECT * FROM battle_table WHERE name == (?)'
+            name_there = (conn.execute(query, (text.get("1.0", "end") ))).fetchall()
+            
+            
+        if len(list(cases_negative.keys())) == 0 and len( name_opponent_and_battle)==2 and name_there=="":
             print("all requirements satisfied to insert")
             #here i save to the db 
             #fist i update the table of the players and then the battle
@@ -167,4 +173,9 @@ def SaveBattle(name_creator, field, text, options):
                     print(e, exc_type, fname, exc_tb.tb_lineno)
                     messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
                     
+
+def retrieve_battle():
+    #need here to get the values of the battle back and get them displayed in a playable field
+    
+    pass
                     

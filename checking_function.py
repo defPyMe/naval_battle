@@ -11,6 +11,7 @@ def checking_first_button(trial_x, trial_y, x, y,all_x, all_y):
     #I have to put here the differenvce in y and x
     
     # SHOULD I add one with the variable and iterate
+    print("all_x, all_y", all_x, all_y)
     print("trial_x, trial_y, len_x_y_cleaned", trial_x, trial_y, len_x_y_cleaned)
     
     [i.append(0) for i in [trial_x, trial_y] if i== []]
@@ -36,31 +37,70 @@ def checking_first_button(trial_x, trial_y, x, y,all_x, all_y):
             #here x is equal to 1
             #going down the line and getting the single list item
             if pressed_button > results[0][0][0]:
+                print("case1", pressed_button,results[0][0][0], all_x, all_y)
                 #the part that i smore tha one in leght shouldn t really change 
-                #need to return two here 
+                #approaching from above 
                 correct_collision_interval_x =  [i for i in all_x if i > results[0][0][0]] 
                 #needds to go a step further down
                 correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
 
             else:
+                print("case2" , pressed_button,  results[0][0][0], all_x, all_y)
                 correct_collision_interval_x =  [i for i in all_x if i < results[0][0][0]] 
                 correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
+            #should be ok here
  
         elif len(results[0][0])!=1 and len(results[1][0])==1:
             if pressed_button > results[1][0][0]:
+                #getting the second one 
+                print("case3", pressed_button,results[1][0][0],all_x, all_y  )
+                
+                #ARE THE TWO CORRECT? ARE WE GETTING THE RIGHT INDEXING? 
+                
+                
                 
                 correct_collision_interval_x =   [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]] 
                 correct_collision_interval_y = [i for i in all_y if i > results[1][0][0]] 
 
             else:
-                 correct_collision_interval_x =   [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]] 
-                 correct_collision_interval_y = [i for i in all_y if i < results[1][0][0]] 
+                print("case4", pressed_button,results[1][0][0], all_x, all_y)
+                correct_collision_interval_x =   [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]] 
+                correct_collision_interval_y = [i for i in all_y if i < results[1][0][0]] 
 
         #now the case where we have all the values above the chosen threshold            
         elif len(results[0][0])!=1 and len(results[1][0])!=1:
+            if results[0][0]==[0,100] and results[1][0]!=[0,100]:
+                #it means i have the situation to check into the second 
+                if pressed_button > results[1][0][0]:
+                    
+                    #then we are approaching from below
+                        print("case5", pressed_button,results[1][0][0], all_x, all_y)
+                        correct_collision_interval_x = [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]]
+                        correct_collision_interval_y = [i for i in all_y if i > pressed_button]
+                elif pressed_button < results[1][0][0]:     
+                       #approaching from above
+                        print("case6", pressed_button, results[1][0][0], all_x, all_y)
+                        correct_collision_interval_x = [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]]
+                        correct_collision_interval_y = [i for i in all_y if i < pressed_button]
+                        #case in which the first is different 
+            elif results[0][0]!=[0,100] and results[1][0]==[0,100]:
+                #only minimum here 
+                if pressed_button > results[0][0][0]:
+                    print("case7", pressed_button,  results[0][0][0],all_x, all_y)
+                    #approaching from below
+                    correct_collision_interval_x = [i for i in all_x if i > pressed_button]
+                    correct_collision_interval_y = [i for i in all_y if i > results[0][0][0] and i < results[0][0][1]]
+                elif pressed_button < results[0][0][0]:
+                    print("case8", pressed_button, results[0][0][0],all_x, all_y)
+                    correct_collision_interval_x = [i for i in all_x if i < pressed_button]
+                    correct_collision_interval_y = [i for i in all_y if i > results[0][0][0] and i < results[0][0][1]]
+            elif results[0][0]==[0,100] and results[1][0]==[0,100]:
+                correct_collision_interval_x =  [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]]
+                correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
             
-            correct_collision_interval_x = [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]]
-            correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
+                    
+                    
+    print("results on the y ",  results[1][0][0],  results[1][0][1])
     #outside of all the ifs i use a conversion
     print("what the correct collisons are", correct_collision_interval_x, correct_collision_interval_y)
     correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  correct_collision_interval_x]
