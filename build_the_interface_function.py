@@ -56,13 +56,28 @@
 # print("all y up amnd down", all_y_up_and_down)
 
 
-checking_the_ship = {"ship1": True, "ship2": False, "ship3":True}
 
-cases = {key: value for key, value in checking_the_ship.items() if value == True}
-cases_negative = {key: value for key, value in checking_the_ship.items() if value == False}
 
-#needs to be alist to have single values 
-print(list(cases_negative.keys()))
+#
 
-l = (1,)
-print(*l)
+
+import sqlite3 
+path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\naval_battle.db"
+user_id = 2
+with sqlite3.connect(path_to_db) as conn:
+        command = "SELECT * FROM Ships_1 WHERE  user_id = (?)"
+        result_of_name_fetch = conn.execute(command, (str(user_id)))
+        fetching_the_result = result_of_name_fetch.fetchall()
+        conn.commit()
+with sqlite3.connect(path_to_db) as conn:
+    list_of_battles_ids = [6,5]
+    query = 'SELECT name FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
+    ids = conn.execute(query, list_of_battles_ids)
+    #first i sname of opponent and the other the one of the creator 
+    #making the list without parenthesis and other strange punctuation
+    ids_int =[str(*i) for i in list(ids.fetchall())]
+    print(ids_int)
+
+
+
+

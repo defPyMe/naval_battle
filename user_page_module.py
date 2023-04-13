@@ -220,7 +220,14 @@ def buld_champion_interface():
     label_champions = Label(text="Player Classification")
     #GETTING ALL THE PLAYERS 
     
-
+def retrieving_battles(name):
+    base_window = Toplevel()
+    base_window.geometry("500x300")
+    base_window.title("Battles of player : " + name )
+    #need to create the buttons with the commands to create teh buttons 
+    frame_buttons = Frame()
+    
+    pass
 
 
 def build_user_page(name):
@@ -235,7 +242,7 @@ def build_user_page(name):
     label_player_name = Label(frame_pic, text=name, width=7, padx=(70, ))
     #retrieve_image(name)
     button_new_battle = Button(frame_buttons, text="new battle",width=15, height=2,bg="red", command =lambda: new_battle(name))
-    button_old_battles = Button(frame_buttons, text="show old battles",width=15, height=2,bg="red", command="")
+    button_old_battles = Button(frame_buttons, text="show old battles",width=15, height=2,bg="red", command=lambda: retrieving_battles(name))
     button_show_champions = Button(frame_buttons, text="show champions",width=15, height=2,bg="red", command="")
     button_change_profile = Button(frame_buttons, text="change profile",width=15, height=2,bg="red", command=lambda: build_modify_profile(name))
     

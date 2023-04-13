@@ -164,9 +164,6 @@ def SaveBattle(name_creator, field, text, options):
                     #need the battle id here + creator id) used above and the  
                         ("not entering as the condition wasn t satisfied")
                         print(cases, cases_negative, name_opponent_and_battle)
-       
-
-
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -182,8 +179,37 @@ def SaveBattle(name_creator, field, text, options):
                     messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
                     
 
-def retrieve_battle():
+def retrieve_battle(name):
     #need here to get the values of the battle back and get them displayed in a playable field
+    #the battles need to be index in case there is more than one 
+    with sqlite3.connect(path_to_db) as conn:
+        command = "SELECT user_id WHERE  name = (?)"
+        result_of_name_fetch = conn.execute(command, (name))
+        fetching_the_user_id = result_of_name_fetch.fetchone()
+        conn.commit()
+    #getting the battles
+    with sqlite3.connect(path_to_db) as conn:
+        command = "SELECT * FROM Ships_1 WHERE  user_id = (?)"
+        result_of_name_fetch = conn.execute(command, (str(fetching_the_user_id)))
+        fetching_the_result = result_of_name_fetch.fetchall()
+        conn.commit()
+    #the result i get i sthe following , two lists 
+    # [(5, 2, "['25']", "['42', '32']", "['39', '29', '19']", "['56', '46', '36', '26']", '', '', '', '', '', '2'), 
+    # (6, 2, "['34']", "['22','23']", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '2')]
+    # columns are --> battle_id, user_id, ship_1, ship_2, ship_3, ship_4, ship_1_hit, ship_2_hit, ship_3_hit, ship_4_hit, palyer_now_playing
+    #getting the names 
+    list_of_battles_ids = [i[0] for i in fetching_the_result]
+    #
+    query = 'SELECT name FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
+    ids = conn.execute(query, list_of_battles_ids)
+    #first i sname of opponent and the other the one of the creator 
+    #making the list without parenthesis and other strange punctuation
+    ids_int =[str(*i) for i in list(ids.fetchall())]
+
+    
+    
+    
+    
     
     pass
                     
