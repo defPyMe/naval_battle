@@ -225,7 +225,13 @@ def retrieving_battles(name):
     base_window.geometry("500x300")
     base_window.title("Battles of player : " + name )
     #need to create the buttons with the commands to create teh buttons 
-    frame_buttons = Frame()
+    frame_buttons = Frame(base_window)
+    frame_buttons.grid(row=0, column=0)
+    
+    
+    
+    
+    
     
     pass
 

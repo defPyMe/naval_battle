@@ -179,7 +179,14 @@ def SaveBattle(name_creator, field, text, options):
                     messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
                     
 
-def retrieve_battle(name):
+
+def loading_battle():
+    pass
+
+
+
+
+def retrieve_battle(name, frame):
     #need here to get the values of the battle back and get them displayed in a playable field
     #the battles need to be index in case there is more than one 
     with sqlite3.connect(path_to_db) as conn:
@@ -198,14 +205,18 @@ def retrieve_battle(name):
     # (6, 2, "['34']", "['22','23']", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '2')]
     # columns are --> battle_id, user_id, ship_1, ship_2, ship_3, ship_4, ship_1_hit, ship_2_hit, ship_3_hit, ship_4_hit, palyer_now_playing
     #getting the names 
-    list_of_battles_ids = [i[0] for i in fetching_the_result]
-    #
-    query = 'SELECT name FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
-    ids = conn.execute(query, list_of_battles_ids)
-    #first i sname of opponent and the other the one of the creator 
-    #making the list without parenthesis and other strange punctuation
-    ids_int =[str(*i) for i in list(ids.fetchall())]
-
+    with sqlite3.connect(path_to_db) as conn:
+        list_of_battles_ids = [i[0] for i in fetching_the_result]
+        #
+        query = 'SELECT name FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
+        ids = conn.execute(query, list_of_battles_ids)
+        #first i sname of opponent and the other the one of the creator 
+        #making the list without parenthesis and other strange punctuation
+        battle_names  =[str(*i) for i in list(ids.fetchall())]
+        #getting the lenght of teh list 
+    for i in len(battle_names):
+        button = Button(frame, text=i, command=lambda: loading_battle())
+        button.grid(row=i, column=0)
     
     
     
