@@ -76,19 +76,19 @@ def checking_first_button(trial_x, trial_y, x, y,all_x, all_y):
                     #then we are approaching from below
                         print("case5", pressed_button,results[1][0][0], all_x, all_y)
                         correct_collision_interval_x = [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]]
-                        correct_collision_interval_y = [i for i in all_y if i > pressed_button]
+                        correct_collision_interval_y = [i for i in all_y if i > results[1][0][0]]#pressed button
                 elif pressed_button < results[1][0][0]:     
                        #approaching from above
                         print("case6", pressed_button, results[1][0][0], all_x, all_y)
                         correct_collision_interval_x = [i for i in all_x if i > results[0][0][0] and i < results[0][0][1]]
-                        correct_collision_interval_y = [i for i in all_y if i < pressed_button]
+                        correct_collision_interval_y = [i for i in all_y if i < results[1][0][0]]#pressed button
                         #case in which the first is different 
             elif results[0][0]!=[0,100] and results[1][0]==[0,100]:
                 #only minimum here 
                 if pressed_button > results[0][0][0]:
                     print("case7", pressed_button,  results[0][0][0],all_x, all_y)
                     #approaching from below
-                    correct_collision_interval_x = [i for i in all_x if i > pressed_button]
+                    correct_collision_interval_x = [i for i in all_x if i > results[0][0][0]]#pressed button before
                     correct_collision_interval_y = [i for i in all_y if i > results[0][0][0] and i < results[0][0][1]]
                 elif pressed_button < results[0][0][0]:
                     print("case8", pressed_button, results[0][0][0],all_x, all_y)
@@ -100,7 +100,7 @@ def checking_first_button(trial_x, trial_y, x, y,all_x, all_y):
             
                     
                     
-    print("results on the y ",  results[1][0][0],  results[1][0][1])
+ 
     #outside of all the ifs i use a conversion
     print("what the correct collisons are", correct_collision_interval_x, correct_collision_interval_y)
     correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  correct_collision_interval_x]

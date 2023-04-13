@@ -64,3 +64,5 @@ cases_negative = {key: value for key, value in checking_the_ship.items() if valu
 #needs to be alist to have single values 
 print(list(cases_negative.keys()))
 
+l = (1,)
+print(*l)

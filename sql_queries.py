@@ -116,55 +116,63 @@ def SaveBattle(name_creator, field, text, options):
         name_opponent_and_battle = (selection_var + "  " +  text.get("1.0", "end")).split()
         #here we pass the test if all the fields are filled and all the ships positioned 
         #need to check here for teh battle name 
-        with sqlite3.connect(path_to_db) as conn:
-            query = 'SELECT * FROM battle_table WHERE name == (?)'
-            name_there = (conn.execute(query, (text.get("1.0", "end") ))).fetchall()
-            
-            
-        if len(list(cases_negative.keys())) == 0 and len( name_opponent_and_battle)==2 and name_there=="":
-            print("all requirements satisfied to insert")
-            #here i save to the db 
-            #fist i update the table of the players and then the battle
+        #needs to create the battle before we can save the data 
+        try:
+            values_to_search = (selection_var + "  " + name_creator).split()
+            #looking for the ids in teh tabl
+            #i get the two users_ids here 
             with sqlite3.connect(path_to_db) as conn:
-            #needs to get the player id if the two players involved
-                        values_to_search = (selection_var + "  " + name_creator).split()
-                        #looking for the ids in teh table
-                        print("values_to_search", values_to_search)
-                        #i get the two users_ids here 
-                        query = 'SELECT user_id FROM users WHERE name IN ({})'.format(', '.join('?' for _ in values_to_search))
-                        ids = conn.execute(query, values_to_search)
-                        #first i sname of opponent and the other the one of the creator 
-                        #making the list without parenthesis and other strange punctuation
-                        ids_int =[str(i) for i in list(ids.fetchall())]
-                        #once the players ids have beeen inserted i can proceed with the retrieving of the battle id as it was created
-                        #how do i upgrade the user_id? the one creating the table?
-                        try:
-                            command = "INSERT INTO battle_table(name, creator, opponent) VALUES (?,?,?)"
-                            conn.execute(command, (name_opponent_and_battle[1], str(ids_int[1]).translate(translator), str(ids_int[0]).translate(translator)))
-                        #committing the results
-                            conn.commit()
-                        except:
-                            messagebox.showinfo("insert error", "battle already created")
-                        #yhen i need to save the battle with the formation
-                        # here I have to pass lists as some ships have mpre than one value
-                        #need the battle id here + creator id) used above and the  
-                        command = "SELECT battle_id FROM battle_table WHERE name = (?)"
-                        #getting the values for the next query
-                        print("what will be inserted", name_opponent_and_battle[0])
-                        battle_id_creator_id = conn.execute(command, (str(name_opponent_and_battle[1]),))
-                        #can i condense this in one 
-                        battle_id_creator_id_fetched =  battle_id_creator_id.fetchall()
-                        #now i should have all the elements i need 
-                        #now i update using the created value of the battle id so i insert when creating
-                        #user_id is te one of the creator that palys first
-                        print(" battle_id_creator_id_fetched",  battle_id_creator_id_fetched)
-                        command = "INSERT INTO Ships_1(battle_id, user_id, ship_1, ship_2, ship_3, ship_4, player_now_playing) VALUES (?,?,?,?,?,?, ?)"
-                        conn.execute(command, (str(battle_id_creator_id_fetched).translate(translator), str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator)))
+                query = 'SELECT user_id FROM users WHERE name IN ({})'.format(', '.join('?' for _ in values_to_search))
+                ids = conn.execute(query, values_to_search)
+                #first i sname of opponent and the other the one of the creator 
+                #making the list without parenthesis and other strange punctuation
+                ids_int =[str(i) for i in list(ids.fetchall())]
+                #once the players ids have beeen inserted i can proceed with the retrieving of the battle id as it was created
+                #how do i upgrade the user_id? the one creating the table?
+                command = "INSERT INTO battle_table(name, creator, opponent) VALUES (?,?,?)"
+                conn.execute(command, (name_opponent_and_battle[1], str(ids_int[1]).translate(translator), str(ids_int[0]).translate(translator)))
+            #committing the results
+                conn.commit()
+                #storing the battle_id in a variable here 
+                query = 'SELECT battle_id FROM battle_table WHERE name=(?)'
+                id_to_index = conn.execute(query, (name_opponent_and_battle[1], ))
+                id_fetched = id_to_index.fetchone()
+        except Exception as e:
+            messagebox.showerror("general error", "some error occurred while creating the battle")
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(e, exc_type, fname, exc_tb.tb_lineno)
+            messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
+        try:
+            with sqlite3.connect(path_to_db) as conn:
+                
+            #not sure this is needed anyway 
+                if len(list(cases_negative.keys())) == 0 and len( name_opponent_and_battle)==2:
+                    print("id fetched", id_fetched)
+                    try:
+                        command = "UPDATE Ships_1 SET user_id = (?) , ship_1 = (?), ship_2 = (?), ship_3 = (?), ship_4 = (?), player_now_playing = (?) WHERE battle_id = (?)"
+                        conn.execute(command, (str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched))
                         conn.commit()
-            pass
-        else:
-            print("not entering as the condition wasn t satisfied")
-            print(cases, cases_negative, name_opponent_and_battle)
+                    except Exception as e:
+                        messagebox.showinfo("insert error", "battle already created")
+                        exc_type, exc_obj, exc_tb = sys.exc_info()
+                        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                        print(e, exc_type, fname, exc_tb.tb_lineno)
+                        messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
+                    #yhen i need to save the battle with the formation
+                    # here I have to pass lists as some ships have mpre than one value
+                    #need the battle id here + creator id) used above and the  
+                        ("not entering as the condition wasn t satisfied")
+                        print(cases, cases_negative, name_opponent_and_battle)
+       
+
+
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(e, exc_type, fname, exc_tb.tb_lineno)
+            messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
+            messagebox.showerror("general error", "general error ")
         pass
     except Exception as e :
                     
