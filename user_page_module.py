@@ -73,7 +73,7 @@ def new_battle(name):
     #creating the buttons 
     #the fieldswhere we have the buttons is the frame field
     ship_1 = Button(player_frame, text="ship 1", width=10, bg="orange")
-    # ret
+    # rsettimng different values before lambda so we can have different for each button 
     ship_1.configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button, 1))
     ship_2 = Button(player_frame, text="ship 2", width=10, bg="blue")
     ship_2.configure(command=lambda color="blue",frame = frame_field,  button=ship_2, : ship_click(color, frame, button, 2))

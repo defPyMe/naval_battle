@@ -7,7 +7,7 @@ from tkinter import *
 from tkinter import messagebox
 import string
 import sys , os
-
+from user_page_module import create_field
 
 path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\naval_battle.db"
 
@@ -179,7 +179,7 @@ def SaveBattle(name_creator, field, text, options):
                     messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
                     
 
-
+#needs id of th eplayer 
 def loading_battle(name_battle, id_of_battle):
     #here i need to pass in the values for the different 
     #gets the battle id starting from the name 
@@ -187,9 +187,28 @@ def loading_battle(name_battle, id_of_battle):
         command = "SELECT * FROM Ships_1 WHERE  battle_id = (?)"
         positioning = conn.execute(command, (id_of_battle,))
         fetching_positions =positioning.fetchone()
-    print("fetching position", fetching_positions)
-    
-    #
+ #(6, 2, "['34']", "['22','23'] ", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '1')
+    all_ships = { list(fetching_positions[2]): "orange" ,  list(fetching_positions[3]):"blue",  list(fetching_positions[4]):"purple", list(fetching_positions[5]):"pink"}
+    #getting the hits as well 
+    ship_1_hit = list(fetching_positions[6])
+    ship_2_hit = list(fetching_positions[7])
+    ship_3_hit = list(fetching_positions[8])
+    ship_4_hit = list(fetching_positions[9])
+    #getting the misses 
+    misses = list(fetching_positions[10])
+    #creating the dicrtionary with the colors 
+    #all_colors = {"ship_1" : "orange" , "ship_2" : "blue", "ship_3" :  "purple", "ship_4" : "pink" }
+    #creating the battle 
+    base_window = Toplevel()
+    frame_field = Frame(base_window)
+    player_frame = Frame(base_window)
+    base_window.title("New Battle of player :" + name_battle)
+    #frame_ships = Frame(base_window)
+    #creating the buttons 
+    create_field(frame_field)
+    #list comprehension to color all values 
+    #configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button, 1))
+    [i.configure(bg=all_ships[])]
     
     
     pass
