@@ -3,7 +3,7 @@ import sqlite3
 import io
 from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
-from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db, check_users, SaveBattle
+from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle
 from tkinter import messagebox
 from checking_function import calculate_cases
 
@@ -221,12 +221,14 @@ def buld_champion_interface():
     #GETTING ALL THE PLAYERS 
     
 def retrieving_battles(name):
+    print("name ---> ",name)
     base_window = Toplevel()
     base_window.geometry("500x300")
     base_window.title("Battles of player : " + name )
     #need to create the buttons with the commands to create teh buttons 
     frame_buttons = Frame(base_window)
     frame_buttons.grid(row=0, column=0)
+    retrieve_battle(name, frame_buttons)
     
     
     

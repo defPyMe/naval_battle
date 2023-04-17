@@ -69,15 +69,14 @@ with sqlite3.connect(path_to_db) as conn:
         result_of_name_fetch = conn.execute(command, (str(user_id)))
         fetching_the_result = result_of_name_fetch.fetchall()
         conn.commit()
+name = "Emmas"
 with sqlite3.connect(path_to_db) as conn:
-    list_of_battles_ids = [6,5]
-    query = 'SELECT name FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
-    ids = conn.execute(query, list_of_battles_ids)
-    #first i sname of opponent and the other the one of the creator 
-    #making the list without parenthesis and other strange punctuation
-    ids_int =[str(*i) for i in list(ids.fetchall())]
-    print(ids_int)
-
+   
+        command = "SELECT user_id FROM users WHERE  name = (?)"
+        result_of_name_fetch = conn.execute(command, (name,))
+        fetching_the_user_id = result_of_name_fetch.fetchone()
+        conn.commit()
+print(fetching_the_user_id)
 
 
 

@@ -180,26 +180,40 @@ def SaveBattle(name_creator, field, text, options):
                     
 
 
-def loading_battle():
+def loading_battle(name_battle, id_of_battle):
+    #here i need to pass in the values for the different 
+    #gets the battle id starting from the name 
+    with sqlite3.connect(path_to_db) as conn:
+        command = "SELECT * FROM Ships_1 WHERE  battle_id = (?)"
+        positioning = conn.execute(command, (id_of_battle,))
+        fetching_positions =positioning.fetchone()
+    print("fetching position", fetching_positions)
+    
+    #
+    
+    
     pass
 
 
 
 
 def retrieve_battle(name, frame):
+
     #need here to get the values of the battle back and get them displayed in a playable field
     #the battles need to be index in case there is more than one 
     with sqlite3.connect(path_to_db) as conn:
-        command = "SELECT user_id WHERE  name = (?)"
-        result_of_name_fetch = conn.execute(command, (name))
+        command = "SELECT user_id FROM users WHERE  name = (?)"
+        result_of_name_fetch = conn.execute(command, (name,))
         fetching_the_user_id = result_of_name_fetch.fetchone()
+        print("user_id fetchwed", fetching_the_user_id)
         conn.commit()
     #getting the battles
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT * FROM Ships_1 WHERE  user_id = (?)"
-        result_of_name_fetch = conn.execute(command, (str(fetching_the_user_id)))
+        result_of_name_fetch = conn.execute(command, (str(*fetching_the_user_id)))
         fetching_the_result = result_of_name_fetch.fetchall()
         conn.commit()
+    print("fetching the result", fetching_the_result[0][0])
     #the result i get i sthe following , two lists 
     # [(5, 2, "['25']", "['42', '32']", "['39', '29', '19']", "['56', '46', '36', '26']", '', '', '', '', '', '2'), 
     # (6, 2, "['34']", "['22','23']", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '2')]
@@ -214,9 +228,12 @@ def retrieve_battle(name, frame):
         #making the list without parenthesis and other strange punctuation
         battle_names  =[str(*i) for i in list(ids.fetchall())]
         #getting the lenght of teh list 
-    for i in len(battle_names):
-        button = Button(frame, text=i, command=lambda: loading_battle())
+        print("battle_names", battle_names)
+    for i in range(len(battle_names)):
+        #i have the different ids right here in the first index 
+        button = Button(frame, text=battle_names[i], command=lambda f=fetching_the_result[i][0]: loading_battle(battle_names, f ))
         button.grid(row=i, column=0)
+    
     
     
     
