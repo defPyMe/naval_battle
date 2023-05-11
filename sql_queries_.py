@@ -7,7 +7,7 @@ from tkinter import *
 from tkinter import messagebox
 import string
 import sys , os
-from user_page_module import create_field
+
 
 path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\naval_battle.db"
 
@@ -177,8 +177,39 @@ def SaveBattle(name_creator, field, text, options):
                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                     print(e, exc_type, fname, exc_tb.tb_lineno)
                     messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
-                    
 
+
+
+def continuing_battle():
+    #gets the number of the pressed button
+    #checks in it is in the saved ships or not
+    #if not in the saved ships gets turned dark gray as it is a miss
+    
+    pass
+
+
+
+
+def create_field_ongoing(frame):
+    for i in range(10):
+        for j in range(10):
+            #adding here the command 
+            button = Button(frame, text=str(i)+str(j), command="")
+            button.grid(row=i, column=j)
+
+       
+       
+       
+       
+               
+def create_field_ended(frame):
+    for i in range(10):
+        for j in range(10):
+            #adding here the command 
+            button = Button(frame, text=str(i)+str(j), command="")
+            button.grid(row=i, column=j)
+            
+            
 #needs id of th eplayer 
 def loading_battle(name_battle, id_of_battle):
     #here i need to pass in the values for the different 
@@ -186,30 +217,61 @@ def loading_battle(name_battle, id_of_battle):
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT * FROM Ships_1 WHERE  battle_id = (?)"
         positioning = conn.execute(command, (id_of_battle,))
-        fetching_positions =positioning.fetchone()
+        fetching_positions = positioning.fetchone()
  #(6, 2, "['34']", "['22','23'] ", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '1')
-    all_ships = { list(fetching_positions[2]): "orange" ,  list(fetching_positions[3]):"blue",  list(fetching_positions[4]):"purple", list(fetching_positions[5]):"pink"}
+ #maybe i can open the diferent lists and adding some colors to the different values 
+    all_ships = { (fetching_positions[2][2:4]): "orange" ,  (fetching_positions[3][2:4]):"blue",(fetching_positions[3][7:9]):"blue",
+                 (fetching_positions[4][2:4]):"purple", (fetching_positions[4][7:9]):"purple",(fetching_positions[4][12:14]):"purple",
+                 (fetching_positions[5][2:4]):"pink", (fetching_positions[5][7:9]):"pink", (fetching_positions[5][12:14]):"pink", (fetching_positions[5][17:19]):"pink"}
     #getting the hits as well 
-    ship_1_hit = list(fetching_positions[6])
-    ship_2_hit = list(fetching_positions[7])
-    ship_3_hit = list(fetching_positions[8])
-    ship_4_hit = list(fetching_positions[9])
-    #getting the misses 
+    #the hits need to be indexed in the same way 
+    all_ships_hits = [fetching_positions[6][2:4],fetching_positions[7][2:4],fetching_positions[7][7:9], fetching_positions[8][2:4], fetching_positions[8][7:9],fetching_positions[8][12:14], 
+                      fetching_positions[9][2:4], fetching_positions[9][7:9], fetching_positions[9][12:14], fetching_positions[5][17:19]]
+
+    #getting the misses --> needs further eleboration as i should have the data in a list 
+    
     misses = list(fetching_positions[10])
     #creating the dicrtionary with the colors 
     #all_colors = {"ship_1" : "orange" , "ship_2" : "blue", "ship_3" :  "purple", "ship_4" : "pink" }
     #creating the battle 
     base_window = Toplevel()
-    frame_field = Frame(base_window)
+    frame_field_retr = Frame(base_window)
     player_frame = Frame(base_window)
-    base_window.title("New Battle of player :" + name_battle)
+    
+    base_window.title("New Battle of player :" + name_battle[0])
     #frame_ships = Frame(base_window)
     #creating the buttons 
-    create_field(frame_field)
+    #here i need to create a different field based on how many values i get 
+    all_ships_hits_not_zero = [i for i in all_ships_hits if i!=""]
+    #case in which i have not all the ships positioned 
+    if len(all_ships_hits_not_zero)<10:
+        print("entering the less than 10 area")
+        #here i need to create the field as it is in the initial option but saved ships are not clickable
+        #the buttons that are saved as hits and misses need not be clickable
+        #here i need to assign to all teh buttons in the field some functionality 
+        create_field_ongoing(frame_field_retr)
+        frame_field_retr.grid(row=0, column=0, padx=10, pady=10)
+        k = [i.configure(bg=all_ships[i["text"]]) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships.keys()]]
+        
+            # coloring all retrieved ships
+
+    else:
+        pass
+    
+  
+
     #list comprehension to color all values 
     #configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button, 1))
-    [i.configure(bg=all_ships[])]
-    
+    #h = [i for i in all_ships.keys()]
+    #fs = [i for i in frame_field.grid_slaves()]
+    #fst = [i["text"] for i in frame_field.grid_slaves()]
+
+    k = [i.configure(bg=all_ships[i["text"]]) for i in frame_field.grid_slaves() if i["text"] in [i for i in all_ships.keys()]]
+    #print(fetching_positions,h, fs, fst)
+    if len(all_ships_hits)==10:
+        messagebox.showinfo("ended battle", "BAttle has ended and the winner is")
+    else:
+        messagebox.showinfo("battle still pending", "BAttle has not ended and it is turn :")
     
     pass
 
@@ -217,7 +279,6 @@ def loading_battle(name_battle, id_of_battle):
 
 
 def retrieve_battle(name, frame):
-
     #need here to get the values of the battle back and get them displayed in a playable field
     #the battles need to be index in case there is more than one 
     with sqlite3.connect(path_to_db) as conn:
@@ -240,7 +301,6 @@ def retrieve_battle(name, frame):
     #getting the names 
     with sqlite3.connect(path_to_db) as conn:
         list_of_battles_ids = [i[0] for i in fetching_the_result]
-        #
         query = 'SELECT name FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
         ids = conn.execute(query, list_of_battles_ids)
         #first i sname of opponent and the other the one of the creator 

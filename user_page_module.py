@@ -3,11 +3,10 @@ import sqlite3
 import io
 from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
-from sql_queries import insert_image, retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle
 from tkinter import messagebox
+
+from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image
 from checking_function import calculate_cases
-
-
 
 #this opens the image and displays it
 def open(name, base_window):
@@ -40,7 +39,11 @@ def update(window):
     print("refresh!!!!!!")
     #window.after(5000, lambda: update(window))
     
-
+def create_field(frame):
+    for i in range(10):
+        for j in range(10):
+            button = Button(frame, text=str(i)+str(j), command="")
+            button.grid(row=i, column=j)
 
 
 
@@ -90,11 +93,7 @@ def new_battle(name):
     save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
     save_button.grid(row=6, column=1, pady=(30,))
 
-def create_field(frame):
-    for i in range(10):
-        for j in range(10):
-            button = Button(frame, text=str(i)+str(j), command="")
-            button.grid(row=i, column=j)
+
 
 
 

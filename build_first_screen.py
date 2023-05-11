@@ -1,8 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
-from sql_queries import checking_credentials
 from user_page_module import build_user_page
-
+from sql_queries_ import checking_credentials
 
 
 def logging_in(text_box):

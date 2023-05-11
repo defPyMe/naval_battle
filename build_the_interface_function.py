@@ -58,25 +58,25 @@
 
 
 
-#
 
-
-import sqlite3 
-path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\naval_battle.db"
-user_id = 2
-with sqlite3.connect(path_to_db) as conn:
-        command = "SELECT * FROM Ships_1 WHERE  user_id = (?)"
-        result_of_name_fetch = conn.execute(command, (str(user_id)))
-        fetching_the_result = result_of_name_fetch.fetchall()
-        conn.commit()
-name = "Emmas"
-with sqlite3.connect(path_to_db) as conn:
-   
-        command = "SELECT user_id FROM users WHERE  name = (?)"
-        result_of_name_fetch = conn.execute(command, (name,))
-        fetching_the_user_id = result_of_name_fetch.fetchone()
-        conn.commit()
-print(fetching_the_user_id)
+p = {"orange":["25"],"blue":["36","37"],"pink":["45", "55", "65"], "red": ["11","21","31","41"]}
 
 
 
+f = [i.configure(bg=p[i]) for i]
+
+
+
+print(g)
+
+
+f = [(str(i)+str(j)) for i in range(10) for j in range(10)]
+
+
+h = [p[i] for i in f if i in [i for i in p.values()]]
+
+
+if "25" in p.values():
+        print("ok")
+else:
+        print("no")
