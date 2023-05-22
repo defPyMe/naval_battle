@@ -38,11 +38,27 @@ def update_name(new_name, name, toplevel):
 def update(window):
     print("refresh!!!!!!")
     #window.after(5000, lambda: update(window))
+
+
+
+
+
+def check_hit(j):
+    #getting all the required variables such as the positioned ships and the misses 
+    #when i load i should be coloring stuff such as red buttons 
+    #here i think i need only ships positioned - the rest is misses 
+    all_ships_placed = []
     
+    
+    
+# x = Button(a, text=c, command=lambda j=c: command(j))    
+    pass
+
+#need to be moved from here as it is not the 
 def create_field(frame):
     for i in range(10):
         for j in range(10):
-            button = Button(frame, text=str(i)+str(j), command="")
+            button = Button(frame, text=str(i)+str(j), command="")#lambda j=str(i)+str(j): check_hit(j)
             button.grid(row=i, column=j)
 
 

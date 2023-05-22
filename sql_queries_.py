@@ -190,12 +190,17 @@ def continuing_battle():
 
 
 
-def create_field_ongoing(frame):
+def create_field_over(frame,all_ships):
+    
+    #once created we also assign the colors and the functionality
     for i in range(10):
         for j in range(10):
             #adding here the command 
             button = Button(frame, text=str(i)+str(j), command="")
             button.grid(row=i, column=j)
+    frame.grid(row=0, column=0, padx=10, pady=10)
+    color_ships = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_ships]]
+    configure_field = [i.configure(bg="grey", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in [i for i in all_ships]]
 
        
        
@@ -217,20 +222,27 @@ def loading_battle(name_battle, id_of_battle):
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT * FROM Ships_1 WHERE  battle_id = (?)"
         positioning = conn.execute(command, (id_of_battle,))
-        fetching_positions = positioning.fetchone()
+        fetching_positions = [i if i!=None else "" for i in positioning.fetchone()]
+    
  #(6, 2, "['34']", "['22','23'] ", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '1')
- #maybe i can open the diferent lists and adding some colors to the different values 
-    all_ships = { (fetching_positions[2][2:4]): "orange" ,  (fetching_positions[3][2:4]):"blue",(fetching_positions[3][7:9]):"blue",
-                 (fetching_positions[4][2:4]):"purple", (fetching_positions[4][7:9]):"purple",(fetching_positions[4][12:14]):"purple",
-                 (fetching_positions[5][2:4]):"pink", (fetching_positions[5][7:9]):"pink", (fetching_positions[5][12:14]):"pink", (fetching_positions[5][17:19]):"pink"}
+ #maybe i can open the diferent lists and adding some colors to the different values -??
+ #this might not be needed, i just need the positions of the buttons as i am not coloring stuff
+ #i am assuming all the ships have been positioned as otherwise they cannot move from the initial screen
+ 
+    all_ships = [(fetching_positions[2][2:4]) ,  (fetching_positions[3][2:4]),(fetching_positions[3][7:9]),
+                 (fetching_positions[4][2:4]), (fetching_positions[4][7:9]),(fetching_positions[4][12:14]),
+                 (fetching_positions[5][2:4]), (fetching_positions[5][7:9]), (fetching_positions[5][12:14]), (fetching_positions[5][17:19])]
     #getting the hits as well 
-    #the hits need to be indexed in the same way 
-    all_ships_hits = [fetching_positions[6][2:4],fetching_positions[7][2:4],fetching_positions[7][7:9], fetching_positions[8][2:4], fetching_positions[8][7:9],fetching_positions[8][12:14], 
-                      fetching_positions[9][2:4], fetching_positions[9][7:9], fetching_positions[9][12:14], fetching_positions[5][17:19]]
+    #the hits need to be indexed in the same way - ??
+    
+   #all_ships_keys_isolated = [fetching_positions[6][2:4],fetching_positions[7][2:4],fetching_positions[7][7:9], fetching_positions[8][2:4], fetching_positions[8][7:9],fetching_positions[8][12:14], 
+    #                  fetching_positions[9][2:4], fetching_positions[9][7:9], fetching_positions[9][12:14], fetching_positions[5][17:19]]
 
     #getting the misses --> needs further eleboration as i should have the data in a list 
-    
-    misses = list(fetching_positions[10])
+    # all_ships_hits = all_ships_keys_isolated 
+    all_pressed = fetching_positions[10]
+    # i need to create the difference between the two lists, the starting position are the all_ships
+    all_common = [i for i in all_ships if i in all_pressed]
     #creating the dicrtionary with the colors 
     #all_colors = {"ship_1" : "orange" , "ship_2" : "blue", "ship_3" :  "purple", "ship_4" : "pink" }
     #creating the battle 
@@ -242,25 +254,32 @@ def loading_battle(name_battle, id_of_battle):
     #frame_ships = Frame(base_window)
     #creating the buttons 
     #here i need to create a different field based on how many values i get 
-    all_ships_hits_not_zero = [i for i in all_ships_hits if i!=""]
+
     #case in which i have not all the ships positioned 
+    print("len all common", len(all_common), all_common, all_pressed)
     #the difference is the fact tat all the ships have been positioned or not 
-    if len(all_ships.keys())==10:
+    if len(all_common)==10:
         #here i need to create the field as it is in the initial option but saved ships are not clickable
         #the buttons that are saved as hits and misses need not be clickable
         #here i need to assign to all teh buttons in the field some functionality 
-        create_field_ongoing(frame_field_retr)
-        frame_field_retr.grid(row=0, column=0, padx=10, pady=10)
-        color_ships = [i.configure(bg=all_ships[i["text"]], state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships.keys()]]
-        configure_field = [i.configure(bg="grey", state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] not in [i for i in all_ships.keys()]]
+        create_field_over(frame_field_retr, all_ships)
+        
+
         # coloring all retrieved ships
         #need to display the winner- maybe putting a new column with the winner 
         base_window.title("Winner  of the battle is:" + name_battle[0])
-    elif len(all_ships.keys())<10:
+    elif len(all_ships_not_zero)<10:
+        create_field_ongoing(frame_field_retr)
+        frame_field_retr.grid(row=0, column=0, padx=10, pady=10)
+        print("entering the part with less than 10 ships", all_ships.keys())
         #case it is less it is still an active battle
         #need to configure all the buttons already pressed
-        configure_field = [i.configure(bg="grey", state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] not in [i for i in all_ships.keys()]]
-        
+        #do not really need to ,color the chosen ships if they werent hit 
+        configure_field_pressed = [i.configure(bg="grey", state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] in all_hits_not_zero]
+        base_window.title("Battle of player:" + name_battle[0])
+        #need to isolate the different buttons if they where hit and where ships
+        configure_ships_hits = [i.configure(bg="gray27", state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] in all_hits_not_zero and i["text"] in all_ships.keys()]
+        print("checking what is checked",  all_ships_not_zero, all_ships.keys())
         pass
     
   
@@ -271,14 +290,22 @@ def loading_battle(name_battle, id_of_battle):
     #fs = [i for i in frame_field.grid_slaves()]
     #fst = [i["text"] for i in frame_field.grid_slaves()]
 
-    k = [i.configure(bg=all_ships[i["text"]]) for i in frame_field.grid_slaves() if i["text"] in [i for i in all_ships.keys()]]
+    k = [i.configure(bg=all_ships[i["text"]]) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships.keys()]]
     #print(fetching_positions,h, fs, fst)
-    if len(all_ships_hits)==10:
+    if len(all_ships)==10:
         messagebox.showinfo("ended battle", "BAttle has ended and the winner is")
     else:
         messagebox.showinfo("battle still pending", "BAttle has not ended and it is turn :")
     
     pass
+
+
+def starting_battle_command():
+    
+    pass
+
+
+
 
 
 
@@ -325,3 +352,4 @@ def retrieve_battle(name, frame):
     
     pass
                     
+
