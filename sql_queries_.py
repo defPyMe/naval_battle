@@ -238,24 +238,29 @@ def loading_battle(name_battle, id_of_battle):
     frame_field_retr = Frame(base_window)
     player_frame = Frame(base_window)
     
-    base_window.title("New Battle of player :" + name_battle[0])
+    
     #frame_ships = Frame(base_window)
     #creating the buttons 
     #here i need to create a different field based on how many values i get 
     all_ships_hits_not_zero = [i for i in all_ships_hits if i!=""]
     #case in which i have not all the ships positioned 
-    if len(all_ships_hits_not_zero)<10:
-        print("entering the less than 10 area")
+    #the difference is the fact tat all the ships have been positioned or not 
+    if len(all_ships.keys())==10:
         #here i need to create the field as it is in the initial option but saved ships are not clickable
         #the buttons that are saved as hits and misses need not be clickable
         #here i need to assign to all teh buttons in the field some functionality 
         create_field_ongoing(frame_field_retr)
         frame_field_retr.grid(row=0, column=0, padx=10, pady=10)
-        k = [i.configure(bg=all_ships[i["text"]]) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships.keys()]]
+        color_ships = [i.configure(bg=all_ships[i["text"]], state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships.keys()]]
+        configure_field = [i.configure(bg="grey", state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] not in [i for i in all_ships.keys()]]
+        # coloring all retrieved ships
+        #need to display the winner- maybe putting a new column with the winner 
+        base_window.title("Winner  of the battle is:" + name_battle[0])
+    elif len(all_ships.keys())<10:
+        #case it is less it is still an active battle
+        #need to configure all the buttons already pressed
+        configure_field = [i.configure(bg="grey", state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] not in [i for i in all_ships.keys()]]
         
-            # coloring all retrieved ships
-
-    else:
         pass
     
   
