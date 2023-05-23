@@ -202,17 +202,26 @@ def create_field_over(frame,all_ships):
     color_ships = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_ships]]
     configure_field = [i.configure(bg="grey", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in [i for i in all_ships]]
 
+def boom_trial(j):
+    pass
        
        
        
-       
-               
-def create_field_ended(frame):
+#here i need to design the different commands. checking if the pressed button is in the ships ones           
+#this is teh field initialization, so i can keep the first values static
+def create_field_ongoing(frame, all_ships, all_common, all_pressed, base_window, name_battle):
+    #all common  needs to be recalculated, the only thing i keep static are the ships
     for i in range(10):
         for j in range(10):
-            #adding here the command 
-            button = Button(frame, text=str(i)+str(j), command="")
+            #adding here the command for all
+            button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j))
             button.grid(row=i, column=j)
+    frame.grid(row=0, column=0, padx=10, pady=10)
+    #all the common ones if present 
+    configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_pressed]
+    configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_common]
+    base_window.title("Battle of player:" + name_battle[0])
+    
             
             
 #needs id of th eplayer 
@@ -256,30 +265,25 @@ def loading_battle(name_battle, id_of_battle):
     #here i need to create a different field based on how many values i get 
 
     #case in which i have not all the ships positioned 
-    print("len all common", len(all_common), all_common, all_pressed)
+    #print("len all common", len(all_common), all_common, all_pressed)
     #the difference is the fact tat all the ships have been positioned or not 
     if len(all_common)==10:
         #here i need to create the field as it is in the initial option but saved ships are not clickable
         #the buttons that are saved as hits and misses need not be clickable
         #here i need to assign to all teh buttons in the field some functionality 
         create_field_over(frame_field_retr, all_ships)
-        
-
         # coloring all retrieved ships
         #need to display the winner- maybe putting a new column with the winner 
         base_window.title("Winner  of the battle is:" + name_battle[0])
-    elif len(all_ships_not_zero)<10:
-        create_field_ongoing(frame_field_retr)
-        frame_field_retr.grid(row=0, column=0, padx=10, pady=10)
-        print("entering the part with less than 10 ships", all_ships.keys())
+    elif len(all_common)<10:
+        create_field_ongoing(frame_field_retr,all_ships, all_common, all_pressed, base_window,name_battle)
         #case it is less it is still an active battle
-        #need to configure all the buttons already pressed
-        #do not really need to ,color the chosen ships if they werent hit 
-        configure_field_pressed = [i.configure(bg="grey", state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] in all_hits_not_zero]
-        base_window.title("Battle of player:" + name_battle[0])
+
+       
+        
         #need to isolate the different buttons if they where hit and where ships
-        configure_ships_hits = [i.configure(bg="gray27", state=DISABLED) for i in frame_field_retr.grid_slaves() if i["text"] in all_hits_not_zero and i["text"] in all_ships.keys()]
-        print("checking what is checked",  all_ships_not_zero, all_ships.keys())
+        
+
         pass
     
   
