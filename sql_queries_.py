@@ -10,7 +10,7 @@ import sys , os
 
 
 path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\naval_battle.db"
-
+translator = str.maketrans("","", string.punctuation)
 def checking_credentials(name):
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT name FROM users WHERE  name = (?)"
@@ -110,7 +110,7 @@ def SaveBattle(name_creator, field, text, options):
         #the conditions are that the elements on the textbox are taken and the list of the negative is ==0
         #now i clean the string building a translator
         #the first two are empty strings as we do not want to map any characters, the third is the constant containing what we want to remove 
-        translator = str.maketrans("","", string.punctuation)
+        
         selection_var = options.get().translate(translator)
         #the first is the name of the opponent while the second is the name of the battle
         name_opponent_and_battle = (selection_var + "  " +  text.get("1.0", "end")).split()
@@ -222,17 +222,24 @@ def fetching_the_battle(id_of_battle):
 
 def write_hit_miss_update(column, value, id_of_battle):
     with sqlite3.connect(path_to_db) as conn:
-        command = "UPDATE Ships_1 SET (?)=(?) WHERE battle_id = (?)"
-        adding = conn.execute(command, (column, value,id_of_battle,))
+
+
+        command = "UPDATE Ships_1 SET {}={} || (?) WHERE battle_id = (?)".format(column, column)
+        adding = conn.execute(command, (value,id_of_battle,))
+        
+        
         return None
 
 
 #assuming the js here are only the clickable buttons as the others are disabled 
 def boom_trial(j, frame, all_ships,all_ships_tuples,  id_of_battle, fetching_positions):
     #checking if the button is present in the all_ships_list
+    j_comma  = j+","
+ 
     if j in all_ships:
         #writing to hits here
-        write_hit_miss_update('hits', j , id_of_battle)
+        write_hit_miss_update('hits', j_comma , id_of_battle)
+        update = fetching_the_battle(id_of_battle)
         [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
         #update sunk
         #what is what here??
@@ -240,22 +247,24 @@ def boom_trial(j, frame, all_ships,all_ships_tuples,  id_of_battle, fetching_pos
      #from user_page_module import build_user_page
         # is the hits already fetched or not? yes it is in the fetching positions --> 6--> should be saved as list
         #[7, 1, "['34']", "['22','23']", "['55','65','75']", "['13','14','15','16']", '', "'34','22','23','55','65','75','13','14','15','16'", '1']
-        results = [all(member in fetching_positions[6] for member in tpl) for tpl in all_ships_tuples]
+        print("fetching positions [6]", update[6].split(","))
+        results = [all(member in update[6].split(",") for member in tpl) for tpl in all_ships_tuples]
+
         matching_tuples = [tpl for tpl, result in zip(all_ships_tuples, results) if result]
         #matching tuples should now be whai i need 
         #coloring all the values we have in the tuples darck red
-
-        [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [value for tpl in l for value in tpl]]
+        
+        ff = [i.configure(bg="red4", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [value for tpl in  matching_tuples for value in tpl]]
         #l = [(1, 2), (4, 3), (5, 7), (9, 13)]#all_ships_tuples
         #values = [1, 2, 5, 6, 8, 9, 0]#hits
-
+        print("matching tuples", results, matching_tuples, ff)
         #results = [all(member in values for member in tpl) for tpl in l]
         #print(results)  # Output: [True, False, True, False]
         #matching_tuples = [tpl for tpl, result in zip(l, results) if result]
         
         
     else:
-        write_hit_miss_update('misses', j , id_of_battle)
+        write_hit_miss_update('misses', j_comma , id_of_battle)
         #write and update the field settings for single button miss
         [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
 
@@ -285,7 +294,7 @@ def loading_battle(name_battle, id_of_battle):
     #here i need to pass in the values for the different 
     #gets the battle id starting from the name 
     fetching_positions = fetching_the_battle(id_of_battle)
-    print("fetching positions ------->", fetching_positions)
+    
     
     
     
@@ -296,18 +305,18 @@ def loading_battle(name_battle, id_of_battle):
  #this might not be needed, i just need the positions of the buttons as i am not coloring stuff
  #i am assuming all the ships have been positioned as otherwise they cannot move from the initial screen
  
-    all_ships = [(fetching_positions[2][2:4]) ,  (fetching_positions[3][2:4]),(fetching_positions[3][7:9]),
-                 (fetching_positions[4][2:4]), (fetching_positions[4][7:9]),(fetching_positions[4][12:14]),
-                 (fetching_positions[5][2:4]), (fetching_positions[5][7:9]), (fetching_positions[5][12:14]), (fetching_positions[5][17:19])]
+    all_ships = [(fetching_positions[2][2:4]) ,  (fetching_positions[3][2:4]),(fetching_positions[3][8:10]),
+                 (fetching_positions[4][2:4]), (fetching_positions[4][8:10]),(fetching_positions[4][14:16]),
+                 (fetching_positions[5][2:4]), (fetching_positions[5][8:10]), (fetching_positions[5][14:16]), (fetching_positions[5][20:22])]
     #getting the hits as well 
     #the hits need to be indexed in the same way - ??
-    
+    print("all_ships in initial function ------->", all_ships)
    #all_ships_keys_isolated = [fetching_positions[6][2:4],fetching_positions[7][2:4],fetching_positions[7][7:9], fetching_positions[8][2:4], fetching_positions[8][7:9],fetching_positions[8][12:14], 
     #                  fetching_positions[9][2:4], fetching_positions[9][7:9], fetching_positions[9][12:14], fetching_positions[5][17:19]]
-    all_ships_tuples = [(all_ships[0]),(all_ships[1],all_ships[2]),(all_ships[3],all_ships[4],all_ships[5]),(all_ships[6],all_ships[7],all_ships[8], all_ships[9])]
+    all_ships_tuples = [(all_ships[0],),(all_ships[1],all_ships[2]),(all_ships[3],all_ships[4],all_ships[5]),(all_ships[6],all_ships[7],all_ships[8], all_ships[9])]
     #getting the misses --> needs further eleboration as i should have the data in a list 
     # all_ships_hits = all_ships_keys_isolated 
-    all_pressed = fetching_positions[10]
+    all_pressed = [fetching_positions[6]]
     # i need to create the difference between the two lists, the starting position are the all_ships
     all_common = [i for i in all_ships if i in all_pressed]
     #creating the dicrtionary with the colors 
@@ -353,7 +362,7 @@ def loading_battle(name_battle, id_of_battle):
     #fs = [i for i in frame_field.grid_slaves()]
     #fst = [i["text"] for i in frame_field.grid_slaves()]
 
-    k = [i.configure(bg=all_ships[i["text"]]) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships]]
+    #[i.configure(bg=all_ships[i["text"]]) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships]]
     #print(fetching_positions,h, fs, fst)
     if len(all_ships)==10:
         messagebox.showinfo("ended battle", "BAttle has ended and the winner is")
