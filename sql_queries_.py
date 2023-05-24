@@ -228,25 +228,32 @@ def write_hit_miss_update(column, value, id_of_battle):
 
 
 #assuming the js here are only the clickable buttons as the others are disabled 
-def boom_trial(j, frame, all_ships,all_ships_tuples,  id_of_battle):
+def boom_trial(j, frame, all_ships,all_ships_tuples,  id_of_battle, fetching_positions):
     #checking if the button is present in the all_ships_list
     if j in all_ships:
+        #writing to hits here
         write_hit_miss_update('hits', j , id_of_battle)
         [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
-         #update sunk
-         #maybe i need to use the tuple here 
-        
-         
-         # Example: Check if all tuple members are in a list using list comprehension
+        #update sunk
+        #what is what here??
+        # Example: Check if all tuple members are in a list using list comprehension
      #from user_page_module import build_user_page
+        # is the hits already fetched or not? yes it is in the fetching positions --> 6--> should be saved as list
+        #[7, 1, "['34']", "['22','23']", "['55','65','75']", "['13','14','15','16']", '', "'34','22','23','55','65','75','13','14','15','16'", '1']
+        results = [all(member in fetching_positions[6] for member in tpl) for tpl in all_ships_tuples]
+        matching_tuples = [tpl for tpl, result in zip(all_ships_tuples, results) if result]
+        #matching tuples should now be whai i need 
+        #coloring all the values we have in the tuples darck red
+
+        [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [value for tpl in l for value in tpl]]
         #l = [(1, 2), (4, 3), (5, 7), (9, 13)]#all_ships_tuples
-        #values = [1, 2, 5, 6, 8, 9, 0]
+        #values = [1, 2, 5, 6, 8, 9, 0]#hits
 
         #results = [all(member in values for member in tpl) for tpl in l]
         #print(results)  # Output: [True, False, True, False]
         #matching_tuples = [tpl for tpl, result in zip(l, results) if result]
         
-        []
+        
     else:
         write_hit_miss_update('misses', j , id_of_battle)
         #write and update the field settings for single button miss
@@ -258,12 +265,12 @@ def boom_trial(j, frame, all_ships,all_ships_tuples,  id_of_battle):
        
 #here i need to design the different commands. checking if the pressed button is in the ships ones           
 #this is teh field initialization, so i can keep the first values static
-def create_field_ongoing(frame, all_ships, all_common, all_pressed, base_window, name_battle, id_of_battle, all_ships_tuples):
+def create_field_ongoing(frame,all_ships, all_ships_tuples, all_common, all_pressed, base_window,name_battle, fetching_positions, id_of_battle):
     #all common  needs to be recalculated, the only thing i keep static are the ships
     for i in range(10):
         for j in range(10):
             #adding here the command for all
-            button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j, frame,  all_ships, all_ships_tuples, id_of_battle))
+            button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j, frame,  all_ships, all_ships_tuples, id_of_battle, fetching_positions))
             button.grid(row=i, column=j)
     frame.grid(row=0, column=0, padx=10, pady=10)
     #all the common ones if present are configured here
@@ -278,8 +285,13 @@ def loading_battle(name_battle, id_of_battle):
     #here i need to pass in the values for the different 
     #gets the battle id starting from the name 
     fetching_positions = fetching_the_battle(id_of_battle)
+    print("fetching positions ------->", fetching_positions)
     
- #(6, 2, "['34']", "['22','23'] ", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '1')
+    
+    
+    
+#battle_id, user_id, ship_1, ship_2, ship_3, ship_4, hits, misses
+ #[7, 1, "['34']", "['22','23']", "['55','65','75']", "['13','14','15','16']", '', "'34','22','23','55','65','75','13','14','15','16'", '1']
  #maybe i can open the diferent lists and adding some colors to the different values -??
  #this might not be needed, i just need the positions of the buttons as i am not coloring stuff
  #i am assuming all the ships have been positioned as otherwise they cannot move from the initial screen
@@ -322,7 +334,8 @@ def loading_battle(name_battle, id_of_battle):
         #need to display the winner- maybe putting a new column with the winner 
         base_window.title("Winner  of the battle is:" + name_battle[0])
     elif len(all_common)<10:
-        create_field_ongoing(frame_field_retr,all_ships, all_ships_tuples, all_common, all_pressed, base_window,name_battle)
+        #adding fetching positions as i need it for the hits 
+        create_field_ongoing(frame_field_retr,all_ships, all_ships_tuples, all_common, all_pressed, base_window,name_battle, fetching_positions, id_of_battle)
         #case it is less it is still an active battle
        
        
