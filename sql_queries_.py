@@ -201,23 +201,72 @@ def create_field_over(frame,all_ships):
     frame.grid(row=0, column=0, padx=10, pady=10)
     color_ships = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_ships]]
     configure_field = [i.configure(bg="grey", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in [i for i in all_ships]]
+    
 
-def boom_trial(j):
+
+
+
+
+
+
+
+
+
+def fetching_the_battle(id_of_battle):
+    with sqlite3.connect(path_to_db) as conn:
+        command = "SELECT * FROM Ships_1 WHERE  battle_id = (?)"
+        positioning = conn.execute(command, (id_of_battle,))
+        fetching_positions = [i if i!=None else "" for i in positioning.fetchone()]
+        return fetching_positions
+    pass
+
+def write_hit_miss_update(column, value, id_of_battle):
+    with sqlite3.connect(path_to_db) as conn:
+        command = "UPDATE Ships_1 SET (?)=(?) WHERE battle_id = (?)"
+        adding = conn.execute(command, (column, value,id_of_battle,))
+        return None
+
+
+#assuming the js here are only the clickable buttons as the others are disabled 
+def boom_trial(j, frame, all_ships,all_ships_tuples,  id_of_battle):
+    #checking if the button is present in the all_ships_list
+    if j in all_ships:
+        write_hit_miss_update('hits', j , id_of_battle)
+        [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
+         #update sunk
+         #maybe i need to use the tuple here 
+        
+         
+         # Example: Check if all tuple members are in a list using list comprehension
+     #from user_page_module import build_user_page
+        #l = [(1, 2), (4, 3), (5, 7), (9, 13)]#all_ships_tuples
+        #values = [1, 2, 5, 6, 8, 9, 0]
+
+        #results = [all(member in values for member in tpl) for tpl in l]
+        #print(results)  # Output: [True, False, True, False]
+        #matching_tuples = [tpl for tpl, result in zip(l, results) if result]
+        
+        []
+    else:
+        write_hit_miss_update('misses', j , id_of_battle)
+        #write and update the field settings for single button miss
+        [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
+
     pass
        
        
        
 #here i need to design the different commands. checking if the pressed button is in the ships ones           
 #this is teh field initialization, so i can keep the first values static
-def create_field_ongoing(frame, all_ships, all_common, all_pressed, base_window, name_battle):
+def create_field_ongoing(frame, all_ships, all_common, all_pressed, base_window, name_battle, id_of_battle, all_ships_tuples):
     #all common  needs to be recalculated, the only thing i keep static are the ships
     for i in range(10):
         for j in range(10):
             #adding here the command for all
-            button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j))
+            button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j, frame,  all_ships, all_ships_tuples, id_of_battle))
             button.grid(row=i, column=j)
     frame.grid(row=0, column=0, padx=10, pady=10)
-    #all the common ones if present 
+    #all the common ones if present are configured here
     configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_pressed]
     configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_common]
     base_window.title("Battle of player:" + name_battle[0])
@@ -228,10 +277,7 @@ def create_field_ongoing(frame, all_ships, all_common, all_pressed, base_window,
 def loading_battle(name_battle, id_of_battle):
     #here i need to pass in the values for the different 
     #gets the battle id starting from the name 
-    with sqlite3.connect(path_to_db) as conn:
-        command = "SELECT * FROM Ships_1 WHERE  battle_id = (?)"
-        positioning = conn.execute(command, (id_of_battle,))
-        fetching_positions = [i if i!=None else "" for i in positioning.fetchone()]
+    fetching_positions = fetching_the_battle(id_of_battle)
     
  #(6, 2, "['34']", "['22','23'] ", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '1')
  #maybe i can open the diferent lists and adding some colors to the different values -??
@@ -246,7 +292,7 @@ def loading_battle(name_battle, id_of_battle):
     
    #all_ships_keys_isolated = [fetching_positions[6][2:4],fetching_positions[7][2:4],fetching_positions[7][7:9], fetching_positions[8][2:4], fetching_positions[8][7:9],fetching_positions[8][12:14], 
     #                  fetching_positions[9][2:4], fetching_positions[9][7:9], fetching_positions[9][12:14], fetching_positions[5][17:19]]
-
+    all_ships_tuples = [(all_ships[0]),(all_ships[1],all_ships[2]),(all_ships[3],all_ships[4],all_ships[5]),(all_ships[6],all_ships[7],all_ships[8], all_ships[9])]
     #getting the misses --> needs further eleboration as i should have the data in a list 
     # all_ships_hits = all_ships_keys_isolated 
     all_pressed = fetching_positions[10]
@@ -258,7 +304,7 @@ def loading_battle(name_battle, id_of_battle):
     base_window = Toplevel()
     frame_field_retr = Frame(base_window)
     player_frame = Frame(base_window)
-    
+   
     
     #frame_ships = Frame(base_window)
     #creating the buttons 
@@ -276,9 +322,9 @@ def loading_battle(name_battle, id_of_battle):
         #need to display the winner- maybe putting a new column with the winner 
         base_window.title("Winner  of the battle is:" + name_battle[0])
     elif len(all_common)<10:
-        create_field_ongoing(frame_field_retr,all_ships, all_common, all_pressed, base_window,name_battle)
+        create_field_ongoing(frame_field_retr,all_ships, all_ships_tuples, all_common, all_pressed, base_window,name_battle)
         #case it is less it is still an active battle
-
+       
        
         
         #need to isolate the different buttons if they where hit and where ships
@@ -294,7 +340,7 @@ def loading_battle(name_battle, id_of_battle):
     #fs = [i for i in frame_field.grid_slaves()]
     #fst = [i["text"] for i in frame_field.grid_slaves()]
 
-    k = [i.configure(bg=all_ships[i["text"]]) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships.keys()]]
+    k = [i.configure(bg=all_ships[i["text"]]) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships]]
     #print(fetching_positions,h, fs, fst)
     if len(all_ships)==10:
         messagebox.showinfo("ended battle", "BAttle has ended and the winner is")
