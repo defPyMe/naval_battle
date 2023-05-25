@@ -117,6 +117,7 @@ def SaveBattle(name_creator, field, text, options):
         #here we pass the test if all the fields are filled and all the ships positioned 
         #need to check here for teh battle name 
         #needs to create the battle before we can save the data 
+        print("name_opponent_and_battle", name_opponent_and_battle)
         try:
             values_to_search = (selection_var + "  " + name_creator).split()
             #looking for the ids in teh tabl
@@ -152,6 +153,20 @@ def SaveBattle(name_creator, field, text, options):
                     try:
                         command = "UPDATE Ships_1 SET user_id = (?) , ship_1 = (?), ship_2 = (?), ship_3 = (?), ship_4 = (?), player_now_playing = (?) WHERE battle_id = (?)"
                         conn.execute(command, (str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched))
+                        #adding also the battle of the opponent 
+                        print("first insertion",(str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched) )
+                        conn.commit()
+                        
+                    except Exception as e:
+                        messagebox.showinfo("insert error", "battle already created")
+                        exc_type, exc_obj, exc_tb = sys.exc_info()
+                        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+                        print(e, exc_type, fname, exc_tb.tb_lineno)
+                        messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
+                    try:
+                        command = "INSERT INTO Ships_1(battle_id, user_id, ship_1, ship_2, ship_3, ship_4, player_now_playing) VALUES(?,?,?,?,?,?,?)"
+                        conn.execute(command, (*id_fetched, str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator)))
+                        print("second insertion",((str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator), *id_fetched) ))
                         conn.commit()
                     except Exception as e:
                         messagebox.showinfo("insert error", "battle already created")
@@ -295,24 +310,22 @@ def loading_battle(name_battle, id_of_battle):
     #gets the battle id starting from the name 
     fetching_positions = fetching_the_battle(id_of_battle)
     
+    #or initializing the variables here and then get the possible combinations here
+    #coloring should be done with a function so that i can change all the possible positions 
     
     
     
-    
-#battle_id, user_id, ship_1, ship_2, ship_3, ship_4, hits, misses
- #[7, 1, "['34']", "['22','23']", "['55','65','75']", "['13','14','15','16']", '', "'34','22','23','55','65','75','13','14','15','16'", '1']
- #maybe i can open the diferent lists and adding some colors to the different values -??
- #this might not be needed, i just need the positions of the buttons as i am not coloring stuff
- #i am assuming all the ships have been positioned as otherwise they cannot move from the initial screen
+    #battle_id, user_id, ship_1, ship_2, ship_3, ship_4, hits, misses
+    #[7, 1, "['34']", "['22','23']", "['55','65','75']", "['13','14','15','16']", '', "'34','22','23','55','65','75','13','14','15','16'", '1']
+    #maybe i can open the diferent lists and adding some colors to the different values -??
+    #this might not be needed, i just need the positions of the buttons as i am not coloring stuff
+    #i am assuming all the ships have been positioned as otherwise they cannot move from the initial screen
  
     all_ships = [(fetching_positions[2][2:4]) ,  (fetching_positions[3][2:4]),(fetching_positions[3][8:10]),
                  (fetching_positions[4][2:4]), (fetching_positions[4][8:10]),(fetching_positions[4][14:16]),
                  (fetching_positions[5][2:4]), (fetching_positions[5][8:10]), (fetching_positions[5][14:16]), (fetching_positions[5][20:22])]
     #getting the hits as well 
-    #the hits need to be indexed in the same way - ??
-    print("all_ships in initial function ------->", all_ships)
-   #all_ships_keys_isolated = [fetching_positions[6][2:4],fetching_positions[7][2:4],fetching_positions[7][7:9], fetching_positions[8][2:4], fetching_positions[8][7:9],fetching_positions[8][12:14], 
-    #                  fetching_positions[9][2:4], fetching_positions[9][7:9], fetching_positions[9][12:14], fetching_positions[5][17:19]]
+    #the first one is not recognized as tuple if not inserted the ast railing comma
     all_ships_tuples = [(all_ships[0],),(all_ships[1],all_ships[2]),(all_ships[3],all_ships[4],all_ships[5]),(all_ships[6],all_ships[7],all_ships[8], all_ships[9])]
     #getting the misses --> needs further eleboration as i should have the data in a list 
     # all_ships_hits = all_ships_keys_isolated 
@@ -326,18 +339,9 @@ def loading_battle(name_battle, id_of_battle):
     frame_field_retr = Frame(base_window)
     player_frame = Frame(base_window)
    
-    
-    #frame_ships = Frame(base_window)
-    #creating the buttons 
-    #here i need to create a different field based on how many values i get 
 
-    #case in which i have not all the ships positioned 
-    #print("len all common", len(all_common), all_common, all_pressed)
-    #the difference is the fact tat all the ships have been positioned or not 
     if len(all_common)==10:
         #here i need to create the field as it is in the initial option but saved ships are not clickable
-        #the buttons that are saved as hits and misses need not be clickable
-        #here i need to assign to all teh buttons in the field some functionality 
         create_field_over(frame_field_retr, all_ships)
         # coloring all retrieved ships
         #need to display the winner- maybe putting a new column with the winner 
@@ -353,21 +357,12 @@ def loading_battle(name_battle, id_of_battle):
         
 
         pass
-    
-  
 
-    #list comprehension to color all values 
-    #configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button, 1))
-    #h = [i for i in all_ships.keys()]
-    #fs = [i for i in frame_field.grid_slaves()]
-    #fst = [i["text"] for i in frame_field.grid_slaves()]
 
-    #[i.configure(bg=all_ships[i["text"]]) for i in frame_field_retr.grid_slaves() if i["text"] in [i for i in all_ships]]
-    #print(fetching_positions,h, fs, fst)
     if len(all_ships)==10:
         messagebox.showinfo("ended battle", "BAttle has ended and the winner is")
     else:
-        messagebox.showinfo("battle still pending", "BAttle has not ended and it is turn :")
+        messagebox.showinfo("battle still pending", "Battle has not ended and it is turn :")
     
     pass
 
