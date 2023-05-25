@@ -5,7 +5,7 @@ from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
 from tkinter import messagebox
 
-from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image
+from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name
 from checking_function import calculate_cases
 
 #this opens the image and displays it
@@ -230,15 +230,16 @@ def buld_champion_interface():
     label_champions = Label(text="Player Classification")
     #GETTING ALL THE PLAYERS 
     
-def retrieving_battles(name):
-    print("name ---> ",name)
+    
+    
+def retrieving_battles(name, user_id):
     base_window = Toplevel()
     base_window.geometry("500x300")
     base_window.title("Battles of player : " + name )
     #need to create the buttons with the commands to create teh buttons 
     frame_buttons = Frame(base_window)
     frame_buttons.grid(row=0, column=0)
-    retrieve_battle(name, frame_buttons)
+    retrieve_battle(name, frame_buttons, user_id)
     
     
     
@@ -249,7 +250,7 @@ def retrieving_battles(name):
 
 
 def build_user_page(name):
-   
+    user_id = getting_user_id_from_name(name)
     base_window = Toplevel()
     base_window.geometry("500x300")
     base_window.title("Military Base : " + name )
@@ -260,7 +261,7 @@ def build_user_page(name):
     label_player_name = Label(frame_pic, text=name, width=7, padx=(70, ))
     #retrieve_image(name)
     button_new_battle = Button(frame_buttons, text="new battle",width=15, height=2,bg="red", command =lambda: new_battle(name))
-    button_old_battles = Button(frame_buttons, text="show old battles",width=15, height=2,bg="red", command=lambda: retrieving_battles(name))
+    button_old_battles = Button(frame_buttons, text="show old battles",width=15, height=2,bg="red", command=lambda: retrieving_battles(name, user_id))
     button_show_champions = Button(frame_buttons, text="show champions",width=15, height=2,bg="red", command="")
     button_change_profile = Button(frame_buttons, text="change profile",width=15, height=2,bg="red", command=lambda: build_modify_profile(name))
     

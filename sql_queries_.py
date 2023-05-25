@@ -7,6 +7,8 @@ from tkinter import *
 from tkinter import messagebox
 import string
 import sys , os
+import user_page_module
+
 
 
 path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\naval_battle.db"
@@ -304,22 +306,14 @@ def create_field_ongoing(frame,all_ships, all_ships_tuples, all_common, all_pres
     
             
             
-#needs id of th eplayer 
-def loading_battle(name_battle, id_of_battle):
+#needs id of th eplayer , user_id should be the one playing
+def loading_battle(name_battle, id_of_battle, user_id):
+    #need to check here if the battle has  any ships positioned or not for the player opening it
+    
     #here i need to pass in the values for the different 
     #gets the battle id starting from the name 
     fetching_positions = fetching_the_battle(id_of_battle)
     
-    #or initializing the variables here and then get the possible combinations here
-    #coloring should be done with a function so that i can change all the possible positions 
-    
-    
-    
-    #battle_id, user_id, ship_1, ship_2, ship_3, ship_4, hits, misses
-    #[7, 1, "['34']", "['22','23']", "['55','65','75']", "['13','14','15','16']", '', "'34','22','23','55','65','75','13','14','15','16'", '1']
-    #maybe i can open the diferent lists and adding some colors to the different values -??
-    #this might not be needed, i just need the positions of the buttons as i am not coloring stuff
-    #i am assuming all the ships have been positioned as otherwise they cannot move from the initial screen
  
     all_ships = [(fetching_positions[2][2:4]) ,  (fetching_positions[3][2:4]),(fetching_positions[3][8:10]),
                  (fetching_positions[4][2:4]), (fetching_positions[4][8:10]),(fetching_positions[4][14:16]),
@@ -338,16 +332,16 @@ def loading_battle(name_battle, id_of_battle):
     base_window = Toplevel()
     frame_field_retr = Frame(base_window)
     player_frame = Frame(base_window)
-   
-
+    print("all common ----> ", all_common)
     if len(all_common)==10:
         #here i need to create the field as it is in the initial option but saved ships are not clickable
         create_field_over(frame_field_retr, all_ships)
         # coloring all retrieved ships
         #need to display the winner- maybe putting a new column with the winner 
         base_window.title("Winner  of the battle is:" + name_battle[0])
-    elif len(all_common)<10:
-        #adding fetching positions as i need it for the hits 
+        #case in which the ships have been positioned only by the opponent 
+    elif (all_common)==0:
+        user_page_module.new_battle(name_battle)
         create_field_ongoing(frame_field_retr,all_ships, all_ships_tuples, all_common, all_pressed, base_window,name_battle, fetching_positions, id_of_battle)
         #case it is less it is still an active battle
        
@@ -371,25 +365,25 @@ def starting_battle_command():
     
     pass
 
-
-
-
-
-
-
-def retrieve_battle(name, frame):
-    #need here to get the values of the battle back and get them displayed in a playable field
-    #the battles need to be index in case there is more than one 
+def getting_user_id_from_name(name):
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT user_id FROM users WHERE  name = (?)"
         result_of_name_fetch = conn.execute(command, (name,))
         fetching_the_user_id = result_of_name_fetch.fetchone()
-        print("user_id fetchwed", fetching_the_user_id)
         conn.commit()
+        return fetching_the_user_id
+
+
+
+
+
+def retrieve_battle(name, frame, user_id):
+    #need here to get the values of the battle back and get them displayed in a playable field
+    #the battles need to be index in case there is more than one 
     #getting the battles
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT * FROM Ships_1 WHERE  user_id = (?)"
-        result_of_name_fetch = conn.execute(command, (str(*fetching_the_user_id)))
+        result_of_name_fetch = conn.execute(command, (str(*user_id)))
         fetching_the_result = result_of_name_fetch.fetchall()
         conn.commit()
     print("fetching the result", fetching_the_result[0][0])
@@ -409,14 +403,8 @@ def retrieve_battle(name, frame):
         print("battle_names", battle_names)
     for i in range(len(battle_names)):
         #i have the different ids right here in the first index 
-        button = Button(frame, text=battle_names[i], command=lambda f=fetching_the_result[i][0]: loading_battle(battle_names, f ))
+        button = Button(frame, text=battle_names[i], command=lambda f=fetching_the_result[i][0]: loading_battle(battle_names, f , user_id))
         button.grid(row=i, column=0)
-    
-    
-    
-    
-    
-    
     pass
                     
 
