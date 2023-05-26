@@ -130,6 +130,7 @@ def SaveBattle(name_creator, field, text, options):
                 #first i sname of opponent and the other the one of the creator 
                 #making the list without parenthesis and other strange punctuation
                 ids_int =[str(i) for i in list(ids.fetchall())]
+                print("ids_int", ids_int)
                 #once the players ids have beeen inserted i can proceed with the retrieving of the battle id as it was created
                 #how do i upgrade the user_id? the one creating the table?
                 command = "INSERT INTO battle_table(name, creator, opponent) VALUES (?,?,?)"
@@ -345,14 +346,8 @@ def loading_battle(id_of_battle, user_id):
         user_page_module.new_battle(id_of_battle[1], 1, id_of_battle[1], id_of_battle[2])
        
         #case it is less it is still an active battle
-       
-       
-        
         #need to isolate the different buttons if they where hit and where ships
-        
-
         pass
-
 
     if len(all_ships)==10:
         messagebox.showinfo("ended battle", "BAttle has ended and the winner is")

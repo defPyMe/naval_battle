@@ -70,6 +70,7 @@ def new_battle(name, flag, battle_name, opponent_name):
     #frame_ships.grid(row=1, column=1)
     label_opponent = Label(player_frame, text="Opponent", width=10)
     label_opponent.grid(row=1, column=0)
+    #insert_battle_name, selected_option
     if flag==0:
             print("flag==0")
             label_name_battle = Label(player_frame, text="add a name for the battle", width=10)
@@ -85,21 +86,37 @@ def new_battle(name, flag, battle_name, opponent_name):
             label_name_battle.grid(row=0, column=0)
             insert_battle_name = Text(player_frame, height=1, width=10)
             insert_battle_name.grid(row=0, column=1) 
+            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
+            save_button.grid(row=6, column=1, pady=(30,))
 
             #creating the buttons 
     else:
             print("flag==1")
+            selected_option = StringVar(value=opponent_name)
+            # set the default option
+            #getting the option menu but with then default value onluy , if one it should be ok as we can only select one
+            option_menu = OptionMenu(player_frame, selected_option, value=opponent_name)
+            option_menu.grid(row=1, column=1)
+            
             #label of name
             label_name_battle = Label(player_frame, text="battle name", width=10)
             label_name_battle.grid(row=0, column=0)
             #actual value for battle name
-            actual_battle_name = Label(player_frame,text=battle_name, height=1, width=10)
-            actual_battle_name.grid(row=0, column=1) 
+            
+            
+            insert_battle_name = Text(player_frame, height=1, width=10)
+            insert_battle_name.grid(row=0, column=1) 
             #actual value, label is ok by default
-            label_name_opponent = Label(player_frame, text=opponent_name, width=10)
-            label_name_opponent.grid(row=1, column=1)
-            #adding the actual values 
-        
+            default_text = battle_name 
+            insert_battle_name.insert(END, default_text)
+
+# Disable the Text widget
+            insert_battle_name.configure(state='disabled')
+            
+
+            #CAN T GET TH EVALUE AS IT IS NOT A TEXT FIELD ANYMORE!!
+            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
+            save_button.grid(row=6, column=1, pady=(30,))
         #the fieldswhere we have the buttons is the frame field
     ship_1 = Button(player_frame, text="ship 1", width=10, bg="orange")
     # rsettimng different values before lambda so we can have different for each button 
@@ -117,8 +134,8 @@ def new_battle(name, flag, battle_name, opponent_name):
     ship_4.grid(row=5, column=0, columnspan=2)
     #in the save button i can pass the name as argument so that i get teh db save
     
-    save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
-    save_button.grid(row=6, column=1, pady=(30,))
+    #save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
+    #save_button.grid(row=6, column=1, pady=(30,))
  
     pass
 
