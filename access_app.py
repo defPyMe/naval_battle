@@ -1,21 +1,19 @@
-import tkinter as tk
-from tkinter import ttk
+from tabulate import tabulate
 
-def get_selected_option():
-    selected_option = option_var.get()
-    print("Selected option:", selected_option)
+data_list = [('25/04/2023', 's'), ('23/06/2023', 's'), ('25/04/2023', 'e'), ('23/06/2023', 'e')]
 
-root = tk.Tk()
+result_dict = {}
 
-# Create a StringVar to hold the selected option
-option_var = tk.StringVar()
+# Iterate over the tuples in the list
+for date, value in data_list:
+    if value not in result_dict or date < result_dict[value]:
+        result_dict[value] = date
 
-# Create the OptionMenu widget
-option_menu = ttk.OptionMenu(root, option_var, "Option 1", "Option 2", "Option 3")
-option_menu.pack()
+# Create a list of tuples using the values from the dictionary
+result_list = [(date, value) for value, date in result_dict.items()]
 
-# Create a button to retrieve the selected option
-button = tk.Button(root, text="Get Selected Option", command=get_selected_option)
-button.pack()
+# Format the result list into a table
+table = tabulate(result_list, headers=['Date', 'Value'], tablefmt='plain')
 
-root.mainloop()
+print(table)
+

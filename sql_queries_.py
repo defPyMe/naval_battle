@@ -232,7 +232,7 @@ def create_field_over(frame,all_ships):
 def fetching_the_battle(id_of_battle):
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT * FROM Ships_1 WHERE  battle_id = (?)"
-        positioning = conn.execute(command, (id_of_battle,))
+        positioning = conn.execute(command, (id_of_battle[0],))
         fetching_positions = [i if i!=None else "" for i in positioning.fetchone()]
         return fetching_positions
     pass
@@ -242,7 +242,7 @@ def write_hit_miss_update(column, value, id_of_battle):
 
 
         command = "UPDATE Ships_1 SET {}={} || (?) WHERE battle_id = (?)".format(column, column)
-        adding = conn.execute(command, (value,id_of_battle,))
+        adding = conn.execute(command, (value,id_of_battle[0],))
         
         
         return None
@@ -307,14 +307,13 @@ def create_field_ongoing(frame,all_ships, all_ships_tuples, all_common, all_pres
             
             
 #needs id of th eplayer , user_id should be the one playing
-def loading_battle(name_battle, id_of_battle, user_id):
-    #need to check here if the battle has  any ships positioned or not for the player opening it
-    
+def loading_battle(id_of_battle, user_id):
+
     #here i need to pass in the values for the different 
     #gets the battle id starting from the name 
     fetching_positions = fetching_the_battle(id_of_battle)
     
- 
+    print("fetching tuples name and id check",  id_of_battle)
     all_ships = [(fetching_positions[2][2:4]) ,  (fetching_positions[3][2:4]),(fetching_positions[3][8:10]),
                  (fetching_positions[4][2:4]), (fetching_positions[4][8:10]),(fetching_positions[4][14:16]),
                  (fetching_positions[5][2:4]), (fetching_positions[5][8:10]), (fetching_positions[5][14:16]), (fetching_positions[5][20:22])]
@@ -332,17 +331,19 @@ def loading_battle(name_battle, id_of_battle, user_id):
     base_window = Toplevel()
     frame_field_retr = Frame(base_window)
     player_frame = Frame(base_window)
-    print("all common ----> ", all_common)
-    if len(all_common)==10:
+    all_common_no_null = [i for i in all_common if i!=""]
+    if len(all_common_no_null)==10:
         #here i need to create the field as it is in the initial option but saved ships are not clickable
         create_field_over(frame_field_retr, all_ships)
         # coloring all retrieved ships
         #need to display the winner- maybe putting a new column with the winner 
-        base_window.title("Winner  of the battle is:" + name_battle[0])
+        base_window.title("Winner  of the battle is:" + id_of_battle[1])
         #case in which the ships have been positioned only by the opponent 
-    elif (all_common)==0:
-        user_page_module.new_battle(name_battle)
-        create_field_ongoing(frame_field_retr,all_ships, all_ships_tuples, all_common, all_pressed, base_window,name_battle, fetching_positions, id_of_battle)
+    elif len(all_common_no_null)==0:
+        print("entering all common, args",fetching_positions )
+        #building page with no ships but already created
+        user_page_module.new_battle(id_of_battle[1], 1, id_of_battle[1], id_of_battle[2])
+       
         #case it is less it is still an active battle
        
        
@@ -373,20 +374,26 @@ def getting_user_id_from_name(name):
         conn.commit()
         return fetching_the_user_id
 
-
+def getting_name_from_id(id):
+    with sqlite3.connect(path_to_db) as conn:
+        command = "SELECT name FROM users WHERE  user_id = (?)"
+        result_of_name_fetch = conn.execute(command, (id,))
+        fetching_the_user_id = result_of_name_fetch.fetchone()
+        conn.commit()
+        return fetching_the_user_id
 
 
 
 def retrieve_battle(name, frame, user_id):
     #need here to get the values of the battle back and get them displayed in a playable field
     #the battles need to be index in case there is more than one 
-    #getting the battles
+    #getting the battles, all the battle s of a player
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT * FROM Ships_1 WHERE  user_id = (?)"
         result_of_name_fetch = conn.execute(command, (str(*user_id)))
         fetching_the_result = result_of_name_fetch.fetchall()
         conn.commit()
-    print("fetching the result", fetching_the_result[0][0])
+    
     #the result i get i sthe following , two lists 
     # [(5, 2, "['25']", "['42', '32']", "['39', '29', '19']", "['56', '46', '36', '26']", '', '', '', '', '', '2'), 
     # (6, 2, "['34']", "['22','23']", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '2')]
@@ -394,16 +401,32 @@ def retrieve_battle(name, frame, user_id):
     #getting the names 
     with sqlite3.connect(path_to_db) as conn:
         list_of_battles_ids = [i[0] for i in fetching_the_result]
-        query = 'SELECT name FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
+        query = 'SELECT name,opponent FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
         ids = conn.execute(query, list_of_battles_ids)
         #first i sname of opponent and the other the one of the creator 
         #making the list without parenthesis and other strange punctuation
-        battle_names  =[str(*i) for i in list(ids.fetchall())]
+        #needs an obj to be iterable
+        fetched = ids.fetchall()
+        print("list of battle ids", fetched, list(ids.fetchall()), [i for i in fetched])
+        battle_names  =[i[0] for i in fetched]
+        opponent_ids=[i[1] for i in fetched]
+  
+  #
+  # NOT WORKING WITH THE IDS 
+  #  not sure if it is the indexing or some values are stored wrong
+  #
+  #
+  #
+  
         #getting the lenght of teh list 
-        print("battle_names", battle_names)
+
     for i in range(len(battle_names)):
-        #i have the different ids right here in the first index 
-        button = Button(frame, text=battle_names[i], command=lambda f=fetching_the_result[i][0]: loading_battle(battle_names, f , user_id))
+        #getting the name from the id
+        opponent_current_battle = getting_name_from_id(opponent_ids[i])
+        #i have the different ids right here in the first index ??
+        #which one is the name of the chosen battle
+        #f is now a tuple with the name and id
+        button = Button(frame, text=battle_names[i], command=lambda f=(fetching_the_result[i][0],battle_names[i],opponent_current_battle): loading_battle(f , user_id))
         button.grid(row=i, column=0)
     pass
                     
