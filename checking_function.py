@@ -131,6 +131,17 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             #the below includes the pressed button
             all_x = [int(str(y)+(str(int(x+i)))) for i in range (-diff, diff+1) if x+i in all_values_allowed] 
             all_y = [ int(str(int(y+i))+(str(x))) for i in range (-diff, diff+1) if y+i in all_values_allowed]
+            
+            
+            #ADDING THE CHECKING FUNCTION TO SEE IF ALL_X IS THE PROBLEM
+            
+            
+            
+            
+            
+            
+            
+            
             #here in case i press 23 i will get respectively all_x = ['03', '13', '23', '33', '43'] all_y = ['21', '22', '23', '24', '25']
             #now i need to check if any of the options is in the already colored buttons
             #here i make the all_colored list in integers
@@ -144,37 +155,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             
             
             
-            
-            
-            
-            #print("all_x, all_y", all_x, all_y)
-            #print("trying_x, trying_y", trying_x, trying_y)
-            #now i need to get the minimum and maximum to see where we touch first, if we touch at all, they can be tuples
-            #need to consider all the following cases 
-            # 1) trying_x != zer trying y == 0, 2) trying_x == 0 trying y != 0, 3) trying_x == 0 trying y == 0, 4) trying_x != zer trying y != 0
-            #need to consider here the possible collisions with other ships 
-            #as of now not moving in all directions , i have t try to 
-            #if it is 54 anything different than that might work, but need to check if the lenght is 
-            #if len(trying_x)==0 and len(trying_y)!=0:
-            #    min_max_trying_x = (min(trying_x), max(trying_x))
-            #    min_max_trying_y = (0, 100)
-            #elif len(trying_y)!=0 and len(trying_x)==0:
-            #    min_max_trying_y = (min(trying_y), max(trying_y))
-            #    min_max_trying_x = (0, 100)
-            #elif len(trying_y)==0 and len(trying_x)==0:
-            #    min_max_trying_x = (-1, 100)
-            #    min_max_trying_y = (-1, 100)
-            #elif len(trying_y)!=0 and len(trying_x)!=0:
-            #    min_max_trying_y = (min(trying_y), max(trying_y))
-            #    min_max_trying_x = (min(trying_x), max(trying_x))
-            #getting the different elements in all_x, all_y in teh interval
-            #print("min_max_trying_y", min_max_trying_y, min_max_trying_x)
-            #correct_collision_interval_x = [i for i in all_x if i > min_max_trying_x[0] and i < min_max_trying_x[1]]
-            #correct_collision_interval_y = [i for i in all_y if i > min_max_trying_y[0] and i < min_max_trying_y[1]]
-            #converting all the values to strings as that is what the below expects
-            #correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  correct_collision_interval_x]
-            #correct_collision_interval_y_str = ['{:02d}'.format(i) for i in  correct_collision_interval_y]
-            #print("correct_collision_interval_y_str, correct_collision_interval_x_str", correct_collision_interval_y_str,correct_collision_interval_x_str)
+ 
             correct_collision_interval_x_str = tuple_result[0]
             correct_collision_interval_y_str = tuple_result [1]
             print( "correct tuple collision",  correct_collision_interval_x_str,    correct_collision_interval_y_str)
@@ -274,11 +255,13 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
         cases_list_str = []
     #returns the list and the diff
     
+    
+    
+    
+    
+    
+    
     return cases_list_str, diff, colored_buttons_singular
-            #i check only the x so t
-            # 
-            # 
-            # 
-            # hat if it is not verified it is a y 
+
             
             
