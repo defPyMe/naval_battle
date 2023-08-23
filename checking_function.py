@@ -1,3 +1,76 @@
+def most_frequent(List):
+    counter = 0
+    num = List[0]
+     
+    for i in List:
+        curr_frequency = List.count(i)
+        if(curr_frequency> counter):
+            counter = curr_frequency
+            num = i
+ 
+    return num
+
+
+
+
+
+def checking_lines():
+    #creating the two lists 
+    horizontal = []
+    vertical = []
+    #all horizontal lines 
+    for i in range(10):
+        l = []
+        for j in range(10):
+            l.append(str(i)+str(j))
+        horizontal.append(l)
+
+
+    #SHOULDN T BE NEEDED HERE 
+    #all vertical lines 
+    #for j in range(10):
+    #    l = []
+    #    for i in [0,2,3,4,5,6,7,8,9]:
+    #    
+    #        l.append(str(i)+str(j))
+    #    vertical.append(l)
+    
+        
+    return horizontal   
+    #return vertical, horizontal
+
+
+#creating a function that takes the input and then we spit out the corrected possibilites 
+#lò is teh list we useti 
+#is this only for the x rows? 
+def  avoiding_skipping_rows(input_x):
+    #creating the checklist here 
+    l =  checking_lines()
+    #correcting the difference 
+    correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  input_x]
+    #correct_collision_interval_y_str = ['{:02d}'.format(i) for i in  correct_collision_interval_y]
+
+    indices = []
+    for i, sublist in enumerate(l):
+        element_found =  [(i,j) for j in correct_collision_interval_x_str if j in sublist]
+    
+        if element_found !=[]:
+            indices = indices + element_found
+        else:
+            pass
+        
+    #need to get the main component of the list 
+    result_most_common = (most_frequent(indices))[0]
+    #going back to integer
+ 
+
+    
+    
+    
+    
+    return [ i[1] for i in indices if i[0] == result_most_common ]
+
+
 #here i need also the pressed x and y as i need to get where itis positioned in case it is one
 #needs to return the values of the x and y
 def checking_first_button(trial_x, trial_y, x, y,all_x, all_y):
@@ -129,13 +202,18 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             #now i expand in all directions(x,y) with the diff
             #i type cast here again to get a list of integers
             #the below includes the pressed button
-            all_x = [int(str(y)+(str(int(x+i)))) for i in range (-diff, diff+1) if x+i in all_values_allowed] 
+            all_x_ = [int(str(y)+(str(int(x+i)))) for i in range (-diff, diff+1) if x+i in all_values_allowed] 
             all_y = [ int(str(int(y+i))+(str(x))) for i in range (-diff, diff+1) if y+i in all_values_allowed]
             
             
-            #ADDING THE CHECKING FUNCTION TO SEE IF ALL_X IS THE PROBLEM
+            #ADDING THE CHaECKING FUNCTION TO SEE IF ALL_X IS THE PROBLEM
             
             
+            #PROBLE,M!!! NEEDDS SDTO RETURN INTEGERS 
+            
+            
+            all_x = [int(i) for i in avoiding_skipping_rows(all_x_)]
+         
             
             
             
