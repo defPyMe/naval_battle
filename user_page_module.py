@@ -87,7 +87,8 @@ def new_battle(name, flag, battle_name, opponent_name):
             label_name_battle.grid(row=0, column=0)
             insert_battle_name = Text(player_frame, height=1, width=10)
             insert_battle_name.grid(row=0, column=1) 
-            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
+            #adding a flag here to skip creation in battle table , otherwise unique constarint error
+            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option, 0))
             save_button.grid(row=6, column=1, pady=(30,))
 
             #creating the buttons 
@@ -116,7 +117,7 @@ def new_battle(name, flag, battle_name, opponent_name):
             
 
             #CAN T GET TH EVALUE AS IT IS NOT A TEXT FIELD ANYMORE!!
-            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
+            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option, 1))
             save_button.grid(row=6, column=1, pady=(30,))
         #the fieldswhere we have the buttons is the frame field
     ship_1 = Button(player_frame, text="ship 1", width=10, bg="orange")
