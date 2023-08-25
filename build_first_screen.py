@@ -26,7 +26,7 @@ def build_first_screen():
     label_space = Label(text = "", width=1, height=1)
     label_space1 = Label(text = "", width=1, height=1)
     text_box = Text(height=1,width=10)
-    #giving the function som earguments without executing it directly with lambda
+    #giving the function som earguments without executing it directly with lambd
     button_log = Button(text = "log in", command = lambda: logging_in(text_box))
     label.pack()
     label1.pack()

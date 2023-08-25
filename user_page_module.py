@@ -75,7 +75,8 @@ def new_battle(name, flag, battle_name, opponent_name):
             print("flag==0")
             label_name_battle = Label(player_frame, text="add a name for the battle", width=10)
             #need to get the users here, is it  alist
-            options = [""]+[check_users(name)]
+            print("check users name ------------>",check_users(name))
+            options = [""]+check_users(name)
             # create a variable to store the selected option
             selected_option = StringVar()
             # set the default option
@@ -281,7 +282,7 @@ def build_user_page(name):
     label_player_name = Label(frame_pic, text=name, width=7, padx=(70, ))
     #retrieve_image(name)
     button_new_battle = Button(frame_buttons, text="new battle",width=15, height=2,bg="red", command =lambda: new_battle(name, 0, "", ""))
-    button_old_battles = Button(frame_buttons, text="show old battles",width=15, height=2,bg="red", command=lambda: retrieving_battles(name, user_id))
+    button_old_battles = Button(frame_buttons, text="show battles",width=15, height=2,bg="red", command=lambda: retrieving_battles(name, user_id))
     button_show_champions = Button(frame_buttons, text="show champions",width=15, height=2,bg="red", command="")
     button_change_profile = Button(frame_buttons, text="change profile",width=15, height=2,bg="red", command=lambda: build_modify_profile(name))
     
