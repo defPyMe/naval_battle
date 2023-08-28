@@ -372,41 +372,58 @@ def loading_battle(id_of_battle, user_id, flag):
     fetching_positions = fetching_the_battle(id_of_battle, user_id[0])
     #if all ships are positioned for me then i can load the battle with no names and buttons
     print("fetching tuples name and id check",  id_of_battle)
-    all_ships = [(fetching_positions[2][2:4]) ,  (fetching_positions[3][2:4]),(fetching_positions[3][8:10]),
+    all_ships_player = [(fetching_positions[2][2:4]) ,  (fetching_positions[3][2:4]),(fetching_positions[3][8:10]),
                  (fetching_positions[4][2:4]), (fetching_positions[4][8:10]),(fetching_positions[4][14:16]),
                  (fetching_positions[5][2:4]), (fetching_positions[5][8:10]), (fetching_positions[5][14:16]), (fetching_positions[5][20:22])]
     #fetching the all hits on my side
-    all_hits = [fetching_positions[6]]
+    all_hits_player = [fetching_positions[6]]
     #all the hits on the side of the opponent
     #getting id of player
-    id_opponent =getting_user_id_from_name(id_of_battle[3][0])
+    all_misses_player = [fetching_positions[7]]
+    all_ships_tuples = [(all_ships_player[0],),(all_ships_player[1],all_ships_player[2]),(all_ships_player[3],
+                        all_ships_player[4],all_ships_player[5]),(all_ships_player[6],
+                        all_ships_player[7],all_ships_player[8], all_ships_player[9])]
+    
+    all_common_player = [i for i in all_ships_player if i in all_hits_player and i!=""]
+    #all_common_player_no_null = [i for i in all_common_player if i!=""]
+    
+    
+    
+    
+    id_opponent = (getting_user_id_from_name(id_of_battle[2][0]))[0]
+
     fetching_positions_opponent = fetching_the_battle(id_of_battle, id_opponent)
-    all_ships = [(fetching_positions_opponent[2][2:4]) ,  (fetching_positions_opponent[3][2:4]),(fetching_positions_opponent[3][8:10]),
+    
+    all_ships_opponent = [(fetching_positions_opponent[2][2:4]) ,  (fetching_positions_opponent[3][2:4]),(fetching_positions_opponent[3][8:10]),
                  (fetching_positions_opponent[4][2:4]), (fetching_positions_opponent[4][8:10]),(fetching_positions_opponent[4][14:16]),
                  (fetching_positions_opponent[5][2:4]), (fetching_positions_opponent[5][8:10]), (fetching_positions_opponent[5][14:16]), (fetching_positions_opponent[5][20:22])]
+    all_hits_opponent = [fetching_positions_opponent[6]]
+    all_misses_opponent = [fetching_positions_opponent[7]]
+    #need to add a checìking mechanism to see what the case is at the moment, such as ended, ongoing
+    all_ships_opponent_tuples = [(all_ships_opponent[0],),(all_ships_opponent[1],all_ships_opponent[2]),(all_ships_opponent[3],
+                    all_ships_opponent[4],all_ships_opponent[5]),(all_ships_opponent[6],
+                        all_ships_opponent[7],all_ships_opponent[8], all_ships_opponent[9])]
+    all_common_opponent = [i for i in all_ships_opponent if i in all_hits_opponent]
+    all_common_opponent_no_null = [i for i in all_ships_opponent if i in all_hits_opponent and i!=""]
     
     #getting the hits as well 
-    if len(all_ships)==10:
+    if len(all_ships_player)==10:
         #here the battle could be started or ended 
         #    
         pass
     
     
     #the first one is not recognized as tuple if not inserted the ast railing comma
-    all_ships_tuples = [(all_ships[0],),(all_ships[1],all_ships[2]),(all_ships[3],all_ships[4],all_ships[5]),(all_ships[6],all_ships[7],all_ships[8], all_ships[9])]
     #getting the misses --> needs further eleboration as i should have the data in a list 
     # all_ships_hits = all_ships_keys_isolated 
-
-    all_misses = [fetching_positions[7]]
     # i need to create the difference between the two lists, the starting position are the all_ships
-    all_common = [i for i in all_ships if i in all_hits]
     #creating the dicrtionary with the colors 
     #all_colors = {"ship_1" : "orange" , "ship_2" : "blue", "ship_3" :  "purple", "ship_4" : "pink" }
     #creating the battle 
     base_window = Toplevel()
     frame_field_retr = Frame(base_window)
     player_frame = Frame(base_window)
-    all_common_no_null = [i for i in all_common if i!=""]
+    all_common_no_null = [i for i in all_common_player if i!=""]
     print("all pressed", all_hits, "all_common_no_null", all_common_no_null)
     if len(all_common_no_null)==10:
         #here i need to create the field as it is in the initial option but saved ships are not clickable

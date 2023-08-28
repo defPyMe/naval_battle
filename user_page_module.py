@@ -5,7 +5,7 @@ from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
 from tkinter import messagebox
 
-from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name
+from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name, boom_trial
 from checking_function import calculate_cases
 
 #this opens the image and displays it
@@ -49,12 +49,18 @@ def update(window):
 
 
 #need to be moved from here as it is not the 
-def create_field(frame):
-    for i in range(10):
-        for j in range(10):
-            button = Button(frame, text=str(i)+str(j), command="")#lambda j=str(i)+str(j): check_hit(j)
-            button.grid(row=i, column=j)
-
+#flag to differentiate between the creation field
+def create_field(frame, flag):
+    if flag == 0:
+        for i in range(10):
+            for j in range(10):
+                button = Button(frame, text=str(i)+str(j), command="")#lambda j=str(i)+str(j): check_hit(j)
+                button.grid(row=i, column=j)
+    else:
+        for i in range(10):
+            for j in range(10):
+                button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j))#lambda j=str(i)+str(j): check_hit(j)
+                button.grid(row=i, column=j)
 
 
 def new_battle(name, flag, battle_name, opponent_name):
@@ -64,14 +70,15 @@ def new_battle(name, flag, battle_name, opponent_name):
     base_window.title("New Battle of player : " + name )
     #frame_ships = Frame(base_window)
     #creating the buttons 
-    create_field(frame_field)
     frame_field.grid(row=0, column=0, padx=10, pady=10)
-    player_frame.grid(row=0, column=1)
-    #frame_ships.grid(row=1, column=1)
-    label_opponent = Label(player_frame, text="Opponent", width=10)
-    label_opponent.grid(row=1, column=0)
     #insert_battle_name, selected_option
     if flag==0:
+            create_field(frame_field, 0)
+ 
+            player_frame.grid(row=0, column=1)
+            #frame_ships.grid(row=1, column=1)
+            label_opponent = Label(player_frame, text="Opponent", width=10)
+            label_opponent.grid(row=1, column=0)
             print("flag==0")
             label_name_battle = Label(player_frame, text="add a name for the battle", width=10)
             #need to get the users here, is it  alist
@@ -87,53 +94,68 @@ def new_battle(name, flag, battle_name, opponent_name):
             label_name_battle.grid(row=0, column=0)
             insert_battle_name = Text(player_frame, height=1, width=10)
             insert_battle_name.grid(row=0, column=1) 
+                #the fieldswhere we have the buttons is the frame field
+            ship_1 = Button(player_frame, text="ship 1", width=10, bg="orange")
+            # rsettimng different values before lambda so we can have different for each button 
+            ship_1.configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button, 1))
+            ship_2 = Button(player_frame, text="ship 2", width=10, bg="blue")
+            ship_2.configure(command=lambda color="blue",frame = frame_field,  button=ship_2, : ship_click(color, frame, button, 2))
+            ship_3 = Button(player_frame, text="ship 3", width=10, bg="purple")
+            ship_3.configure(command=lambda color="purple",frame = frame_field,  button=ship_3, : ship_click(color, frame, button, 3))
+            
+            ship_4 = Button(player_frame, text="ship 4", width=10, bg="pink")
+            ship_4.configure(command=lambda color="pink",frame = frame_field,  button=ship_4, : ship_click(color, frame, button, 4))
+            ship_1.grid(row=2, column=0, columnspan=2)
+            ship_2.grid(row=3, column=0, columnspan=2)
+            ship_3.grid(row=4, column=0, columnspan=2)
+            ship_4.grid(row=5, column=0, columnspan=2)
+    #in the save button i can pass the name as argument so that i get teh db save
+    
+    #save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
+    #save_button.grid(row=6, column=1, pady=(30,))
+ 
+
+
             #adding a flag here to skip creation in battle table , otherwise unique constarint error
             save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option, 0))
             save_button.grid(row=6, column=1, pady=(30,))
 
             #creating the buttons 
     else:
+            create_field(frame_field, 1)
             print("flag==1")
-            selected_option = StringVar(value=opponent_name)
+###selected_option = StringVar(value=opponent_name)
             # set the default option
             #getting the option menu but with then default value onluy , if one it should be ok as we can only select one
-            option_menu = OptionMenu(player_frame, selected_option, value=opponent_name)
+            #option_menu = OptionMenu(player_frame, selected_option, value=opponent_name)
             option_menu.grid(row=1, column=1)
             
             #label of name
-            label_name_battle = Label(player_frame, text="battle name", width=10)
-            label_name_battle.grid(row=0, column=0)
+            #label_name_battle = Label(player_frame, text="battle name", width=10)
+            #label_name_battle.grid(row=0, column=0)
             #actual value for battle name
             
             
-            insert_battle_name = Text(player_frame, height=1, width=10)
-            insert_battle_name.grid(row=0, column=1) 
+            #insert_battle_name = Text(player_frame, height=1, width=10)
+            #insert_battle_name.grid(row=0, column=1) 
             #actual value, label is ok by default
-            default_text = battle_name 
-            insert_battle_name.insert(END, default_text)
+            #default_text = battle_name 
+            #insert_battle_name.insert(END, default_text)
 
 # Disable the Text widget
-            insert_battle_name.configure(state='disabled')
+            #insert_battle_name.configure(state='disabled')
             
 
+
+        #here it shold save directly to teh db thje èpositions , maybe i ghave already the boom trial
+
+
+
             #CAN T GET TH EVALUE AS IT IS NOT A TEXT FIELD ANYMORE!!
-            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option, 1))
-            save_button.grid(row=6, column=1, pady=(30,))
-        #the fieldswhere we have the buttons is the frame field
-    ship_1 = Button(player_frame, text="ship 1", width=10, bg="orange")
-    # rsettimng different values before lambda so we can have different for each button 
-    ship_1.configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button, 1))
-    ship_2 = Button(player_frame, text="ship 2", width=10, bg="blue")
-    ship_2.configure(command=lambda color="blue",frame = frame_field,  button=ship_2, : ship_click(color, frame, button, 2))
-    ship_3 = Button(player_frame, text="ship 3", width=10, bg="purple")
-    ship_3.configure(command=lambda color="purple",frame = frame_field,  button=ship_3, : ship_click(color, frame, button, 3))
-    
-    ship_4 = Button(player_frame, text="ship 4", width=10, bg="pink")
-    ship_4.configure(command=lambda color="pink",frame = frame_field,  button=ship_4, : ship_click(color, frame, button, 4))
-    ship_1.grid(row=2, column=0, columnspan=2)
-    ship_2.grid(row=3, column=0, columnspan=2)
-    ship_3.grid(row=4, column=0, columnspan=2)
-    ship_4.grid(row=5, column=0, columnspan=2)
+            ##save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option, 1))
+            #save_button.grid(row=6, column=1, pady=(30,))
+        #the fieldswhere we have the buttons is the frame field.
+
     #in the save button i can pass the name as argument so that i get teh db save
     
     #save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
