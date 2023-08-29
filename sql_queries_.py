@@ -293,97 +293,73 @@ def fetching_the_battle(id_of_battle, id_user):
         fetching_positions = [i if i!=None else "" for i in positioning.fetchone()]
         return fetching_positions
     
-
-def write_hit_miss_update(column, value, id_of_battle):
-    with sqlite3.connect(path_to_db) as conn:
-
-
-        command = "UPDATE Ships_1 SET {}={} || (?) WHERE battle_id = (?)".format(column, column)
-        adding = conn.execute(command, (value,id_of_battle[0],))
-        
-        
-        return None
-
-
-#assuming the js here are only the clickable buttons as the others are disabled 
-def boom_trial(j, frame, all_ships_opponent, id_of_battle,opponent_id):
-    #checking if the button is present in the all_ships_list
-    j_comma  = j+","
- 
-    if j in all_ships_opponent:
-        #writing to hits here
-        write_hit_miss_update('hits', j_comma , id_of_battle)
-        update = fetching_the_battle(id_of_battle, fetching_positions[1])
-        [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
-        #update sunk
-        #what is what here??
-        # Example: Check if all tuple members are in a list using list comprehension
-     #from user_page_module import build_user_page
-        # is the hits already fetched or not? yes it is in the fetching positions --> 6--> should be saved as list
-        #[7, 1, "['34']", "['22','23']", "['55','65','75']", "['13','14','15','16']", '', "'34','22','23','55','65','75','13','14','15','16'", '1']
-        print("fetching positions [6]", update[6].split(","))
-        results = [all(member in update[6].split(",") for member in tpl) for tpl in all_ships_tuples]
-
-        matching_tuples = [tpl for tpl, result in zip(all_ships_tuples, results) if result]
-        #matching tuples should now be whai i need 
-        #coloring all the values we have in the tuples darck red
-        
-        ff = [i.configure(bg="red4", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [value for tpl in  matching_tuples for value in tpl]]
-        #l = [(1, 2), (4, 3), (5, 7), (9, 13)]#all_ships_tuples
-        #values = [1, 2, 5, 6, 8, 9, 0]#hits
-        print("matching tuples", results, matching_tuples, ff)
-        #results = [all(member in values for member in tpl) for tpl in l]
-        #print(results)  # Output: [True, False, True, False]
-        #matching_tuples = [tpl for tpl, result in zip(l, results) if result]
-        
-        
-    else:
-        write_hit_miss_update('misses', j_comma , id_of_battle)
-        #write and update the field settings for single button miss
-        [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
-
-    pass
-       
-       
-       
-#here i need to design the different commands. checking if the pressed button is in the ships ones           
-#this is teh field initialization, so i can keep the first values static
-def create_field_ongoing(frame,all_ships, all_ships_tuples, all_common, all_pressed, base_window,name_battle, fetching_positions, id_of_battle):
-    #all common  needs to be recalculated, the only thing i keep static are the ships
-    for i in range(10):
-        for j in range(10):
-            #adding here the command for all
-            button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j, frame,  all_ships, all_ships_tuples, id_of_battle, fetching_positions))
-            button.grid(row=i, column=j)
-    frame.grid(row=0, column=0, padx=10, pady=10)
-    #all the common ones if present are configured here
-    configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_pressed]
-    configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_common]
-    base_window.title("Battle of player:" + name_battle[0])
-   
-   
-    
 #adding a flag to see if it is coloring a retrieve dbattle ot a new one , also if it is ongoing
 def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, flag, j):
     #coloring the ships
-    # flag == 0 then coloring at loadingy, battle not ended
+    # flag == 0 then coloring at loadingy, battle not ended   ---- [i for i in all_ships]
     if flag==0:
-        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_misses_opponent]
-        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent]
-        
+        print("all buttons??", frame.grid_slaves(), frame.winfo_class())
+        print("entering the coloring 0 flag that should color all the already pressed buttons, ", "all_hits_opponent", all_hits_opponent, "all misses opponent", all_misses_opponent)
+        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_misses_opponent]]
+        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_hits_opponent]]
+        print("all lists to color ",configure_field_pressed, configure_ships_hits )
     #coloring when loading ended
     elif flag == 1:
         #all the buttons are colored , hits red, misses in gray
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in all_hits_opponent]
         configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent]
-    #at pressing
-    else:
+    #at pressing when battle ongoing and hit
+    elif flag==2:
         #check the format here 
-        if j in all_ships_opponent:
+        
              [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
-        else:
+    else:
             [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
     pass    
+
+
+#needs to write on the column chosen updating the field and nto deleting the values already there
+# hit_or_misses can be all_misses or all_hits deopending on the case 
+
+def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misses):
+    #first selecting value and then updating and rewriting 
+    #using already inserted to add 
+    with sqlite3.connect(path_to_db) as conn:
+        #setting the user_id equal to the opponent_id
+        command = f"UPDATE Ships_1 SET {column} = (?) WHERE battle_id = (?) AND user_id = (?)" 
+        #column passed in directly in teh function?
+        #printing out teh values passd 
+        print("values passed on to the command  ",column,value,  type(value), type(id_of_battle), id_of_battle, type(opponent_id), opponent_id )
+        adding = conn.execute(command, ( value,id_of_battle[0], opponent_id ))
+        
+        
+        return None
+    
+#boom_trial(j, )
+
+#assuming the js here are only the clickable buttons as the others are disabled 
+def boom_trial(j, frame, all_hits_opponent, all_misses_opponent,  all_ships_opponent, id_opponent, id_of_battle):
+    #checking if the button is present in the all_ships_list
+    #creating j comma as i need to create a list
+    j_comma  = j
+ 
+    if j in all_ships_opponent:
+        #writing to hits here
+        write_hit_miss_update('hits', j_comma , id_of_battle, id_opponent, all_hits_opponent)
+        coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 2, j)
+    else:
+        write_hit_miss_update('misses', j_comma , id_of_battle, id_opponent,  all_misses_opponent)
+        #update sunk
+        #what is what here??
+        coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 3, j)
+        
+
+       
+#here i need to design the different commands. checking if the pressed button is in the ships ones           
+
+   
+    
+
             
 #needs id of th eplayer , user_id should be the one playing
 def loading_battle(id_of_battle, user_id, flag, name):
@@ -445,13 +421,16 @@ def loading_battle(id_of_battle, user_id, flag, name):
 
     #one of the two battles has ended
     if len(all_common_opponent_no_null)==10:
+        print("entering opponent won")
     #opponent won
-        user_page_module.new_battle(id_of_battle[2][0], 2,all_hits_player, all_misses_player, id_opponent)
+    #id_of_battle[2][0] --> opponent _name
+        user_page_module.new_battle(id_of_battle[2][0], 2,all_hits_player, all_misses_player, id_opponent, id_of_battle)
         base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
     
     elif len(all_common_player_no_null)==10:
+        print("entering player won")
         #player won
-        user_page_module.new_battle(name[0], 2,all_hits_player, all_misses_player,  all_ships_opponent, id_opponent)
+        user_page_module.new_battle(name[0], 2,all_hits_player, all_misses_player,  all_ships_opponent, id_opponent, id_of_battle)
         
         #here i need to create the field as it is in the initial option but saved ships are not clickable
         
@@ -461,20 +440,12 @@ def loading_battle(id_of_battle, user_id, flag, name):
         #case in which the ships have been positioned only by the opponent 
         #case of non ended game, just started or not started
     else:  
-        user_page_module.new_battle(name[0], 2,all_hits_player, all_misses_player,  all_ships_opponent, id_opponent)
-        #passing in the flag argument here and then going down the list
-        # 0 
-        print("entering all common, args",fetching_positions )
-        #building page with no ships but already created
-
-        #first pne needs to be the name of the player
-        #using function to get name from user id
-        name = getting_name_from_id(user_id)
-        print("passing to the function create field in the retrieve battle --> ", name,  1, id_of_battle[1], id_of_battle[2])
-        user_page_module.new_battle(name[0], 1, id_of_battle[1], id_of_battle[2], all_ships_opponent)
-       
-        #case it is less it is still an active battle
-        #need to isolate the different buttons if they where hit and where ships
+        wid = user_page_module.new_battle(name[0], 1,all_hits_player, all_misses_player,  all_ships_opponent, id_opponent, id_of_battle)
+        print("entering battle still ongoing")
+        #coloring as it is ongoing
+        coloring(wid, all_ships_opponent, all_hits_opponent, all_misses_opponent, 0,"")
+ 
+ 
         pass
 
 #    if len(all_ships)==10:

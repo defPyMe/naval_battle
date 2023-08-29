@@ -51,7 +51,7 @@ def update(window):
 #need to be moved from here as it is not the 
 #flag to differentiate between the creation field
 #adding arguments to color in case battle has ended, jut one as we can differentialte the lists later
-def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent):
+def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle):
     #need to account also for ended games 
     if flag == 0:
         for i in range(10):
@@ -62,7 +62,7 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent):
         #ongoing game
         for i in range(10):
             for j in range(10):
-                button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j))#lambda j=str(i)+str(j): check_hit(j)
+                button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j,frame,  all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle))#lambda j=str(i)+str(j): check_hit(j)
                 button.grid(row=i, column=j)
     else:
         for i in range(10):
@@ -71,13 +71,11 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent):
                 button.grid(row=i, column=j)
         #need to color the buttons based on the hits and misses (misses dark gery and hits dark red)
         # coloring also the non presssed
-        color_ships_sunk = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_ships_opponent]]
-        #coloring all the same 
-        color_not_pressed_misses = [i.configure(bg="grey", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in [i for i in all_ships_opponent]]
+
         
 
 
-def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent):
+def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle):
     base_window = Toplevel()
     frame_field = Frame(base_window)
     player_frame = Frame(base_window)
@@ -88,7 +86,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent):
     #insert_battle_name, selected_option
     if flag==0:
         #empty arguments as new battle
-            create_field(frame_field, 0, "", "",  all_ships_opponent)
+            create_field(frame_field, 0, "", "",  all_ships_opponent, id_opponent, id_of_battle)
  
             player_frame.grid(row=0, column=1)
             #frame_ships.grid(row=1, column=1)
@@ -138,7 +136,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent):
             #creating the buttons 
     elif flag == 1:
             # empty arguments as the battle has not ended
-            create_field(frame_field, 1, "", "",  all_ships_opponent)
+            create_field(frame_field, 1, "", "",  all_ships_opponent, id_opponent, id_of_battle)
             print("flag==1")
 ###selected_option = StringVar(value=opponent_name)
             # set the default option
@@ -152,8 +150,9 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent):
             #actual value for battle name
     else:
         #ended game
-            create_field(frame_field, 2, all_hits, all_misses,  all_ships_opponent)
-
+            create_field(frame_field, 2, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle)
+            #trying to return the widget so as to access it in loading
+    return frame_field
             
             #insert_battle_name = Text(player_frame, height=1, width=10)
             #insert_battle_name.grid(row=0, column=1) 
