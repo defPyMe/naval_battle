@@ -455,8 +455,13 @@ def loading_battle(id_of_battle, user_id, flag, name):
         #case in which the ships have been positioned only by the opponent 
         #case of non ended game, just started or not started
     else:  
-        wid = user_page_module.new_battle(name[0], 1,all_hits_player, all_misses_player,  all_ships_opponent, id_opponent, id_of_battle)
-        print("entering battle still ongoing")
+        #loading correctly here the first time
+        
+        # CHANGED HERE!! --> player = opponent
+        
+        
+        wid = user_page_module.new_battle(name[0], 1,all_hits_opponent, all_misses_opponent,  all_ships_opponent, id_opponent, id_of_battle)
+        print("entering battle still ongoing",all_hits_player, all_hits_opponent, all_misses_player, all_misses_opponent,  all_ships_opponent, id_opponent, id_of_battle)
         #coloring as it is ongoing
         coloring(wid, all_ships_opponent, all_hits_opponent, all_misses_opponent, 0,"")
  

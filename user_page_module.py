@@ -52,6 +52,7 @@ def update(window):
 #flag to differentiate between the creation field
 #adding arguments to color in case battle has ended, jut one as we can differentialte the lists later
 def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle):
+    print("all hits misses in create filed", all_hits, all_misses)
     #need to account also for ended games 
     if flag == 0:
         for i in range(10):
@@ -136,6 +137,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             #creating the buttons 
     elif flag == 1:
             # empty arguments as the battle has not ended
+            print("all misses, all hits in new battle", all_hits, all_misses)
             create_field(frame_field, 1, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle)
             print("flag==1")
 ###selected_option = StringVar(value=opponent_name)
