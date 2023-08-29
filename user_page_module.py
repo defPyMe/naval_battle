@@ -86,7 +86,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
     #insert_battle_name, selected_option
     if flag==0:
         #empty arguments as new battle
-            create_field(frame_field, 0, "", "",  all_ships_opponent, id_opponent, id_of_battle)
+            create_field(frame_field, 0, [], [],  all_ships_opponent, id_opponent, id_of_battle)
  
             player_frame.grid(row=0, column=1)
             #frame_ships.grid(row=1, column=1)
@@ -136,7 +136,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             #creating the buttons 
     elif flag == 1:
             # empty arguments as the battle has not ended
-            create_field(frame_field, 1, "", "",  all_ships_opponent, id_opponent, id_of_battle)
+            create_field(frame_field, 1, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle)
             print("flag==1")
 ###selected_option = StringVar(value=opponent_name)
             # set the default option

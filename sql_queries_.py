@@ -8,6 +8,7 @@ from tkinter import messagebox
 import string
 import sys , os
 import user_page_module
+import ast
 
 
 
@@ -295,14 +296,21 @@ def fetching_the_battle(id_of_battle, id_user):
     
 #adding a flag to see if it is coloring a retrieve dbattle ot a new one , also if it is ongoing
 def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, flag, j):
+    #turn
+    print("all lists to color ", all_hits_opponent, all_misses_opponent , all_ships_opponent)
+
+
     #coloring the ships
     # flag == 0 then coloring at loadingy, battle not ended   ---- [i for i in all_ships]
     if flag==0:
+        all_ships_opponent_ = ast.literal_eval(all_ships_opponent[0])
+        all_misses_opponent_ = ast.literal_eval(all_misses_opponent[0])
+        all_hits_opponent_ = ast.literal_eval(all_hits_opponent[0])
         print("all buttons??", frame.grid_slaves(), frame.winfo_class())
         print("entering the coloring 0 flag that should color all the already pressed buttons, ", "all_hits_opponent", all_hits_opponent, "all misses opponent", all_misses_opponent)
-        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_misses_opponent]]
-        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_hits_opponent]]
-        print("all lists to color ",configure_field_pressed, configure_ships_hits )
+        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_misses_opponent_]]
+        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_hits_opponent_]]
+
     #coloring when loading ended
     elif flag == 1:
         #all the buttons are colored , hits red, misses in gray
@@ -323,14 +331,18 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
 
 def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misses):
     #first selecting value and then updating and rewriting 
+    
+    str(hit_or_misses.append(value)).replace("[","").replace("]","").replace("\"", "")
+    print("checking what i spassed with hits or misses ", type(hit_or_misses), hit_or_misses, value)
     #using already inserted to add 
     with sqlite3.connect(path_to_db) as conn:
         #setting the user_id equal to the opponent_id
         command = f"UPDATE Ships_1 SET {column} = (?) WHERE battle_id = (?) AND user_id = (?)" 
         #column passed in directly in teh function?
         #printing out teh values passd 
-        print("values passed on to the command  ",column,value,  type(value), type(id_of_battle), id_of_battle, type(opponent_id), opponent_id )
-        adding = conn.execute(command, ( value,id_of_battle[0], opponent_id ))
+        #print("values passed on to the command  ",column,value,  type(value), type(id_of_battle), id_of_battle, type(opponent_id), opponent_id )
+        
+        adding = conn.execute(command, ( str(hit_or_misses),id_of_battle[0], opponent_id ))
         
         
         return None
@@ -344,10 +356,13 @@ def boom_trial(j, frame, all_hits_opponent, all_misses_opponent,  all_ships_oppo
     j_comma  = j
  
     if j in all_ships_opponent:
+        print("checking what we pass in the boom trial case of hit", all_hits_opponent, type(all_hits_opponent))
         #writing to hits here
         write_hit_miss_update('hits', j_comma , id_of_battle, id_opponent, all_hits_opponent)
         coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 2, j)
     else:
+        print("checking what we pass in the boom trial case of miss", all_misses_opponent, type(all_misses_opponent))
+        #writing to hits here
         write_hit_miss_update('misses', j_comma , id_of_battle, id_opponent,  all_misses_opponent)
         #update sunk
         #what is what here??

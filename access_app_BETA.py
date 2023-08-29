@@ -1,6 +1,5 @@
-import string
+import ast
 
-translator = str.maketrans("","", string.punctuation)
-
-f = ['(1,)', '(3,)']
-print(f[0].translate(translator))
+f = ["['', '44', '54', '55']"]
+f_list = ast.literal_eval(f[0])
+print(f_list)
