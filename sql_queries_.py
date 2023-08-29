@@ -306,11 +306,11 @@ def write_hit_miss_update(column, value, id_of_battle):
 
 
 #assuming the js here are only the clickable buttons as the others are disabled 
-def boom_trial(j, frame, all_ships,all_ships_tuples,  id_of_battle, fetching_positions):
+def boom_trial(j, frame, all_ships_opponent, id_of_battle,opponent_id):
     #checking if the button is present in the all_ships_list
     j_comma  = j+","
  
-    if j in all_ships:
+    if j in all_ships_opponent:
         #writing to hits here
         write_hit_miss_update('hits', j_comma , id_of_battle)
         update = fetching_the_battle(id_of_battle, fetching_positions[1])
@@ -360,13 +360,38 @@ def create_field_ongoing(frame,all_ships, all_ships_tuples, all_common, all_pres
     configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_pressed]
     configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_common]
     base_window.title("Battle of player:" + name_battle[0])
+   
+   
     
-            
+#adding a flag to see if it is coloring a retrieve dbattle ot a new one , also if it is ongoing
+def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, flag, j):
+    #coloring the ships
+    # flag == 0 then coloring at loadingy, battle not ended
+    if flag==0:
+        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_misses_opponent]
+        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent]
+        
+    #coloring when loading ended
+    elif flag == 1:
+        #all the buttons are colored , hits red, misses in gray
+        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in all_hits_opponent]
+        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent]
+    #at pressing
+    else:
+        #check the format here 
+        if j in all_ships_opponent:
+             [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
+        else:
+            [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
+    pass    
             
 #needs id of th eplayer , user_id should be the one playing
-def loading_battle(id_of_battle, user_id, flag):
+def loading_battle(id_of_battle, user_id, flag, name):
     #what is it that i am passing 
     print("two arguments ---->",id_of_battle, user_id )
+    base_window = Toplevel()
+    frame_field_retr = Frame(base_window)
+    player_frame = Frame(base_window)
     #here i need to pass in the values for the different 
     #gets the battle id starting from the name ,fetches all the ships 
     fetching_positions = fetching_the_battle(id_of_battle, user_id[0])
@@ -384,7 +409,7 @@ def loading_battle(id_of_battle, user_id, flag):
                         all_ships_player[4],all_ships_player[5]),(all_ships_player[6],
                         all_ships_player[7],all_ships_player[8], all_ships_player[9])]
     
-    all_common_player = [i for i in all_ships_player if i in all_hits_player and i!=""]
+    all_common_player_no_null = [i for i in all_ships_player if i in all_hits_player and i!=""]
     #all_common_player_no_null = [i for i in all_common_player if i!=""]
     
     
@@ -403,14 +428,11 @@ def loading_battle(id_of_battle, user_id, flag):
     all_ships_opponent_tuples = [(all_ships_opponent[0],),(all_ships_opponent[1],all_ships_opponent[2]),(all_ships_opponent[3],
                     all_ships_opponent[4],all_ships_opponent[5]),(all_ships_opponent[6],
                         all_ships_opponent[7],all_ships_opponent[8], all_ships_opponent[9])]
-    all_common_opponent = [i for i in all_ships_opponent if i in all_hits_opponent]
+    #all_common_opponent = [i for i in all_ships_opponent if i in all_hits_opponent]
     all_common_opponent_no_null = [i for i in all_ships_opponent if i in all_hits_opponent and i!=""]
     
     #getting the hits as well 
-    if len(all_ships_player)==10:
-        #here the battle could be started or ended 
-        #    
-        pass
+
     
     
     #the first one is not recognized as tuple if not inserted the ast railing comma
@@ -420,29 +442,36 @@ def loading_battle(id_of_battle, user_id, flag):
     #creating the dicrtionary with the colors 
     #all_colors = {"ship_1" : "orange" , "ship_2" : "blue", "ship_3" :  "purple", "ship_4" : "pink" }
     #creating the battle 
-    base_window = Toplevel()
-    frame_field_retr = Frame(base_window)
-    player_frame = Frame(base_window)
-    all_common_no_null = [i for i in all_common_player if i!=""]
-    print("all pressed", all_hits, "all_common_no_null", all_common_no_null)
-    if len(all_common_no_null)==10:
+
+    #one of the two battles has ended
+    if len(all_common_opponent_no_null)==10:
+    #opponent won
+        user_page_module.new_battle(id_of_battle[2][0], 2,all_hits_player, all_misses_player, id_opponent)
+        base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
+    
+    elif len(all_common_player_no_null)==10:
+        #player won
+        user_page_module.new_battle(name[0], 2,all_hits_player, all_misses_player,  all_ships_opponent, id_opponent)
+        
         #here i need to create the field as it is in the initial option but saved ships are not clickable
-        create_field_over(frame_field_retr, all_ships)
+        
         # coloring all retrieved ships
-        #need to display the winner- maybe putting a new column with the winner 
-        base_window.title("Winner  of the battle is:" + id_of_battle[1])
+        #need to display the winner- adding it to the name of the window
+        base_window.title("Winner of the battle is:" + name)
         #case in which the ships have been positioned only by the opponent 
-    elif len(all_common_no_null)==0:
+        #case of non ended game, just started or not started
+    else:  
+        user_page_module.new_battle(name[0], 2,all_hits_player, all_misses_player,  all_ships_opponent, id_opponent)
         #passing in the flag argument here and then going down the list
         # 0 
         print("entering all common, args",fetching_positions )
         #building page with no ships but already created
 
-        #first pne needs to be the name of the palyer
+        #first pne needs to be the name of the player
         #using function to get name from user id
         name = getting_name_from_id(user_id)
         print("passing to the function create field in the retrieve battle --> ", name,  1, id_of_battle[1], id_of_battle[2])
-        user_page_module.new_battle(name[0], 1, id_of_battle[1], id_of_battle[2])
+        user_page_module.new_battle(name[0], 1, id_of_battle[1], id_of_battle[2], all_ships_opponent)
        
         #case it is less it is still an active battle
         #need to isolate the different buttons if they where hit and where ships
@@ -510,7 +539,7 @@ def retrieve_battle(name, frame, user_id):
         #i have the different ids right here in the first index ??
         #which one is the name of the chosen battle
         #f is now a tuple with the name and id
-        button = Button(frame, text=battle_names[i], command=lambda f=(fetching_the_result[i][0],battle_names[i],opponent_current_battle): loading_battle(f , user_id, 0))
+        button = Button(frame, text=battle_names[i], command=lambda f=(fetching_the_result[i][0],battle_names[i],opponent_current_battle): loading_battle(f , user_id, 0, name))
         button.grid(row=i, column=0)
     pass
                     

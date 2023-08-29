@@ -50,20 +50,34 @@ def update(window):
 
 #need to be moved from here as it is not the 
 #flag to differentiate between the creation field
-def create_field(frame, flag):
+#adding arguments to color in case battle has ended, jut one as we can differentialte the lists later
+def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent):
+    #need to account also for ended games 
     if flag == 0:
         for i in range(10):
             for j in range(10):
                 button = Button(frame, text=str(i)+str(j), command="")#lambda j=str(i)+str(j): check_hit(j)
                 button.grid(row=i, column=j)
-    else:
+    elif flag == 1:
+        #ongoing game
         for i in range(10):
             for j in range(10):
                 button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j))#lambda j=str(i)+str(j): check_hit(j)
                 button.grid(row=i, column=j)
+    else:
+        for i in range(10):
+            for j in range(10):
+                button = Button(frame, text=str(i)+str(j))#lambda j=str(i)+str(j): check_hit(j)
+                button.grid(row=i, column=j)
+        #need to color the buttons based on the hits and misses (misses dark gery and hits dark red)
+        # coloring also the non presssed
+        color_ships_sunk = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_ships_opponent]]
+        #coloring all the same 
+        color_not_pressed_misses = [i.configure(bg="grey", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in [i for i in all_ships_opponent]]
+        
 
 
-def new_battle(name, flag, battle_name, opponent_name):
+def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent):
     base_window = Toplevel()
     frame_field = Frame(base_window)
     player_frame = Frame(base_window)
@@ -73,7 +87,8 @@ def new_battle(name, flag, battle_name, opponent_name):
     frame_field.grid(row=0, column=0, padx=10, pady=10)
     #insert_battle_name, selected_option
     if flag==0:
-            create_field(frame_field, 0)
+        #empty arguments as new battle
+            create_field(frame_field, 0, "", "",  all_ships_opponent)
  
             player_frame.grid(row=0, column=1)
             #frame_ships.grid(row=1, column=1)
@@ -121,20 +136,24 @@ def new_battle(name, flag, battle_name, opponent_name):
             save_button.grid(row=6, column=1, pady=(30,))
 
             #creating the buttons 
-    else:
-            create_field(frame_field, 1)
+    elif flag == 1:
+            # empty arguments as the battle has not ended
+            create_field(frame_field, 1, "", "",  all_ships_opponent)
             print("flag==1")
 ###selected_option = StringVar(value=opponent_name)
             # set the default option
             #getting the option menu but with then default value onluy , if one it should be ok as we can only select one
             #option_menu = OptionMenu(player_frame, selected_option, value=opponent_name)
-            option_menu.grid(row=1, column=1)
+            #option_menu.grid(row=1, column=1)
             
             #label of name
             #label_name_battle = Label(player_frame, text="battle name", width=10)
             #label_name_battle.grid(row=0, column=0)
             #actual value for battle name
-            
+    else:
+        #ended game
+            create_field(frame_field, 2, all_hits, all_misses,  all_ships_opponent)
+
             
             #insert_battle_name = Text(player_frame, height=1, width=10)
             #insert_battle_name.grid(row=0, column=1) 
