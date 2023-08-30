@@ -298,24 +298,48 @@ def fetching_the_battle(id_of_battle, id_user):
 def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, flag, j):
     #turn
     print("all lists to color ", all_hits_opponent, all_misses_opponent , all_ships_opponent)
-
-
+    #if one is empty it generates  an error and skips over this 
+    if len(all_hits_opponent)>1:
+        try:
+            #all ships should be ok already , it was probably generating the issueas it was a list already 
+                #all_ships_opponent_ = ast.literal_eval(all_ships_opponent[0])
+                #if one is empty it generates an error! 
+                all_hits_opponent_ = ast.literal_eval(all_hits_opponent[0]) 
+        except:
+                all_hits_opponent_ = all_hits_opponent
+                all_misses_opponent_ = all_misses_opponent
+    elif len(all_misses_opponent)>1:
+        try:
+            #all ships should be ok already , it was probably generating the issueas it was a list already 
+                #all_ships_opponent_ = ast.literal_eval(all_ships_opponent[0])
+                #if one is empty it generates an error! 
+                all_misses_opponent_ = ast.literal_eval(all_misses_opponent[0]) 
+        except:
+                all_misses_opponent_ = all_misses_opponent
+                all_hits_opponent_ = all_hits_opponent
+    else:
+        try:
+            all_misses_opponent = ast.literal_eval(all_misses_opponent[0]) 
+            all_hits_opponent = ast.literal_eval(all_hits_opponent[0]) 
+        except:
+            all_misses_opponent_ = all_misses_opponent
+            all_hits_opponent_ = all_hits_opponent
+            
+            
     #coloring the ships
     # flag == 0 then coloring at loadingy, battle not ended   ---- [i for i in all_ships]
     if flag==0:
-        all_ships_opponent_ = ast.literal_eval(all_ships_opponent[0])
-        all_misses_opponent_ = ast.literal_eval(all_misses_opponent[0])
-        all_hits_opponent_ = ast.literal_eval(all_hits_opponent[0])
+
         print("all buttons??", frame.grid_slaves(), frame.winfo_class())
-        print("entering the coloring 0 flag that should color all the already pressed buttons, ", "all_hits_opponent", all_hits_opponent, "all misses opponent", all_misses_opponent)
+        print("entering the coloring 0 flag that should color all the already pressed buttons, ", "all_hits_opponent", all_hits_opponent_, "all misses opponent", all_misses_opponent_)
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_misses_opponent_]]
         configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_hits_opponent_]]
 
     #coloring when loading ended
     elif flag == 1:
         #all the buttons are colored , hits red, misses in gray
-        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in all_hits_opponent]
-        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent]
+        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in all_hits_opponent_]
+        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
     #at pressing when battle ongoing and hit
     elif flag==2:
         #check the format here 
@@ -331,9 +355,24 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
 
 def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misses):
     #first selecting value and then updating and rewriting 
-    
-    str(hit_or_misses.append(value)).replace("[","").replace("]","").replace("\"", "")
+    #
+    #
+    #NEEDS TO BE A LIST EVERY TIME! after the first appends the folowing
+    # ["['', '65', '75', '76', '66', '67']", '87']  with value 87
     print("checking what i spassed with hits or misses ", type(hit_or_misses), hit_or_misses, value)
+    #
+    try:
+            hit_or_misses = ast.literal_eval(hit_or_misses[0])
+            hit_or_misses.append(value)
+            print("processing_ast")
+
+    except:
+            hit_or_misses.append(value)
+            print("processing normal string")
+
+    #changing here !!! maye it is getting written twice 
+    #hit_or_misses.append(value)
+
     #using already inserted to add 
     with sqlite3.connect(path_to_db) as conn:
         #setting the user_id equal to the opponent_id
