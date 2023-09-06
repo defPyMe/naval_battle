@@ -49,7 +49,7 @@ def update_name(new_name, name, toplevel):
 #flag to differentiate between the creation field
 #adding arguments to color in case battle has ended, jut one as we can differentialte the lists later
 def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle):
-    print("all hits misses in create filed", all_hits, all_misses)
+    #print("all hits misses in create filed", all_hits, all_misses)
     #need to account also for ended games 
     if flag == 0:
         for i in range(10):
@@ -90,10 +90,10 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             #frame_ships.grid(row=1, column=1)
             label_opponent = Label(player_frame, text="Opponent", width=10)
             label_opponent.grid(row=1, column=0)
-            print("flag==0")
+            #print("flag==0")
             label_name_battle = Label(player_frame, text="add a name for the battle", width=10)
             #need to get the users here, is it  alist
-            print("check users name ------------>",check_users(name))
+            #print("check users name ------------>",check_users(name))
             options = [""]+check_users(name)
             # create a variable to store the selected option
             selected_option = StringVar()
@@ -134,9 +134,9 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             #creating the buttons 
     elif flag == 1:
             # empty arguments as the battle has not ended
-            print("all misses, all hits in new battle", all_hits, all_misses)
+            #print("all misses, all hits in new battle", all_hits, all_misses)
             create_field(frame_field, 1, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle)
-            print("flag==1")
+            #print("flag==1")
 
     else:
         #ended game
@@ -215,7 +215,7 @@ def ship_click(color, frame, button, total):
     #configuring all of the buttons
         [i.config(state = ACTIVE, bg="#f0f0f0", command=lambda button_grid=i, color=color, total_ships=total_ships, frame=frame : button_click(button_grid, color, total_ships, frame)) for i in frame.grid_slaves() if i not in colored_buttons]
     else:
-        print("entering resetting")
+        #print("entering resetting")
         #i can truy to remove the color dinamically 
         #this should reset all the other buttons if not of the color 
         colors.remove(color)

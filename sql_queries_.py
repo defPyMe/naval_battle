@@ -52,7 +52,7 @@ def getting_user_id_from_name(name):
 def getting_name_from_id(id_):
     with sqlite3.connect(path_to_db) as conn:
         if type(id_) is tuple:
-            print("what the passed id is and it should be a tuple---->", id_)
+            #print("what the passed id is and it should be a tuple---->", id_)
             id_=id_[0]
         else:
             pass
@@ -133,7 +133,7 @@ def retrieve_image(name, current_window ):
                             img = conn.execute(command, (name,))
                             #returns a tuple here
                             photo_tuple = img.fetchone()
-                            print("photo tuple", photo_tuple)
+                            #print("photo tuple", photo_tuple)
                             
                             photo = photo_tuple[0]
     fp = io.BytesIO(photo)
@@ -182,20 +182,20 @@ def SaveBattle(name_creator, field, text, options, flag):
                 values_to_search = (selection_var + "  " + name_creator).split()
                 #looking for the ids in teh tabl
                 #i get the two users_ids here 
-                print("values to seearch ", values_to_search)
+                #print("values to seearch ", values_to_search)
                 with sqlite3.connect(path_to_db) as conn:
                     query = 'SELECT user_id FROM users WHERE name IN ({})'.format(', '.join('?' for _ in values_to_search))
                     ids = conn.execute(query, values_to_search)
                     #first i sname of opponent and the other the one of the creator 
                     #making the list without parenthesis and other strange punctuation
                     ids_int =[str(i) for i in list(ids.fetchall())]
-                    print("ids_int", ids_int)
+                    #print("ids_int", ids_int)
                     if flag==0:
                         #once the players ids have beeen inserted i can proceed with the retrieving of the battle id as it was created
                         #how do i upgrade the user_id? the one creating the table?
                         command = "INSERT INTO battle_table(name, creator, opponent) VALUES (?,?,?)"
                         #is this wrong here
-                        print("checking wjhat is inserted when crearting a table", name_opponent_and_battle[1], str(ids_int[0]).translate(translator), str(ids_int[1]).translate(translator))
+                        #print("checking wjhat is inserted when crearting a table", name_opponent_and_battle[1], str(ids_int[0]).translate(translator), str(ids_int[1]).translate(translator))
                         conn.execute(command, (name_opponent_and_battle[1], str(ids_int[0]).translate(translator), str(ids_int[1]).translate(translator)))
                     #committing the results
                         conn.commit()
@@ -216,7 +216,7 @@ def SaveBattle(name_creator, field, text, options, flag):
                 # CHECK HERE IF IT IS NEEDED OR NOT 
                 #not sure this is needed anyway 
                     
-                        print("id fetched", id_fetched)
+                        #print("id fetched", id_fetched)
                         try:
                             if flag==0:
                                 #here something happening differently if is the opponent or the user inserting , as i do not need to qupdate the information i have already there
@@ -224,12 +224,12 @@ def SaveBattle(name_creator, field, text, options, flag):
                                 command = "UPDATE Ships_1 SET user_id = (?) , ship_1 = (?), ship_2 = (?), ship_3 = (?), ship_4 = (?), player_now_playing = (?) WHERE battle_id = (?)"
                                 conn.execute(command, (str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched))
                                 #adding also the battle of the opponent 
-                                print("first insertion",(str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched) )
+                                #print("first insertion",(str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched) )
                                 conn.commit()
                             else:
                                 #here something happening differently if is the opponent or the user inserting , as i do not need to qupdate the information i have already there
                                 # info already inserted = battle_id, user_id, player now playing
-                                print("first insertion",(str(ship_1), str(ship_2), str(ship_3), str(ship_4),id_fetched[0], ids_int[0].translate(translator), "isolating the battle id", id_fetched[0]  ))
+                               #print("first insertion",(str(ship_1), str(ship_2), str(ship_3), str(ship_4),id_fetched[0], ids_int[0].translate(translator), "isolating the battle id", id_fetched[0]  ))
                                 command = "UPDATE Ships_1 SET ship_1 = (?), ship_2 = (?), ship_3 = (?), ship_4 = (?) WHERE battle_id = (?) AND user_id = (?)"
                                 conn.execute(command, (str(ship_1), str(ship_2), str(ship_3), str(ship_4), *id_fetched, ids_int[0].translate(translator)))
                                 messagebox.showinfo("inserted ships", "battle now playing")
@@ -246,7 +246,7 @@ def SaveBattle(name_creator, field, text, options, flag):
                             if flag==0:
                                 command = "INSERT INTO Ships_1(battle_id, user_id, ship_1, ship_2, ship_3, ship_4, player_now_playing) VALUES(?,?,?,?,?,?,?)"
                                 conn.execute(command, (*id_fetched, str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator)))
-                                print("second insertion",((str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator), *id_fetched) ))
+                                #print("second insertion",((str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator), *id_fetched) ))
                                 conn.commit()
                             else:
                                 pass
@@ -260,7 +260,7 @@ def SaveBattle(name_creator, field, text, options, flag):
                         # here I have to pass lists as some ships have mpre than one value
                         #need the battle id here + creator id) used above and the  
                             ("not entering as the condition wasn t satisfied")
-                            print(cases, cases_negative, name_opponent_and_battle)
+                            #print(cases, cases_negative, name_opponent_and_battle)
             except Exception as e:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -376,7 +376,7 @@ def processing_fetched_results(fetched_results, flag):
 #adding a flag to see if it is coloring a retrieve dbattle ot a new one , also if it is ongoing
 def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, flag, j):
     #turn
-    print("all lists to color pre processing ", all_hits_opponent, all_misses_opponent , all_ships_opponent)
+    #print("all lists to color pre processing ", all_hits_opponent, all_misses_opponent , all_ships_opponent)
     #if one is empty it generates  an error and skips over this 
     if len(all_hits_opponent)>1:
         try:
@@ -388,7 +388,7 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
         except:
                 all_hits_opponent_ = all_hits_opponent
                 all_misses_opponent_ = all_misses_opponent
-        print("case of hits > 1 and misses <1")
+        #print("case of hits > 1 and misses <1")
     elif len(all_misses_opponent)>1:
         try:
             #all ships should be ok already , it was probably generating the issueas it was a list already 
@@ -399,7 +399,7 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
         except:
                 all_misses_opponent_ = all_misses_opponent
                 all_hits_opponent_ = all_hits_opponent
-        print("case of hits < 1 and misses >1")
+     #   print("case of hits < 1 and misses >1")
     else:
         try:
             all_misses_opponent_ = ast.literal_eval(all_misses_opponent) 
@@ -407,7 +407,7 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
         except:
             all_misses_opponent_ = all_misses_opponent
             all_hits_opponent_ = all_hits_opponent
-        print("case of hits > 1 and misses >1")
+        #print("case of hits > 1 and misses >1")
             
             
     #coloring the ships
@@ -416,7 +416,7 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
         #print("entering the coloring 0 flag that should color all the already pressed buttons, ", "all_hits_opponent", all_hits_opponent_, "all misses opponent", all_misses_opponent_)
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_misses_opponent_]#[i for i in all_misses_opponent_]]
         configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]#[i for i in all_hits_opponent_]]
-        print("went through with coloring flag == 0", all_hits_opponent_, all_misses_opponent_, len(all_misses_opponent_))
+        #print("went through with coloring flag == 0", all_hits_opponent_, all_misses_opponent_, len(all_misses_opponent_))
     #coloring when loading ended
     elif flag == 1:
         #all the buttons are colored , hits red, misses in gray
@@ -442,17 +442,17 @@ def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misse
     #NEEDS TO BE A LIST EVERY TIME! after the first appends the folowing
     # ["['', '65', '75', '76', '66', '67']", '87']  with value 87
     #print("checking what i spassed with hits or misses ", type(hit_or_misses), hit_or_misses, value)
-    print("hit or misses in write hit or miss", hit_or_misses,type(hit_or_misses),list(hit_or_misses), value, type(value) )
+    #print("hit or misses in write hit or miss", hit_or_misses,type(hit_or_misses),list(hit_or_misses), value, type(value) )
     try:
             hit_or_misses = ast.literal_eval(hit_or_misses)
-            print("ast hit or misses --> ", hit_or_misses, value)
+            #print("ast hit or misses --> ", hit_or_misses, value)
             hit_or_misses.append(value)
-            print("processing_ast")
-            print("higt or misses post appending", hit_or_misses)
+            #print("processing_ast")
+            #print("higt or misses post appending", hit_or_misses)
 
     except:
             hit_or_misses.append(value)
-            print("processing normal string")
+            #print("processing normal string")
 
     #changing here !!! maye it is getting written twice 
     #hit_or_misses.append(value)
@@ -512,16 +512,26 @@ def boom_trial(j, frame,  all_ships_opponent, id_opponent, id_of_battle):
 #needs id of th eplayer , user_id should be the one playing
 def loading_battle(id_of_battle, user_id, flag, name):
     #what is it that i am passing 
-    print("two arguments ---->",id_of_battle, user_id )
-    base_window = Toplevel()
-    frame_field_retr = Frame(base_window)
-    player_frame = Frame(base_window)
+    #print("two arguments ---->",id_of_battle, user_id )
+    
+    #IS THIS NEEDED???
+    #PROBABLY NOT
+    
+    
+    
+    #base_window = Toplevel()
+    #frame_field_retr = Frame(base_window)
+    #player_frame = Frame(base_window)
+    
+    
+    
+    
     #here i need to pass in the values for the different 
     #gets the battle id starting from the name ,fetches all the ships 
     #this needs to return all teh needed info to be accessed by its name 
     fetching_positions = fetching_the_battle(id_of_battle, user_id[0])
     #if all ships are positioned for me then i can load the battle with no names and buttons
-    print("fetching tuples name and id check",  id_of_battle)
+    #print("fetching tuples name and id check",  id_of_battle)
     #using funtion to process
     # expected result is a list that is as follows 
     # [[all_ships_player, all_hits_player, all_misses_player, all_ships_tuples, all_common_player_no_null] ]
@@ -530,7 +540,7 @@ def loading_battle(id_of_battle, user_id, flag, name):
    # need to get the opponent id here 
     
     id_opponent = getting_opponent_id_from_battle_id(id_of_battle[0], user_id)
-    print("opponent id in the loading battle --> ", id_opponent)
+    #print("opponent id in the loading battle --> ", id_opponent)
     fetching_positions_opponent = fetching_the_battle(id_of_battle, id_opponent)
     #getting results for opponent , flag 1 for opponent
     result_opponent = processing_fetched_results(fetching_positions_opponent, 1)
@@ -550,11 +560,11 @@ def loading_battle(id_of_battle, user_id, flag, name):
    
    
    
-    print("result opponent", result_opponent)
-    print("result", result)
+    #print("result opponent", result_opponent)
+    #print("result", result)
     #one of the two battles has ended
     if len(result_opponent['all_common_opponent_no_null'])==10:
-        print("entering opponent won")
+        #print("entering opponent won")
     #opponent won
     #id_of_battle[2][0] --> opponent _name
     #all hits palyer shold show what i have hit in te opponent field 
@@ -562,7 +572,7 @@ def loading_battle(id_of_battle, user_id, flag, name):
         base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
     
     elif len(result['all_common_player_no_null'])==10:
-        print("entering player won")
+        #print("entering player won")
         #player won
         user_page_module.new_battle(name[0], 2,result['all_hits_player'], result['all_misses_player'] , result_opponent['all_ships_opponent'],  id_opponent, id_of_battle)
         
@@ -593,18 +603,13 @@ def loading_battle(id_of_battle, user_id, flag, name):
                                           id_opponent, id_of_battle)
         #print("entering battle still ongoing",result['all_hits_player'], result_opponent['all_hits_opponent'], result['all_misses_player'], result_opponent['all_misses_opponent'], 
         #      result_opponent['all_ships_opponent'],id_opponent, id_of_battle)
-        print("waht we are pasing to coloring", result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'])
+        #print("waht we are pasing to coloring", result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'])
         #coloring as it is ongoing
         coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 0,"")
  
  
         pass
 
-#    if len(all_ships)==10:
-#        messagebox.showinfo("ended battle", "BAttle has ended and the winner is")
-#    else:
-#        messagebox.showinfo("battle still pending", "Battle has not ended and it is turn :")   
-#    pass
 
 
 def starting_battle_command():
@@ -617,7 +622,7 @@ def starting_battle_command():
 
 
 def retrieve_battle(name, frame, user_id):
-    print("user_id----------->    ", user_id)
+    #print("user_id----------->    ", user_id)
     #need here to get the values of the battle back and get them displayed in a playable field
     #the battles need to be index in case there is more than one 
     #getting the battles, all the battle s of a player
@@ -626,7 +631,7 @@ def retrieve_battle(name, frame, user_id):
         result_of_name_fetch = conn.execute(command, (str(*user_id)))
         fetching_the_result = result_of_name_fetch.fetchall()
         conn.commit()
-    print("fetching the result", fetching_the_result)
+    #print("fetching the result", fetching_the_result)
     #the result i get i sthe following
     # [(5, 2, "['25']", "['42', '32']", "['39', '29', '19']", "['56', '46', '36', '26']", '', '', '', '', '', '2'), 
     # (6, 2, "['34']", "['22','23']", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '2')]
@@ -640,7 +645,7 @@ def retrieve_battle(name, frame, user_id):
         #making the list without parenthesis and other strange punctuation
         #needs an obj to be iterable
         fetched = ids.fetchall()
-        print("fetche ----->d", fetched)
+        #print("fetche ----->d", fetched)
         battle_names  = [i[0] for i in fetched] 
         opponent_ids = [i[1] for i in fetched]
         #getting who is playing now with the id
