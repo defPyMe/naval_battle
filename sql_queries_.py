@@ -442,9 +442,9 @@ def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misse
     #NEEDS TO BE A LIST EVERY TIME! after the first appends the folowing
     # ["['', '65', '75', '76', '66', '67']", '87']  with value 87
     #print("checking what i spassed with hits or misses ", type(hit_or_misses), hit_or_misses, value)
-    #
+    print("hit or misses in write hit or miss", hit_or_misses,type(hit_or_misses),list(hit_or_misses), value, type(value) )
     try:
-            hit_or_misses = ast.literal_eval(hit_or_misses[0])
+            hit_or_misses = ast.literal_eval(hit_or_misses)
             print("ast hit or misses --> ", hit_or_misses, value)
             hit_or_misses.append(value)
             print("processing_ast")
