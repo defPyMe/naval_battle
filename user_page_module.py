@@ -137,46 +137,14 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             print("all misses, all hits in new battle", all_hits, all_misses)
             create_field(frame_field, 1, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle)
             print("flag==1")
-###selected_option = StringVar(value=opponent_name)
-            # set the default option
-            #getting the option menu but with then default value onluy , if one it should be ok as we can only select one
-            #option_menu = OptionMenu(player_frame, selected_option, value=opponent_name)
-            #option_menu.grid(row=1, column=1)
-            
-            #label of name
-            #label_name_battle = Label(player_frame, text="battle name", width=10)
-            #label_name_battle.grid(row=0, column=0)
-            #actual value for battle name
+
     else:
         #ended game
             create_field(frame_field, 2, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle)
             #trying to return the widget so as to access it in loading
     return frame_field
             
-            #insert_battle_name = Text(player_frame, height=1, width=10)
-            #insert_battle_name.grid(row=0, column=1) 
-            #actual value, label is ok by default
-            #default_text = battle_name 
-            #insert_battle_name.insert(END, default_text)
 
-# Disable the Text widget
-            #insert_battle_name.configure(state='disabled')
-            
-
-
-        #here it shold save directly to teh db thje èpositions , maybe i ghave already the boom trial
-
-
-
-            #CAN T GET TH EVALUE AS IT IS NOT A TEXT FIELD ANYMORE!!
-            ##save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option, 1))
-            #save_button.grid(row=6, column=1, pady=(30,))
-        #the fieldswhere we have the buttons is the frame field.
-
-    #in the save button i can pass the name as argument so that i get teh db save
-    
-    #save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
-    #save_button.grid(row=6, column=1, pady=(30,))
  
     
 
