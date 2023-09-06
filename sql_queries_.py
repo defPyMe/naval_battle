@@ -367,8 +367,8 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
                 all_hits_opponent_ = all_hits_opponent
     else:
         try:
-            all_misses_opponent = ast.literal_eval(all_misses_opponent[0]) 
-            all_hits_opponent = ast.literal_eval(all_hits_opponent[0]) 
+            all_misses_opponent_ = ast.literal_eval(all_misses_opponent[0]) 
+            all_hits_opponent_ = ast.literal_eval(all_hits_opponent[0]) 
         except:
             all_misses_opponent_ = all_misses_opponent
             all_hits_opponent_ = all_hits_opponent
@@ -377,8 +377,6 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
     #coloring the ships
     # flag == 0 then coloring at loadingy, battle not ended   ---- [i for i in all_ships]
     if flag==0:
-
-        print("all buttons??", frame.grid_slaves(), frame.winfo_class())
         print("entering the coloring 0 flag that should color all the already pressed buttons, ", "all_hits_opponent", all_hits_opponent_, "all misses opponent", all_misses_opponent_)
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_misses_opponent_]]
         configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_hits_opponent_]]
@@ -411,8 +409,10 @@ def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misse
     #
     try:
             hit_or_misses = ast.literal_eval(hit_or_misses[0])
+            print("ast hit or misses --> ", hit_or_misses, value)
             hit_or_misses.append(value)
             print("processing_ast")
+            print("higt or misses post appending", hit_or_misses)
 
     except:
             hit_or_misses.append(value)
@@ -432,29 +432,38 @@ def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misse
         adding = conn.execute(command, ( str(hit_or_misses),id_of_battle[0], opponent_id ))
         
         
-        return None
+        return hit_or_misses
     
-#boom_trial(j, )
+#WHERE IS THIS TAKING FROM???
 
 #assuming the js here are only the clickable buttons as the others are disabled 
-def boom_trial(j, frame, all_hits_opponent, all_misses_opponent,  all_ships_opponent, id_opponent, id_of_battle):
+#removing all hits and all misses so that it becomes dynamic 
+def boom_trial(j, frame,  all_ships_opponent, id_opponent, id_of_battle):
     #checking if the button is present in the all_ships_list
     #creating j comma as i need to create a list
     j_comma  = j
- 
+    #CHANGED HERE SO IT IS DYNAMIC WITH THE THINGS TO GET
+    #looking for updates in the lists all misses, all hits
+    #getting the fetched battle
+    fetched_result = fetching_the_battle(id_of_battle, id_opponent)
+    result_opponent = processing_fetched_results(fetched_result, 0)
+    # variable_dict = {"all_ships_opponent":all_ships_player, "all_hits_opponent":all_hits_player, "all_misses_opponent":all_misses_player, 
+    #                     "all_ships_opponents_tuples":all_ships_tuples, "all_common_opponent_no_null":all_common_player_no_null}
+    #
+    print("result opponent in the boom trial", result_opponent)
     if j in all_ships_opponent:
-        print("checking what we pass in the boom trial case of hit", all_hits_opponent, type(all_hits_opponent))
-        #writing to hits here
-        write_hit_miss_update('hits', j_comma , id_of_battle, id_opponent, all_hits_opponent)
+       
+        #writing to hits here, ALL MISSES STILL STATIC
+        result_hit = write_hit_miss_update('hits', j_comma , id_of_battle, id_opponent, result_opponent["all_hits_player"])
         #coloring needs to be refreshed
-        coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 2, j)
+        coloring(frame, all_ships_opponent, result_hit, result_opponent["all_misses_player"], 2, j)
     else:
-        print("checking what we pass in the boom trial case of miss", all_misses_opponent, type(all_misses_opponent))
-        #writing to hits here
-        write_hit_miss_update('misses', j_comma , id_of_battle, id_opponent,  all_misses_opponent)
+        
+        #writing to hits here, ALL HITS STILL STATIC
+        result_miss = write_hit_miss_update('misses', j_comma , id_of_battle, id_opponent,  result_opponent["all_misses_player"])
         #update sunk
         #what is what here??
-        coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 3, j)
+        coloring(frame, all_ships_opponent,  result_opponent["all_hits_player"], result_miss, 3, j)
         
 
        
@@ -563,6 +572,8 @@ def loading_battle(id_of_battle, user_id, flag, name):
 def starting_battle_command():
     
     pass
+
+
 
 
 

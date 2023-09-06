@@ -4,7 +4,6 @@ import io
 from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
 from tkinter import messagebox
-
 from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name, boom_trial
 from checking_function import calculate_cases
 
@@ -35,9 +34,7 @@ def update_name(new_name, name, toplevel):
 
 
 
-def update(window):
-    print("refresh!!!!!!")
-    #window.after(5000, lambda: update(window))
+
 
 
 
@@ -63,7 +60,7 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_oppo
         #ongoing game
         for i in range(10):
             for j in range(10):
-                button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j,frame,  all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle))#lambda j=str(i)+str(j): check_hit(j)
+                button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j,frame,  all_ships_opponent, id_opponent, id_of_battle))#lambda j=str(i)+str(j): check_hit(j)
                 button.grid(row=i, column=j)
     else:
         for i in range(10):
@@ -181,7 +178,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
     #save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
     #save_button.grid(row=6, column=1, pady=(30,))
  
-    pass
+    
 
 #button in grid 
 def button_click(button_grid, color, total_ships, frame):#need to start adding here 
@@ -334,5 +331,5 @@ def build_user_page(name):
     button_old_battles.grid(row=1, column=0,padx=(150,10), pady=10 )
     button_show_champions.grid(row=2, column=0,padx=(150,10), pady=10)
     button_change_profile.grid(row=3, column=0,padx=(150,10), pady=10)
-    update(base_window)
+    
     
