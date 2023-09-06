@@ -323,7 +323,7 @@ def fetching_the_battle(id_of_battle, id_user):
 #needs to have the difference in the player and opponent 
 #flag to be used depending on the player or opponent at call
 def processing_fetched_results(fetched_results, flag):
-
+    print("fetched results", fetched_results)
   
     #actually getting the values 
     all_ships_player = [(fetched_results[2][2:4]) ,  (fetched_results[3][2:4]),(fetched_results[3][8:10]),
@@ -339,7 +339,7 @@ def processing_fetched_results(fetched_results, flag):
                         all_ships_player[7],all_ships_player[8], all_ships_player[9])]
     
     all_common_player_no_null = [i for i in all_ships_player if i in all_hits_player and i!=""]
-
+    player_now_playing = fetched_results[8]
     #after the values have been set 
     #
     #ADDING ZERO HERE AS TO GET THE CORRECT NUMBERS
@@ -351,12 +351,12 @@ def processing_fetched_results(fetched_results, flag):
     
     if flag == 0:
         variable_dict = {"all_ships_player":all_ships_player, "all_hits_player":all_hits_player[0], "all_misses_player":all_misses_player[0], 
-                         "all_ships_tuples":all_ships_tuples, "all_common_player_no_null":all_common_player_no_null}
+                         "all_ships_tuples":all_ships_tuples, "all_common_player_no_null":all_common_player_no_null, "player_now_playing":player_now_playing}
     
    #case of opponent
     else:
         variable_dict = {"all_ships_opponent":all_ships_player, "all_hits_opponent":all_hits_player[0], "all_misses_opponent":all_misses_player[0], 
-                         "all_ships_opponents_tuples":all_ships_tuples, "all_common_opponent_no_null":all_common_player_no_null}
+                         "all_ships_opponents_tuples":all_ships_tuples, "all_common_opponent_no_null":all_common_player_no_null, "player_now_playing":player_now_playing}
     
     #returning a dict so as to access values with the key requested 
     return variable_dict
@@ -427,9 +427,17 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
         #check the format here 
         
              [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
+    elif flag==3:
+        #here i have the case in which it is not the palyers' turn 
+        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_misses_opponent_]#[i for i in all_misses_opponent_]]
+        configure_ships_hits = [i.configure(bg="firebrick4", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
+        #coloring al the remeining colors 
+        all_to_skip = all_misses_opponent_ + all_hits_opponent_
+        configure_rest_of_ships = [i.configure(bg="grey73", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in all_to_skip]
+        messagebox.showinfo("Not your turn", "Waiting for ove from other player")
     else:
             [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
-    pass    
+
 
 
 #needs to write on the column chosen updating the field and nto deleting the values already there
@@ -545,20 +553,7 @@ def loading_battle(id_of_battle, user_id, flag, name):
     #getting results for opponent , flag 1 for opponent
     result_opponent = processing_fetched_results(fetching_positions_opponent, 1)
     
-  
 
-    
-    
-    #the first one is not recognized as tuple if not inserted the ast railing comma
-    #getting the misses --> needs further eleboration as i should have the data in a list 
-    # all_ships_hits = all_ships_keys_isolated 
-    # i need to create the difference between the two lists, the starting position are the all_ships
-    #creating the dicrtionary with the colors 
-    #all_colors = {"ship_1" : "orange" , "ship_2" : "blue", "ship_3" :  "purple", "ship_4" : "pink" }
-    #creating the battle 
-
-   
-   
    
     #print("result opponent", result_opponent)
     #print("result", result)
@@ -569,7 +564,7 @@ def loading_battle(id_of_battle, user_id, flag, name):
     #id_of_battle[2][0] --> opponent _name
     #all hits palyer shold show what i have hit in te opponent field 
         user_page_module.new_battle(id_of_battle[2][0], 2,result['all_hits_player'], result['all_misses_player'], id_opponent, id_of_battle)
-        base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
+        #base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
     
     elif len(result['all_common_player_no_null'])==10:
         #print("entering player won")
@@ -580,35 +575,38 @@ def loading_battle(id_of_battle, user_id, flag, name):
         
         # coloring all retrieved ships
         #need to display the winner- adding it to the name of the window
-        base_window.title("Winner of the battle is:" + name)
+        #base_window.title("Winner of the battle is:" + name)
         #case in which the ships have been positioned only by the opponent 
         #case of non ended game, just started or not started
     else:  
-    
-    
+    #need to take into consideration here what happens when the turn is not right
+        print("confrontation between the user ids:     ", user_id[0], type(user_id[0]), result["player_now_playing"], type(result["player_now_playing"]) )
+        if user_id[0] == int(result["player_now_playing"]):
+            print("user playing the same playing in db")
     #result opponent {'all_ships_opponent': ['21', '39', '29', '35', '25', '15', '76', '75', '74', '73'], 'all_hits_opponent': [''], 'all_misses_opponent': [''], 
-    #'all_ships_opponents_tuples': [('21',), ('39', '29'), ('35', '25', '15'), ('76', '75', '74', '73')], 'all_common_opponent_no_null': []}
-    
-    
+    #'all_ships_opponents_tuples': [('21',), ('39', '29'), ('35', '25', '15'), ('76', '75', '74', '73')], 'all_common_opponent_no_null': []
     #result {'all_ships_player': ['21', '39', '29', '35', '25', '15', '76', '75', '74', '73'], 'all_hits_player': [''], 'all_misses_player': [''],
     #'all_ships_tuples': [('21',), ('39', '29'), ('35', '25', '15'), ('76', '75', '74', '73')], 'all_common_player_no_null': []}
-    
     #"""
-        #loading correctly here the first time
-        
-        # CHANGED HERE!! --> player = opponent
-        #changing based on result here als well
-         # [[all_ships_player, all_hits_player, all_misses_player, all_ships_tuples, all_common_player_no_null] ]
-        wid = user_page_module.new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
-                                          id_opponent, id_of_battle)
-        #print("entering battle still ongoing",result['all_hits_player'], result_opponent['all_hits_opponent'], result['all_misses_player'], result_opponent['all_misses_opponent'], 
-        #      result_opponent['all_ships_opponent'],id_opponent, id_of_battle)
-        #print("waht we are pasing to coloring", result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'])
-        #coloring as it is ongoing
-        coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 0,"")
+            #loading correctly here the first time
+            # CHANGED HERE!! --> player = opponent
+            #changing based on result here als well
+            # [[all_ships_player, all_hits_player, all_misses_player, all_ships_tuples, all_common_player_no_null] ]
+            wid = user_page_module.new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
+                                            id_opponent, id_of_battle)
+            #print("entering battle still ongoing",result['all_hits_player'], result_opponent['all_hits_opponent'], result['all_misses_player'], result_opponent['all_misses_opponent'], 
+            #      result_opponent['all_ships_opponent'],id_opponent, id_of_battle)
+            #print("waht we are pasing to coloring", result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'])
+            #coloring as it is ongoing
+            coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 0,"")
  
- 
-        pass
+        else:
+            print("user playing different from the one in db")
+            wid = user_page_module.new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
+                                            id_opponent, id_of_battle)
+    #need probably to introduce a new instance in coloring to disable all the field , coloring darker grey the misses, dark grey the misses and light grey all the others
+            coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 3,"")
+            pass
 
 
 
