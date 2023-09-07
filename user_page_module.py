@@ -7,6 +7,7 @@ from tkinter import messagebox
 from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name, boom_trial
 from checking_function import calculate_cases
 #added for the function refresh
+from sql_queries_ import refresh
 import threading
 
 
@@ -76,7 +77,7 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_oppo
         
 
 
-def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player, refresh):
+def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player):
     base_window = Toplevel()
     frame_field = Frame(base_window)
     player_frame = Frame(base_window)
@@ -140,9 +141,9 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             #print("all misses, all hits in new battle", all_hits, all_misses)
             create_field(frame_field, 1, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
             #print("flag==1")
-            
+            #with args[0]=id_of_battle, args[1][0]=user_id[0]
             #adding some threading part, not sure of what it does
-            t = threading.Thread(target=refresh, args=[])
+            t = threading.Thread(target=refresh, args=[id_of_battle, id_player, frame_field])
             t.daemon = True
             t.start()
             

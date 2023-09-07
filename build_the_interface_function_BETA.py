@@ -1,3 +1,4 @@
-original_string = "I'm a Python string with single quotes."
-updated_string = original_string.replace("'", "")
-print(updated_string)
+def variable_args(*args):
+    print(args[1])
+
+variable_args("s", "w", "e")
