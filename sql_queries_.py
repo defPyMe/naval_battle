@@ -23,7 +23,7 @@ def refresh(*args):
     #if all ships are positioned for me then i can load the battle with no names and buttons
     #all values for the player
     #result = processing_fetched_results(fetching_positions, 0)
-    print("frame considered , ", args[2])
+    print("frame considered  ---------------------------->, ", args[2])
    # need to get the opponent id here 
     id_opponent = getting_opponent_id_from_battle_id(args[0][0], args[1])
     #print("opponent id in the loading battle --> ", id_opponent)
@@ -337,7 +337,7 @@ def fetching_the_battle(id_of_battle, id_user):
 #needs to have the difference in the player and opponent 
 #flag to be used depending on the player or opponent at call
 def processing_fetched_results(fetched_results, flag):
-    print("fetched results", fetched_results)
+    #print("fetched results", fetched_results)
   
     #actually getting the values 
     all_ships_player = [(fetched_results[2][2:4]) ,  (fetched_results[3][2:4]),(fetched_results[3][8:10]),
@@ -402,11 +402,12 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
     all_hits_opponent_ = checking_ast(all_hits_opponent)
     all_misses_opponent_ = checking_ast(all_misses_opponent)
     #turn
-    print("all lists to color pre processing ", all_hits_opponent, type(all_hits_opponent),all_misses_opponent ,type(all_misses_opponent), all_ships_opponent)            
+    #print("all lists to color pre processing ", all_hits_opponent, type(all_hits_opponent),all_misses_opponent ,type(all_misses_opponent), all_ships_opponent)            
     #coloring the ships
     # flag == 0 then coloring at loadingy, battle not ended   ---- [i for i in all_ships]
     if flag==0:
         print("entering flag 0 in coloring, it is the palyers' turn, to color ", all_misses_opponent_, all_hits_opponent_)
+        configure_all = [i.configure(bg="azure2") for i in frame.grid_slaves()]
         #print("entering the coloring 0 flag that should color all the already pressed buttons, ", "all_hits_opponent", all_hits_opponent_, "all misses opponent", all_misses_opponent_)
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_misses_opponent_]#[i for i in all_misses_opponent_]]
         configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]#[i for i in all_hits_opponent_]]
@@ -424,6 +425,7 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
     elif flag==3:
         #here i have the case in which it is not the palyers' turn 
         print("entered flag 3", all_hits_opponent_, all_misses_opponent_)
+        #configure_all = [i.configure(bg="azure2") for i in frame.grid_slaves()]
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in  all_misses_opponent_]#[i for i in all_misses_opponent_]]
         configure_ships_hits = [i.configure(bg="firebrick4", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
         #coloring al the remeining colors 
@@ -438,21 +440,24 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
 
 def write_hit_miss_update(column1, column2, value, id_of_battle, opponent_id, hit_or_misses, now_playing):
     #first selecting value and then updating and rewriting 
-    print("now playing in the write hit miss for the update of the db, should be the id of the user", now_playing[0], opponent_id)
+    #print("now playing in the write hit miss for the update of the db, should be the id of the user", now_playing[0], opponent_id)
     #
     #NEEDS TO BE A LIST EVERY TIME! after the first appends the folowing
     # ["['', '65', '75', '76', '66', '67']", '87']  with value 87
     #print("checking what i spassed with hits or misses ", type(hit_or_misses), hit_or_misses, value)
     #print("hit or misses in write hit or miss", hit_or_misses,type(hit_or_misses),list(hit_or_misses), value, type(value) )
-    try:
-            hit_or_misses = ast.literal_eval(hit_or_misses)
-            #print("ast hit or misses --> ", hit_or_misses, value)
-            hit_or_misses.append(value)
-            #print("processing_ast")
-            #print("higt or misses post appending", hit_or_misses)
+    if hit_or_misses == "":
+        hit_or_misses = []
+    else:
+        try:
+                hit_or_misses = ast.literal_eval(hit_or_misses)
+                #print("ast hit or misses --> ", hit_or_misses, value)
+                hit_or_misses.append(value)
+                #print("processing_ast")
+                #print("higt or misses post appending", hit_or_misses)
 
-    except:
-            hit_or_misses.append(value)
+        except:
+                hit_or_misses.append(value)
             #print("processing normal string")
 
     #changing here !!! maye it is getting written twice 
@@ -466,11 +471,11 @@ def write_hit_miss_update(column1, column2, value, id_of_battle, opponent_id, hi
         #printing out teh values passd 
         #print("values passed on to the command  ",column,value,  type(value), type(id_of_battle), id_of_battle, type(opponent_id), opponent_id )
         #changing teh column in teh opponent battle
-        adding = conn.execute(command, ( str(hit_or_misses),opponent_id, id_of_battle[0], opponent_id ))
+        adding = conn.execute(command, ( str(hit_or_misses),now_playing[0], id_of_battle[0], opponent_id ))
         #now changing the user part of the battle
-        command = f"UPDATE Ships_1 SET {column1} = (?), {column2} = (?) WHERE battle_id = (?) AND user_id = (?)"
-        adding = conn.execute(command, ( str(hit_or_misses),opponent_id, id_of_battle[0], now_playing[0] ))
-        
+        command = f"UPDATE Ships_1 SET {column2} = (?) WHERE battle_id = (?) AND user_id = (?)"
+        adding = conn.execute(command, ( now_playing[0], id_of_battle[0], now_playing[0] ))
+        print("in hit or misses ---> ",str(hit_or_misses), id_of_battle[0], opponent_id, "user_id=", now_playing[0], column1, column2)
         return hit_or_misses
     
 #WHERE IS THIS TAKING FROM???
@@ -527,8 +532,8 @@ def loading_battle(id_of_battle, user_id, flag, name):
     #getting results for opponent , flag 1 for opponent
     result_opponent = processing_fetched_results(fetching_positions_opponent, 1)
     #one of the two battles has ended
-    print("fetching_positions_player ", fetching_positions,"id_of_battle", id_of_battle,"user_id[0]" , user_id[0],
-          "id_opponent ", id_opponent ," fetching_positions_opponent",  fetching_positions_opponent, "result_opponent", result_opponent, "now playing")
+    #print("fetching_positions_player ", fetching_positions,"id_of_battle", id_of_battle,"user_id[0]" , user_id[0],
+    #      "id_opponent ", id_opponent ," fetching_positions_opponent",  fetching_positions_opponent, "result_opponent", result_opponent, "now playing")
     if len(result_opponent['all_common_opponent_no_null'])==10:
         #print("entering opponent won")
     #opponent won

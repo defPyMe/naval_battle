@@ -143,7 +143,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             #print("flag==1")
             #with args[0]=id_of_battle, args[1][0]=user_id[0]
             #adding some threading part, not sure of what it does
-            t = threading.Thread(target=refresh, args=[id_of_battle, id_player, frame_field])
+            t = threading.Thread(target=lambda: refresh(id_of_battle, id_player, frame_field))
             t.daemon = True
             t.start()
             
