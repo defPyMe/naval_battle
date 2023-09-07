@@ -6,6 +6,9 @@ from tkinter import filedialog
 from tkinter import messagebox
 from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name, boom_trial
 from checking_function import calculate_cases
+#added for the function refresh
+import threading
+
 
 #this opens the image and displays it
 def open(name, base_window):
@@ -48,7 +51,7 @@ def update_name(new_name, name, toplevel):
 #need to be moved from here as it is not the 
 #flag to differentiate between the creation field
 #adding arguments to color in case battle has ended, jut one as we can differentialte the lists later
-def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle):
+def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player):
     #print("all hits misses in create filed", all_hits, all_misses)
     #need to account also for ended games 
     if flag == 0:
@@ -60,7 +63,7 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_oppo
         #ongoing game
         for i in range(10):
             for j in range(10):
-                button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j,frame,  all_ships_opponent, id_opponent, id_of_battle))#lambda j=str(i)+str(j): check_hit(j)
+                button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j,frame,  all_ships_opponent, id_opponent, id_of_battle, id_player))#lambda j=str(i)+str(j): check_hit(j)
                 button.grid(row=i, column=j)
     else:
         for i in range(10):
@@ -73,7 +76,7 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_oppo
         
 
 
-def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle):
+def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player, refresh):
     base_window = Toplevel()
     frame_field = Frame(base_window)
     player_frame = Frame(base_window)
@@ -84,7 +87,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
     #insert_battle_name, selected_option
     if flag==0:
         #empty arguments as new battle
-            create_field(frame_field, 0, [], [],  all_ships_opponent, id_opponent, id_of_battle)
+            create_field(frame_field, 0, [], [],  all_ships_opponent, id_opponent, id_of_battle, id_player)
  
             player_frame.grid(row=0, column=1)
             #frame_ships.grid(row=1, column=1)
@@ -135,12 +138,19 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
     elif flag == 1:
             # empty arguments as the battle has not ended
             #print("all misses, all hits in new battle", all_hits, all_misses)
-            create_field(frame_field, 1, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle)
+            create_field(frame_field, 1, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
             #print("flag==1")
+            
+            #adding some threading part, not sure of what it does
+            t = threading.Thread(target=refresh, args=[])
+            t.daemon = True
+            t.start()
+            
+            
 
     else:
         #ended game
-            create_field(frame_field, 2, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle)
+            create_field(frame_field, 2, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
             #trying to return the widget so as to access it in loading
     return frame_field
             

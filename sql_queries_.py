@@ -9,7 +9,7 @@ import string
 import sys , os
 import user_page_module
 import ast
-
+import time
 
 
 
@@ -17,7 +17,13 @@ path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battl
 translator = str.maketrans("","", string.punctuation)
 
 
-
+#refreshing_function 
+def refresh():
+    while True:
+        #it does nothing if the user id is the same as that of the player now playingz
+        time.sleep(1)
+        print("refresh")
+    pass
 
 #user id here is the player id, so we can get the opposite 
 def getting_opponent_id_from_battle_id(battle_id, user_id):
@@ -278,12 +284,7 @@ def SaveBattle(name_creator, field, text, options, flag):
 
 
 
-def continuing_battle():
-    #gets the number of the pressed button
-    #checks in it is in the saved ships or not
-    #if not in the saved ships gets turned dark gray as it is a miss
-    
-    pass
+
 
 
 
@@ -300,12 +301,6 @@ def create_field_over(frame,all_ships):
     color_ships = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in [i for i in all_ships]]
     configure_field = [i.configure(bg="grey", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in [i for i in all_ships]]
     
-
-
-
-
-
-
 
 
 
@@ -365,51 +360,30 @@ def processing_fetched_results(fetched_results, flag):
     
     
     
+# "['', '31', '42', '52', '62', '32', '43', '53', '63', '72']"
+def checking_ast(checking_input):
+    #remove all the characters not needed
+    try:
+        pre_result = checking_input.replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
+        result = list(pre_result.split(","))
+    except:
+        result = checking_input 
+        if result=="":
+            result=[]
 
-    
-    
-    
+
+    return result
     
     
     
     
 #adding a flag to see if it is coloring a retrieve dbattle ot a new one , also if it is ongoing
 def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, flag, j):
+    
+    all_hits_opponent_ = checking_ast(all_hits_opponent)
+    all_misses_opponent_ = checking_ast(all_misses_opponent)
     #turn
-    #print("all lists to color pre processing ", all_hits_opponent, all_misses_opponent , all_ships_opponent)
-    #if one is empty it generates  an error and skips over this 
-    if len(all_hits_opponent)>1:
-        try:
-            #all ships should be ok already , it was probably generating the issueas it was a list already 
-                #all_ships_opponent_ = ast.literal_eval(all_ships_opponent[0])
-                #if one is empty it generates an error! 
-                all_hits_opponent_ = ast.literal_eval(all_hits_opponent[0]) 
-                all_misses_opponent_ = all_misses_opponent
-        except:
-                all_hits_opponent_ = all_hits_opponent
-                all_misses_opponent_ = all_misses_opponent
-        #print("case of hits > 1 and misses <1")
-    elif len(all_misses_opponent)>1:
-        try:
-            #all ships should be ok already , it was probably generating the issueas it was a list already 
-                #all_ships_opponent_ = ast.literal_eval(all_ships_opponent[0])
-                #if one is empty it generates an error! 
-                all_misses_opponent_ = ast.literal_eval(all_misses_opponent[0]) 
-                all_hits_opponent_ = all_hits_opponent
-        except:
-                all_misses_opponent_ = all_misses_opponent
-                all_hits_opponent_ = all_hits_opponent
-     #   print("case of hits < 1 and misses >1")
-    else:
-        try:
-            all_misses_opponent_ = ast.literal_eval(all_misses_opponent) 
-            all_hits_opponent_ = ast.literal_eval(all_hits_opponent) 
-        except:
-            all_misses_opponent_ = all_misses_opponent
-            all_hits_opponent_ = all_hits_opponent
-        #print("case of hits > 1 and misses >1")
-            
-            
+    print("all lists to color pre processing ", all_hits_opponent, type(all_hits_opponent),all_misses_opponent ,type(all_misses_opponent), all_ships_opponent)            
     #coloring the ships
     # flag == 0 then coloring at loadingy, battle not ended   ---- [i for i in all_ships]
     if flag==0:
@@ -429,23 +403,22 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
              [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
     elif flag==3:
         #here i have the case in which it is not the palyers' turn 
-        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_misses_opponent_]#[i for i in all_misses_opponent_]]
+        print("entered flag 3", all_hits_opponent_, all_misses_opponent_)
+        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in  all_misses_opponent_]#[i for i in all_misses_opponent_]]
         configure_ships_hits = [i.configure(bg="firebrick4", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
         #coloring al the remeining colors 
-        all_to_skip = all_misses_opponent_ + all_hits_opponent_
-        configure_rest_of_ships = [i.configure(bg="grey73", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in all_to_skip]
+        configure_rest_of_ships = [i.configure(bg="grey73", state=DISABLED) for i in frame.grid_slaves() if i["state"]!=DISABLED]
         messagebox.showinfo("Not your turn", "Waiting for ove from other player")
-    else:
-            [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
+
 
 
 
 #needs to write on the column chosen updating the field and nto deleting the values already there
 # hit_or_misses can be all_misses or all_hits deopending on the case 
 
-def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misses):
+def write_hit_miss_update(column1, column2, value, id_of_battle, opponent_id, hit_or_misses, now_playing):
     #first selecting value and then updating and rewriting 
-    #
+    print("now playing in the write hit miss for the update of the db, should be the id of the user", now_playing[0], opponent_id)
     #
     #NEEDS TO BE A LIST EVERY TIME! after the first appends the folowing
     # ["['', '65', '75', '76', '66', '67']", '87']  with value 87
@@ -468,13 +441,15 @@ def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misse
     #using already inserted to add 
     with sqlite3.connect(path_to_db) as conn:
         #setting the user_id equal to the opponent_id
-        command = f"UPDATE Ships_1 SET {column} = (?) WHERE battle_id = (?) AND user_id = (?)" 
+        command = f"UPDATE Ships_1 SET {column1} = (?), {column2} = (?) WHERE battle_id = (?) AND user_id = (?)"
         #column passed in directly in teh function?
         #printing out teh values passd 
         #print("values passed on to the command  ",column,value,  type(value), type(id_of_battle), id_of_battle, type(opponent_id), opponent_id )
-        
-        adding = conn.execute(command, ( str(hit_or_misses),id_of_battle[0], opponent_id ))
-        
+        #changing teh column in teh opponent battle
+        adding = conn.execute(command, ( str(hit_or_misses),opponent_id, id_of_battle[0], opponent_id ))
+        #now changing the user part of the battle
+        command = f"UPDATE Ships_1 SET {column1} = (?), {column2} = (?) WHERE battle_id = (?) AND user_id = (?)"
+        adding = conn.execute(command, ( str(hit_or_misses),opponent_id, id_of_battle[0], now_playing[0] ))
         
         return hit_or_misses
     
@@ -482,7 +457,7 @@ def write_hit_miss_update(column, value, id_of_battle, opponent_id, hit_or_misse
 
 #assuming the js here are only the clickable buttons as the others are disabled 
 #removing all hits and all misses so that it becomes dynamic 
-def boom_trial(j, frame,  all_ships_opponent, id_opponent, id_of_battle):
+def boom_trial(j, frame,  all_ships_opponent, id_opponent, id_of_battle, id_player):
     #checking if the button is present in the all_ships_list
     #creating j comma as i need to create a list
     j_comma  = j
@@ -497,15 +472,15 @@ def boom_trial(j, frame,  all_ships_opponent, id_opponent, id_of_battle):
     #print("result opponent in the boom trial", result_opponent)
     if j in all_ships_opponent:
        
-        #writing to hits here, ALL MISSES STILL STATIC
-        result_hit = write_hit_miss_update('hits', j_comma , id_of_battle, id_opponent, result_opponent["all_hits_player"])
+        #writing to hits here, neeed the id of the palyer now playing from his interface
+        result_hit = write_hit_miss_update('hits','player_now_playing', j_comma , id_of_battle, id_opponent, result_opponent["all_hits_player"] , id_player)
         #coloring needs to be refreshed
         coloring(frame, all_ships_opponent, result_hit, result_opponent["all_misses_player"], 2, j)
     else:
         
         #writing to hits here, ALL HITS STILL STATIC
-        result_miss = write_hit_miss_update('misses', j_comma , id_of_battle, id_opponent,  result_opponent["all_misses_player"])
-        #update sunk
+        result_miss = write_hit_miss_update('misses','player_now_playing', j_comma , id_of_battle, id_opponent,  result_opponent["all_misses_player"], id_player)
+        #, nowwwwupdate sunk
         #what is what here??
         coloring(frame, all_ships_opponent,  result_opponent["all_hits_player"], result_miss, 3, j)
         
@@ -518,65 +493,32 @@ def boom_trial(j, frame,  all_ships_opponent, id_opponent, id_of_battle):
 
             
 #needs id of th eplayer , user_id should be the one playing
-def loading_battle(id_of_battle, user_id, flag, name):
+def loading_battle(id_of_battle, user_id, flag, name, refresh=refresh):
     #what is it that i am passing 
-    #print("two arguments ---->",id_of_battle, user_id )
-    
-    #IS THIS NEEDED???
-    #PROBABLY NOT
-    
-    
-    
-    #base_window = Toplevel()
-    #frame_field_retr = Frame(base_window)
-    #player_frame = Frame(base_window)
-    
-    
-    
-    
-    #here i need to pass in the values for the different 
-    #gets the battle id starting from the name ,fetches all the ships 
     #this needs to return all teh needed info to be accessed by its name 
     fetching_positions = fetching_the_battle(id_of_battle, user_id[0])
     #if all ships are positioned for me then i can load the battle with no names and buttons
-    #print("fetching tuples name and id check",  id_of_battle)
-    #using funtion to process
-    # expected result is a list that is as follows 
-    # [[all_ships_player, all_hits_player, all_misses_player, all_ships_tuples, all_common_player_no_null] ]
     #all values for the player
     result = processing_fetched_results(fetching_positions, 0)
    # need to get the opponent id here 
-    
     id_opponent = getting_opponent_id_from_battle_id(id_of_battle[0], user_id)
     #print("opponent id in the loading battle --> ", id_opponent)
     fetching_positions_opponent = fetching_the_battle(id_of_battle, id_opponent)
     #getting results for opponent , flag 1 for opponent
     result_opponent = processing_fetched_results(fetching_positions_opponent, 1)
-    
-
-   
-    #print("result opponent", result_opponent)
-    #print("result", result)
     #one of the two battles has ended
     if len(result_opponent['all_common_opponent_no_null'])==10:
         #print("entering opponent won")
     #opponent won
     #id_of_battle[2][0] --> opponent _name
     #all hits palyer shold show what i have hit in te opponent field 
-        user_page_module.new_battle(id_of_battle[2][0], 2,result['all_hits_player'], result['all_misses_player'], id_opponent, id_of_battle)
+        user_page_module.new_battle(id_of_battle[2][0], 2,result['all_hits_player'], result['all_misses_player'], id_opponent, id_of_battle, user_id, refresh)
         #base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
-    
     elif len(result['all_common_player_no_null'])==10:
         #print("entering player won")
         #player won
-        user_page_module.new_battle(name[0], 2,result['all_hits_player'], result['all_misses_player'] , result_opponent['all_ships_opponent'],  id_opponent, id_of_battle)
-        
-        #here i need to create the field as it is in the initial option but saved ships are not clickable
-        
-        # coloring all retrieved ships
-        #need to display the winner- adding it to the name of the window
-        #base_window.title("Winner of the battle is:" + name)
-        #case in which the ships have been positioned only by the opponent 
+        user_page_module.new_battle(name[0], 2,result['all_hits_player'], result['all_misses_player'] ,
+                                    result_opponent['all_ships_opponent'],  id_opponent, id_of_battle, user_id, refresh)
         #case of non ended game, just started or not started
     else:  
     #need to take into consideration here what happens when the turn is not right
@@ -588,12 +530,10 @@ def loading_battle(id_of_battle, user_id, flag, name):
     #result {'all_ships_player': ['21', '39', '29', '35', '25', '15', '76', '75', '74', '73'], 'all_hits_player': [''], 'all_misses_player': [''],
     #'all_ships_tuples': [('21',), ('39', '29'), ('35', '25', '15'), ('76', '75', '74', '73')], 'all_common_player_no_null': []}
     #"""
-            #loading correctly here the first time
-            # CHANGED HERE!! --> player = opponent
-            #changing based on result here als well
             # [[all_ships_player, all_hits_player, all_misses_player, all_ships_tuples, all_common_player_no_null] ]
+            #(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
             wid = user_page_module.new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
-                                            id_opponent, id_of_battle)
+                                            id_opponent, id_of_battle, user_id, refresh)
             #print("entering battle still ongoing",result['all_hits_player'], result_opponent['all_hits_opponent'], result['all_misses_player'], result_opponent['all_misses_opponent'], 
             #      result_opponent['all_ships_opponent'],id_opponent, id_of_battle)
             #print("waht we are pasing to coloring", result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'])
@@ -603,16 +543,14 @@ def loading_battle(id_of_battle, user_id, flag, name):
         else:
             print("user playing different from the one in db")
             wid = user_page_module.new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
-                                            id_opponent, id_of_battle)
+                                            id_opponent, id_of_battle, user_id, refresh)
     #need probably to introduce a new instance in coloring to disable all the field , coloring darker grey the misses, dark grey the misses and light grey all the others
             coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 3,"")
             pass
 
 
 
-def starting_battle_command():
-    
-    pass
+
 
 
 
@@ -653,14 +591,6 @@ def retrieve_battle(name, frame, user_id):
         #getting the lenght of teh list 
         #PROCESSED VALUES
         
-
-
-
-
-
-
-
-
     for i in range(len(battle_names)):
         #getting the name from the id
         opponent_current_battle = getting_name_from_id(opponent_ids[i])
