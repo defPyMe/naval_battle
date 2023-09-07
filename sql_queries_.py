@@ -18,30 +18,33 @@ translator = str.maketrans("","", string.punctuation)
 
 #refreshing_function 
 def refresh(*args):
+    while True:
     #with args[0]=id_of_battle, args[1][0]=user_id[0]
     #fetching_positions = fetching_the_battle(args[0], args[1][0])
     #if all ships are positioned for me then i can load the battle with no names and buttons
     #all values for the player
     #result = processing_fetched_results(fetching_positions, 0)
-    print("frame considered  ---------------------------->, ", args[2])
+
    # need to get the opponent id here 
-    id_opponent = getting_opponent_id_from_battle_id(args[0][0], args[1])
+        id_opponent = getting_opponent_id_from_battle_id(args[0][0], args[1])
     #print("opponent id in the loading battle --> ", id_opponent)
-    fetching_positions_opponent = fetching_the_battle(args[0], id_opponent)
+        fetching_positions_opponent = fetching_the_battle(args[0], id_opponent)
     #getting results for opponent , flag 1 for opponent
-    result_opponent = processing_fetched_results(fetching_positions_opponent, 1)
-    while True:
+        result_opponent = processing_fetched_results(fetching_positions_opponent, 1)
+    
+  
         #it does nothing if the user id is the same as that of the player now playingz
         time.sleep(3)
         #here result or result opponent are the same, as we write in both when pressing
         if args[1][0] != int(result_opponent["player_now_playing"]):
-            #frame field as args[2]
-            print("in refreshing, player different from the one that has played in db", args[1][0] ,type(args[1][0]), result_opponent["player_now_playing"], type(result_opponent["player_now_playing"]))
+            #frame field as args[2], current user id is --> args[1][0]
+            #print("in refreshing, player different from the one that has played in db",  args[1][0] ,type(args[1][0]),
+            #      result_opponent["player_now_playing"], type(result_opponent["player_now_playing"]))
             coloring(args[2], result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 0,"")
         else:
             coloring(args[2], result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 3,"")
-            print("in refreshing, player equal from the one that has played in db", args[1][0] ,result_opponent["player_now_playing"])
-        print("refreshe")
+            #print("in refreshing, player equal from the one that has played in db", args[1][0] ,result_opponent["player_now_playing"])
+        print("refreshed ", result_opponent["player_now_playing"], args[1][0])
     pass
 
 #user id here is the player id, so we can get the opposite 
@@ -407,24 +410,31 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
     # flag == 0 then coloring at loadingy, battle not ended   ---- [i for i in all_ships]
     if flag==0:
         print("entering flag 0 in coloring, it is the palyers' turn, to color ", all_misses_opponent_, all_hits_opponent_)
-        configure_all = [i.configure(bg="azure2") for i in frame.grid_slaves()]
+        configure_all = [i.configure(bg="gray82", state=ACTIVE) for i in frame.grid_slaves()]
+        
         #print("entering the coloring 0 flag that should color all the already pressed buttons, ", "all_hits_opponent", all_hits_opponent_, "all misses opponent", all_misses_opponent_)
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_misses_opponent_]#[i for i in all_misses_opponent_]]
         configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]#[i for i in all_hits_opponent_]]
         #print("went through with coloring flag == 0", all_hits_opponent_, all_misses_opponent_, len(all_misses_opponent_))
-    #coloring when loading ended
+    #coloring when loading, ended
     elif flag == 1:
+        print("entering flag 1 battle anded ", all_misses_opponent_, all_hits_opponent_)
         #all the buttons are colored , hits red, misses in gray
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in all_hits_opponent_]
         configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
+        
     #at pressing when battle ongoing and hit
     elif flag==2:
         #check the format here 
+        #WHAT IS HAPPENING HERE ACTUALLY? IS THERE SOMETHING I NEED TO CHANGE HERE?  
+        print("entering flag 2 in coloring, it is the palyers' turn, to color ", all_misses_opponent_, all_hits_opponent_)
         
-             [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
+        
+        
+        [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
     elif flag==3:
         #here i have the case in which it is not the palyers' turn 
-        print("entered flag 3", all_hits_opponent_, all_misses_opponent_)
+        print("entered flag 3 other player' turn", all_hits_opponent_, all_misses_opponent_)
         #configure_all = [i.configure(bg="azure2") for i in frame.grid_slaves()]
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in  all_misses_opponent_]#[i for i in all_misses_opponent_]]
         configure_ships_hits = [i.configure(bg="firebrick4", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
@@ -449,15 +459,16 @@ def write_hit_miss_update(column1, column2, value, id_of_battle, opponent_id, hi
     if hit_or_misses == "":
         hit_or_misses = []
     else:
-        try:
-                hit_or_misses = ast.literal_eval(hit_or_misses)
-                #print("ast hit or misses --> ", hit_or_misses, value)
-                hit_or_misses.append(value)
-                #print("processing_ast")
-                #print("higt or misses post appending", hit_or_misses)
+        hit_or_misses=hit_or_misses
+    try:
+            hit_or_misses = ast.literal_eval(hit_or_misses)
+            #print("ast hit or misses --> ", hit_or_misses, value)
+            hit_or_misses.append(value)
+            #print("processing_ast")
+            #print("higt or misses post appending", hit_or_misses)
 
-        except:
-                hit_or_misses.append(value)
+    except:
+            hit_or_misses.append(value)
             #print("processing normal string")
 
     #changing here !!! maye it is getting written twice 
@@ -503,7 +514,7 @@ def boom_trial(j, frame,  all_ships_opponent, id_opponent, id_of_battle, id_play
         coloring(frame, all_ships_opponent, result_hit, result_opponent["all_misses_player"], 2, j)
     else:
         
-        #writing to hits here, ALL HITS STILL STATIC
+        #writing to misses here, ALL HITS STILL STATIC
         result_miss = write_hit_miss_update('misses','player_now_playing', j_comma , id_of_battle, id_opponent,  result_opponent["all_misses_player"], id_player)
         #, nowwwwupdate sunk
         #what is what here??
