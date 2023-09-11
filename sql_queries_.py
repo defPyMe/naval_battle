@@ -21,10 +21,13 @@ def refresh(*args):
 
     
     while True:
+    #need to account for ended games with a flag thatcan be all hits 
+        
+        
+        
+        
     #with args[0]=id_of_battle, args[1][0]=user_id[0]
     #fetching_positions = fetching_the_battle(args[0], args[1][0])
-    #if all ships are positioned for me then i can load the battle with no names and buttons
-    #all values for the player
     #result = processing_fetched_results(fetching_positions, 0)
    # need to get the opponent id here 
         id_opponent = getting_opponent_id_from_battle_id(args[0][0], args[1])
@@ -56,21 +59,12 @@ def refresh(*args):
         #all buttons that could be available
         #all disabled flag
         all_disabled = [str(i["text"]) for i in  args[2].grid_slaves() if i["state"]==DISABLED]
-        print("len all disabled", len(all_disabled))
-        
-        
-        
+        #print("len all disabled", len(all_disabled))
         #all_able_buttons_after_addition = [str(i["text"]) for i in args[2].grid_slaves() if i not in [all_values_colored]]
         #not colored in  frame.grid_slaves, result[] are the updated values 
-        #all_able_buttons_before_addition = [str(i["text"]) for i in args[2].grid_slaves()]
-        
-        
-        
-        
-        
-        
+        #all_able_buttons_before_addition = [str(i["text"]) for i in args[2].grid_slaves(
         #it does nothing if the user id is the same as that of the player now playingz
-        time.sleep(5)
+        time.sleep(7)
         
         #here result or result opponent are the same, as we write in both when pressing
         if args[1][0] == int(result_opponent["player_now_playing"]):
@@ -480,16 +474,23 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
         #all the buttons are colored , hits red, misses in gray
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in all_hits_opponent_]
         configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
-        
     #at pressing when battle ongoing and hit
     elif flag==2:
         #check the format here 
         #WHAT IS HAPPENING HERE ACTUALLY? IS THERE SOMETHING I NEED TO CHANGE HERE?  
-        print("entering flag 2 in coloring, it is the palyers' turn, to color ", all_misses_opponent_, all_hits_opponent_)
+        result = all_misses_opponent_ + all_hits_opponent_
+        all_buttons_text = [i["text"] for i in frame.grid_slaves()]
+        print("entering flag 2 in coloring, it is the palyers' turn, to color ", all_misses_opponent_, all_hits_opponent_, result, all_buttons_text)
+        #all_to_color_lightly = [[i["text"] for i in frame.grid_slaves()].remove(i) for i in result]
+        #configure_field_others = [i.configure(bg="grey81", state=DISABLED) for i in frame.grid_slaves() if i["text"] not in  all_to_color_lightly]
+        configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_misses_opponent_]
+        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
+        configure_field_others = [i.configure(bg="grey81", state=DISABLED) for i in frame.grid_slaves() if i["bg"] not in ["red", "gray27"]]
         
         
         
-        [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
+        
+        
     elif flag==3:
         #here i have the case in which it is not the palyers' turn 
         print("entered flag 3 it is the other player' turn", all_hits_opponent_, all_misses_opponent_)
@@ -603,18 +604,26 @@ def loading_battle(id_of_battle, user_id, flag, name):
     #one of the two battles has ended
     #print("fetching_positions_player ", fetching_positions,"id_of_battle", id_of_battle,"user_id[0]" , user_id[0],
     #      "id_opponent ", id_opponent ," fetching_positions_opponent",  fetching_positions_opponent, "result_opponent", result_opponent, "now playing")
-    if len(result_opponent['all_common_opponent_no_null'])==10:
+    #print("why the algorithm is not working at the moment ----->", result_opponent, "result ----->",  result)
+    if len(checking_ast(result_opponent['all_hits_opponent']))==10 or len(checking_ast(result['all_hits_player']))==10:        
         #print("entering opponent won")
     #opponent won
     #id_of_battle[2][0] --> opponent _name
     #all hits palyer shold show what i have hit in te opponent field 
-        user_page_module.new_battle(id_of_battle[2][0], 2,result['all_hits_player'], result['all_misses_player'], id_opponent, id_of_battle, user_id)
+        print("ONE OF THE BATTLES HAS ENEDED FOR SURE")
+    #COMMENTING OUT
+    
+    
+    
+    
+    
+        user_page_module.new_battle(id_of_battle[2][0], 2,result['all_hits_player'], result['all_misses_player'],result_opponent['all_ships_opponent'],  id_opponent, id_of_battle, user_id)
         #base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
-    elif len(result['all_common_player_no_null'])==10:
+    #elif len(result['all_common_player_no_null'])==10:
         #print("entering player won")
         #player won
-        user_page_module.new_battle(name[0], 2,result['all_hits_player'], result['all_misses_player'] ,
-                                    result_opponent['all_ships_opponent'],  id_opponent, id_of_battle, user_id)
+        #user_page_module.new_battle(name[0], 2,result['all_hits_player'], result['all_misses_player'] ,
+        #                            result_opponent['all_ships_opponent'],  id_opponent, id_of_battle, user_id)
         #case of non ended game, just started or not started
     else:  
     #need to take into consideration here what happens when the turn is not right

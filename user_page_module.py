@@ -4,7 +4,7 @@ import io
 from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
 from tkinter import messagebox
-from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name, boom_trial
+from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name, boom_trial, coloring
 from checking_function import calculate_cases
 #added for the function refresh
 from sql_queries_ import refresh
@@ -36,15 +36,6 @@ def update_name(new_name, name, toplevel):
     toplevel.title(updated_name)
     messagebox.showinfo("update info", "Username successfully updated")
 
-
-
-
-
-
-
-
-
-
     
     
 
@@ -71,6 +62,8 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_oppo
             for j in range(10):
                 button = Button(frame, text=str(i)+str(j))#lambda j=str(i)+str(j): check_hit(j)
                 button.grid(row=i, column=j)
+                #flag ==1 battle ended , j="" shouldn cause any damage
+                coloring(frame, all_ships_opponent, all_hits, all_misses, 2, "")
         #need to color the buttons based on the hits and misses (misses dark gery and hits dark red)
         # coloring also the non presssed
 
