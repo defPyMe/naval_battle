@@ -18,34 +18,92 @@ translator = str.maketrans("","", string.punctuation)
 
 #refreshing_function 
 def refresh(*args):
+
+    
     while True:
     #with args[0]=id_of_battle, args[1][0]=user_id[0]
     #fetching_positions = fetching_the_battle(args[0], args[1][0])
     #if all ships are positioned for me then i can load the battle with no names and buttons
     #all values for the player
     #result = processing_fetched_results(fetching_positions, 0)
-
    # need to get the opponent id here 
         id_opponent = getting_opponent_id_from_battle_id(args[0][0], args[1])
     #print("opponent id in the loading battle --> ", id_opponent)
         fetching_positions_opponent = fetching_the_battle(args[0], id_opponent)
     #getting results for opponent , flag 1 for opponent
         result_opponent = processing_fetched_results(fetching_positions_opponent, 1)
+    #after having checked the DB where i have written the new values i isolate the difference 
+    # frame = args[2],
+    # what differences i have here?
+    #1) hits
+    #2) misses 
+    #the calculation is made with the colored buttons (they are colored with the 3 and 1 coloring colors )
+    #
+    # configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in  all_misses_opponent_]#[i for i in all_misses_opponent_]]
+    # configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
+    #
+    #WHEN I RETRIEVED IS ALREADY COLORED, SO I CAN JUST COLOR THE DIFFERENCE 
+    #
+    #
+    #
+    #
     
-  
+        diff_hit = [i for i in [str(i["text"]) for i in args[2].grid_slaves() if i["bg"]=="red"] if i not in result_opponent['all_hits_opponent']]
+        diff_miss = [i for i in [str(i["text"]) for i in args[2].grid_slaves() if i["bg"]=="gray27"] if i not in result_opponent['all_misses_opponent']]
+        #print("diff_miss, diff_hits    ", diff_miss, diff_hit, "all_hits_opponent",  result_opponent['all_hits_opponent'], "all_misses_opponent", result_opponent['all_misses_opponent'])
+        #the two lists seem to be the same, i can now subtract the two and just get the difference not to color anything to avoid buffer effect
+        #all_values_colored = diff_hit + diff_miss + result_opponent['all_hits_opponent'] +  result_opponent['all_misses_opponent']
+        #all buttons that could be available
+        #all disabled flag
+        all_disabled = [str(i["text"]) for i in  args[2].grid_slaves() if i["state"]==DISABLED]
+        print("len all disabled", len(all_disabled))
+        
+        
+        
+        #all_able_buttons_after_addition = [str(i["text"]) for i in args[2].grid_slaves() if i not in [all_values_colored]]
+        #not colored in  frame.grid_slaves, result[] are the updated values 
+        #all_able_buttons_before_addition = [str(i["text"]) for i in args[2].grid_slaves()]
+        
+        
+        
+        
+        
+        
         #it does nothing if the user id is the same as that of the player now playingz
-        time.sleep(3)
+        time.sleep(5)
+        
         #here result or result opponent are the same, as we write in both when pressing
-        if args[1][0] != int(result_opponent["player_now_playing"]):
-            #frame field as args[2], current user id is --> args[1][0]
-            #print("in refreshing, player different from the one that has played in db",  args[1][0] ,type(args[1][0]),
-            #      result_opponent["player_now_playing"], type(result_opponent["player_now_playing"]))
-            coloring(args[2], result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 0,"")
+        if args[1][0] == int(result_opponent["player_now_playing"]):
+            #in this case then also the difference is to be colored 
+            if diff_miss!=[] and diff_hit!=[]:
+                #frame field as args[2], current user id is --> args[1][0]
+                #print("in refreshing, player different from the one that has played in db",  args[1][0] ,type(args[1][0]),
+                #      result_opponent["player_now_playing"], type(result_opponent["player_now_playing"]))
+                coloring(args[2], result_opponent['all_ships_opponent'],  diff_hit, diff_miss, 3,"")#result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent']
+            else:pass
         else:
-            coloring(args[2], result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 3,"")
+            #if needs to be loaded again
+            if len(all_disabled)==100:
+                coloring(args[2], result_opponent['all_ships_opponent'],result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'],  0,"")# result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent']
+                if diff_miss!=[] and diff_hit!=[]:
+                    coloring(args[2], result_opponent['all_ships_opponent'],diff_hit ,diff_miss,  0,"")# result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent']
+                else:
+                    pass
+                #if i am waiting here i need to reenable everything not colored 
+            else:
+                if diff_miss!=[] and diff_hit!=[]:
+                    coloring(args[2], result_opponent['all_ships_opponent'],diff_hit ,diff_miss,  0,"")
+                else:pass
+                
+                
+                
+                
+                
+                
+                
             #print("in refreshing, player equal from the one that has played in db", args[1][0] ,result_opponent["player_now_playing"])
         print("refreshed ", result_opponent["player_now_playing"], args[1][0])
-    pass
+    
 
 #user id here is the player id, so we can get the opposite 
 def getting_opponent_id_from_battle_id(battle_id, user_id):
@@ -434,10 +492,10 @@ def coloring(frame, all_ships_opponent, all_hits_opponent, all_misses_opponent, 
         [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"]==j]
     elif flag==3:
         #here i have the case in which it is not the palyers' turn 
-        print("entered flag 3 other player' turn", all_hits_opponent_, all_misses_opponent_)
+        print("entered flag 3 it is the other player' turn", all_hits_opponent_, all_misses_opponent_)
         #configure_all = [i.configure(bg="azure2") for i in frame.grid_slaves()]
         configure_field_pressed = [i.configure(bg="gray27", state=DISABLED) for i in frame.grid_slaves() if i["text"] in  all_misses_opponent_]#[i for i in all_misses_opponent_]]
-        configure_ships_hits = [i.configure(bg="firebrick4", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
+        configure_ships_hits = [i.configure(bg="red", state=DISABLED) for i in frame.grid_slaves() if i["text"] in all_hits_opponent_]
         #coloring al the remeining colors 
         configure_rest_of_ships = [i.configure(bg="grey73", state=DISABLED) for i in frame.grid_slaves() if i["state"]!=DISABLED]#grey73
         #messagebox.showinfo("Not your turn", "Waiting for ove from other player")
