@@ -4,4 +4,4 @@ k = ['21', '73', '74', '75', '76', '35', '25']
 print(k+f)
 j = ['76', '35', '25']
 print(k+f-j)
-[[i["text"] for i in frame.grid_slaves()].remove(i) for i in [all_value]]
+[[i["text"] for i in frame.grid_slaves()].remove(i) for i in [all_values]]
