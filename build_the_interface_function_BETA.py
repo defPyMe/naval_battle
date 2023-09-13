@@ -1,7 +1,11 @@
-f = ['10', '20', '30', '40', '50', '60', '00', '70', '80', '82', '02', '18', '98', '41', '51', '61', '94', '85', '44', '90', '71', '92', '31', '81', '01', '22', '12', '93', '42', '11', '27', '65', 
-'34', '33', '91', '52', '43', '62', '53', '72', '24', '64', '63', '83', '84', '45', '54', '32', '38', '23', '47', '46', '55', '37', '37', '56', '68', '16', '17', '26', '57', '66', '67', '77'] 
-k = ['21', '73', '74', '75', '76', '35', '25']
-print(k+f)
-j = ['76', '35', '25']
-print(k+f-j)
-[[i["text"] for i in frame.grid_slaves()].remove(i) for i in [all_values]]
+import customtkinter
+#defaults to the user one, otherwise if we specify one it will always stay the same 
+customtkinter.set_appearance_mode("dark")#system, dark, light
+customtkinter.set_default_color_theme("dark-blue")#blue, green, dark-blue
+
+
+root = customtkinter.Ctk()
+root.geometry("500x300")
+
+
+root.mainloop()

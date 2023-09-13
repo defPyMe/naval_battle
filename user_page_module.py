@@ -4,7 +4,9 @@ import io
 from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
 from tkinter import messagebox
-from sql_queries_ import  retrieve_image, check_if_image, path_to_db, check_users, SaveBattle, retrieve_battle, insert_image, getting_user_id_from_name, boom_trial, coloring
+from sql_queries_ import  (retrieve_image, check_if_image, path_to_db, check_users, SaveBattle,
+                            retrieve_battle, insert_image, getting_user_id_from_name,
+                                boom_trial, coloring, getting_name_from_id, get_battle_name_from_id)
 from checking_function import calculate_cases
 #added for the function refresh
 from sql_queries_ import refresh
@@ -36,8 +38,66 @@ def update_name(new_name, name, toplevel):
     toplevel.title(updated_name)
     messagebox.showinfo("update info", "Username successfully updated")
 
+
+#initialize both the arguments with a function and then display only the correct one
+def create_attributes():
+    label_opponent = Label(args[0], text="Opponent", width=10)
     
     
+    
+    pass
+
+
+
+#player_frame, name, frame_field,  label_name_battle ="" 
+def create_interface_field(*args):#args[0] = player_frame, args[1]=name, args[2]=label_name_battle, 
+        args[0].grid(row=0, column=1)
+            #frame_ships.grid(row=1, column=1)
+        label_opponent = Label(args[0], text="Opponent", width=10)
+        label_opponent.grid(row=1, column=0)
+        #print("flag==0")
+        label_name_battle = Label(args[0], text="add a name for the battle", width=10)
+        #need to get the users here is it  alist
+        #print("check users name ------------>",check_users(name))
+        options = [""]+check_users(args[1])
+        # create a variable to store the selected option
+        selected_option = StringVar()
+        # set the default option
+        selected_option.set(options[0])
+    # create the option menu widget
+        option_menu = OptionMenu(args[0], selected_option, *options)
+        option_menu.grid(row=1, column=1)
+        label_name_battle.grid(row=0, column=0)
+        insert_battle_name = Text(player_frame, height=1, width=10)
+        insert_battle_name.grid(row=0, column=1) 
+            #the fieldswhere we have the buttons is the frame field
+        ship_1 = Button(player_frame, text="ship 1", width=10, bg="orange")
+        # rsettimng different values before lambda so we can have different for each button 
+        ship_1.configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button, 1))
+        ship_2 = Button(player_frame, text="ship 2", width=10, bg="blue")
+        ship_2.configure(command=lambda color="blue",frame = frame_field,  button=ship_2, : ship_click(color, frame, button, 2))
+        ship_3 = Button(player_frame, text="ship 3", width=10, bg="purple")
+        ship_3.configure(command=lambda color="purple",frame = frame_field,  button=ship_3, : ship_click(color, frame, button, 3))
+        
+        ship_4 = Button(player_frame, text="ship 4", width=10, bg="pink")
+        ship_4.configure(command=lambda color="pink",frame = frame_field,  button=ship_4, : ship_click(color, frame, button, 4))
+        ship_1.grid(row=2, column=0, columnspan=2)
+        ship_2.grid(row=3, column=0, columnspan=2)
+        ship_3.grid(row=4, column=0, columnspan=2)
+        ship_4.grid(row=5, column=0, columnspan=2)
+#in the save button i can pass the name as argument so that i get teh db save
+
+#save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
+#save_button.grid(row=6, column=1, pady=(30,))
+
+
+
+        #adding a flag here to skip creation in battle table , otherwise unique constarint error
+        save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option, 0))
+        save_button.grid(row=6, column=1, pady=(30,))
+    
+    
+        pass
 
 
 #need to be moved from here as it is not the 
@@ -57,7 +117,7 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_oppo
             for j in range(10):
                 button = Button(frame, text=str(i)+str(j), command=lambda j=str(i)+str(j): boom_trial(j,frame,  all_ships_opponent, id_opponent, id_of_battle, id_player))#lambda j=str(i)+str(j): check_hit(j)
                 button.grid(row=i, column=j)
-    else:
+    elif flag == 2:
         for i in range(10):
             for j in range(10):
                 button = Button(frame, text=str(i)+str(j))#lambda j=str(i)+str(j): check_hit(j)
@@ -66,6 +126,14 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_oppo
                 coloring(frame, all_ships_opponent, all_hits, all_misses, 2, "")
         #need to color the buttons based on the hits and misses (misses dark gery and hits dark red)
         # coloring also the non presssed
+        #not coloring as the battle has not started for this player
+    else:
+         for i in range(10):
+            for j in range(10):
+                button = Button(frame, text=str(i)+str(j))#lambda j=str(i)+str(j): check_hit(j)
+                button.grid(row=i, column=j)
+        
+                #flag ==1 battle ended , j="" shouldn cause any damage
 
         
 
@@ -125,7 +193,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
 
 
             #adding a flag here to skip creation in battle table , otherwise unique constarint error
-            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option, 0))
+            save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(base_window, name, frame_field, insert_battle_name, selected_option, 0))
             save_button.grid(row=6, column=1, pady=(30,))
 
             #creating the buttons 
@@ -142,10 +210,90 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             
             
 
-    else:
+    elif flag == 2:
         #ended game
             create_field(frame_field, 2, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
             #trying to return the widget so as to access it in loading
+            #case in which i need to position the ships 
+    else:
+        #flag 3 for the buttons 
+        #opponent opponent and battle name to be selected here 
+        
+        
+        #id of battle -------------> (25, 'jjjjjj', ('Simona',))
+        
+        #phony variables here as they are not created or used in teh save battle operations 
+ 
+        
+        
+        
+        
+        
+        create_field(frame_field, 3, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
+        player_frame.grid(row=0, column=1)
+        #frame_ships.grid(row=1, column=1)
+        label_opponent = Label(player_frame, text="Opponent", width=10)
+        label_opponent.grid(row=1, column=0)
+        label_opponent_name =  Label(player_frame,text=id_of_battle[2][0], width=10)
+        label_opponent_name.grid(row=1, column=1)
+        
+        
+        #print("flag==0")
+        label_name_battle = Label(player_frame, text="name of battle", width=10)
+        label_actual_name_battle =  Label(player_frame, text=id_of_battle[1], width=10)
+        #need to get the users here, is it  alist
+        #print("check users name ------------>",check_users(name))
+        #options = [""]+check_users(name)
+        # create a variable to store the selected option
+        #selected_option = StringVar()
+        # set the default option
+        #selected_option.set(options[0])
+    # create the option menu widget
+        #option_menu = OptionMenu(player_frame, selected_option, *options)
+        #option_menu.grid(row=1, column=1)
+        
+        
+        
+        label_name_battle.grid(row=0, column=0)
+        label_actual_name_battle.grid(row=0, column=1)
+        
+        
+        #overwriting the values 
+        insert_battle_name = id_of_battle[1]
+        selected_option = id_of_battle[2][0]
+        
+        
+        
+        
+        #insert_battle_name = Label(text="" )
+        #insert_battle_name.grid(row=0, column=1) 
+            #the fieldswhere we have the buttons is the frame field
+        ship_1 = Button(player_frame, text="ship 1", width=10, bg="orange")
+        # rsettimng different values before lambda so we can have different for each button 
+        ship_1.configure(command=lambda color="orange",frame = frame_field,  button=ship_1, : ship_click(color, frame, button, 1))
+        ship_2 = Button(player_frame, text="ship 2", width=10, bg="blue")
+        ship_2.configure(command=lambda color="blue",frame = frame_field,  button=ship_2, : ship_click(color, frame, button, 2))
+        ship_3 = Button(player_frame, text="ship 3", width=10, bg="purple")
+        ship_3.configure(command=lambda color="purple",frame = frame_field,  button=ship_3, : ship_click(color, frame, button, 3))
+        
+        ship_4 = Button(player_frame, text="ship 4", width=10, bg="pink")
+        ship_4.configure(command=lambda color="pink",frame = frame_field,  button=ship_4, : ship_click(color, frame, button, 4))
+        ship_1.grid(row=2, column=0, columnspan=2)
+        ship_2.grid(row=3, column=0, columnspan=2)
+        ship_3.grid(row=4, column=0, columnspan=2)
+        ship_4.grid(row=5, column=0, columnspan=2)
+#in the save button i can pass the name as argument so that i get teh db save
+
+#save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
+#save_button.grid(row=6, column=1, pady=(30,))
+
+
+        #print("what is passed to saved button ----> ",insert_battle_name, selected_option)
+        #what is passed to saved button ---->  jjjjjj Simona
+        #adding a flag here to skip creation in battle table , otherwise unique constarint error
+        #leaving 
+        save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(base_window, name, frame_field, insert_battle_name, selected_option, 1))
+        save_button.grid(row=6, column=1, pady=(30,))
     return frame_field
             
 
@@ -293,7 +441,7 @@ def build_user_page(name):
     frame_buttons.grid(row=0, column=1)
     label_player_name = Label(frame_pic, text=name, width=7, padx=(70, ))
     #retrieve_image(name)
-    button_new_battle = Button(frame_buttons, text="new battle",width=15, height=2,bg="red", command =lambda: new_battle(name, 0, "", ""))
+    button_new_battle = Button(frame_buttons, text="new battle",width=15, height=2,bg="red", command =lambda: new_battle(name, 0, "", "", "", "", "",""))
     button_old_battles = Button(frame_buttons, text="show battles",width=15, height=2,bg="red", command=lambda: retrieving_battles(name, user_id))
     button_show_champions = Button(frame_buttons, text="show champions",width=15, height=2,bg="red", command="")
     button_change_profile = Button(frame_buttons, text="change profile",width=15, height=2,bg="red", command=lambda: build_modify_profile(name))

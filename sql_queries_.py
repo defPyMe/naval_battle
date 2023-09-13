@@ -150,6 +150,19 @@ def getting_name_from_id(id_):
 
 
 
+def get_battle_name_from_id(id_):
+    with sqlite3.connect(path_to_db) as conn:
+        command = "SELECT name FROM battle_table WHERE  battle_id = (?)"
+        result_of_name_fetch = conn.execute(command, (id_))
+        fetching_battle_name = result_of_name_fetch.fetchone()
+        conn.commit()
+        return fetching_battle_name
+    
+    
+    
+    pass
+
+
 
 def checking_credentials(name):
     with sqlite3.connect(path_to_db) as conn:
@@ -234,7 +247,7 @@ def retrieve_image(name, current_window ):
     label_picture.grid(row=1, column=0)
     
     
-def SaveBattle(name_creator, field, text, options, flag):
+def SaveBattle(toplevel, name_creator, field, text, options, flag):
     #should get the different ships we have placed
     try:
         #her ei get the texts to save in the database
@@ -251,16 +264,27 @@ def SaveBattle(name_creator, field, text, options, flag):
         #the conditions are that the elements on the textbox are taken and the list of the negative is ==0
         #now i clean the string building a translator
         #the first two are empty strings as we do not want to map any characters, the third is the constant containing what we want to remove 
+        #setting teh name and battle in case tyhe ships haven t been placed 
         
-        selection_var = options.get().translate(translator)
-        #the first is the name of the opponent while the second is the name of the battle
-        name_opponent_and_battle = (selection_var + "  " +  text.get("1.0", "end")).split()
+        try:
+            selection_var = options.get().translate(translator)
+            #the first is the name of the opponent while the second is the name of the battle
+            name_opponent_and_battle = (selection_var + "  " +  text.get("1.0", "end")).split()
+
+            #selection_var, name_opponent_and_battle   ---------> Silvia ['Silvia', 'ccccccccccccc']
+        except:
+            #inn  this case it is the name of battle and opponent 
+            #['jjjjjj', 'Simona']
+            name_opponent_and_battle = [options] + [text] 
+            print("name opponent and battle in sql query ", name_opponent_and_battle)
+            selection_var = text
+        
         #here we pass the test if all the fields are filled and all the ships positioned 
         #need to check here for teh battle name 
         #needs to create the battle before we can save the data 
         #need to verify the condition here , once i have all the conditions i do not need also to create a new battle
         
-        
+        #checking ifd the ships are correclty placed
         if len(list(cases_negative.keys())) == 0 and len( name_opponent_and_battle)==2:
             
             try:
@@ -316,8 +340,11 @@ def SaveBattle(name_creator, field, text, options, flag):
                                 # info already inserted = battle_id, user_id, player now playing
                                #print("first insertion",(str(ship_1), str(ship_2), str(ship_3), str(ship_4),id_fetched[0], ids_int[0].translate(translator), "isolating the battle id", id_fetched[0]  ))
                                 command = "UPDATE Ships_1 SET ship_1 = (?), ship_2 = (?), ship_3 = (?), ship_4 = (?) WHERE battle_id = (?) AND user_id = (?)"
+                                print("id fetchd ---->", id_fetched)
+                                
                                 conn.execute(command, (str(ship_1), str(ship_2), str(ship_3), str(ship_4), *id_fetched, ids_int[0].translate(translator)))
                                 messagebox.showinfo("inserted ships", "battle now playing")
+                                
                                 #adding also the battle of the opponent 
                                 
                                 conn.commit()
@@ -333,6 +360,7 @@ def SaveBattle(name_creator, field, text, options, flag):
                                 conn.execute(command, (*id_fetched, str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator)))
                                 #print("second insertion",((str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator), *id_fetched) ))
                                 conn.commit()
+                               
                             else:
                                 pass
                         except Exception as e:
@@ -360,7 +388,7 @@ def SaveBattle(name_creator, field, text, options, flag):
                     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                     print(e, exc_type, fname, exc_tb.tb_lineno)
                     messagebox.showinfo(message=str(e)+ "/n" + str(exc_type)+ "/n" + str(fname)+ "/n" + str(exc_tb.tb_lineno)+ "/n")
-
+    toplevel.destroy()
 
 
 
@@ -617,7 +645,7 @@ def loading_battle(id_of_battle, user_id, flag, name):
         
         #if no partial positioning is possible thanks to the save button 
         #zero a s flag as it is a new battle
-        user_page_module.new_battle(name, 0, [], [],  result_opponent["all_ships_opponent"], id_opponent, id_of_battle, user_id[0])
+        user_page_module.new_battle(name, 3, [], [],  result_opponent["all_ships_opponent"], id_opponent, id_of_battle, user_id[0])
         
         
         
