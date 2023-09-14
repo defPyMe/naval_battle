@@ -465,7 +465,7 @@ def retrieving_battles(name, user_id):
     canvas.config(yscrollcommand=bar.set)
     canvas.pack(side=LEFT,expand=True,fill=BOTH)
    
-    frame_buttons_1 = Frame(base_window)
+    frame_buttons_1 = Frame(base_window, padx = 10)
    
     canvas.create_window(0, 0, anchor='nw', window=frame_buttons_1)
    

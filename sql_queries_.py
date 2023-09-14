@@ -747,7 +747,7 @@ def retrieve_battle(name, frame, user_id):
         #i have the different ids right here in the first index ??
         #which one is the name of the chosen battle
         #f is now a tuple with the name and id
-        button = Button(frame, text=battle_names[i],width=20, height=5, padx=10, pady=3,bg="orange", 
+        button = Button(frame, text=battle_names[i],width=60, height=5, padx=20, pady=3,bg="orange", 
                         
                         command=lambda f=(fetching_the_result[i][0],battle_names[i],opponent_current_battle): loading_battle(f , user_id, 0, name))
         # attach Text widget to root window at top
