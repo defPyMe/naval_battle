@@ -424,9 +424,84 @@ def retrieving_battles(name, user_id):
     base_window.geometry("500x300")
     base_window.title("Battles of player : " + name )
     #need to create the buttons with the commands to create teh buttons 
+    #need to add a scrolalble frame here
+    """
+    
+            container = Frame(new_window, width = 10, height = 10)
+        
+        canvas = Canvas(container)
+        scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+        scrollable_frame = Frame(canvas)
+
+        scrollable_frame.bind(
+            "<Configure>",
+             lambda e: canvas.configure(
+              scrollregion=canvas.bbox("all")
+             )
+            )
+
+        
+        # adding all to the interface 
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+       
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+    
+    
+    
+    
+    """
+    #initializing frame
     frame_buttons = Frame(base_window)
-    frame_buttons.grid(row=0, column=0)
-    retrieve_battle(name, frame_buttons, user_id)
+    #adding some propertiees 
+    frame_buttons.pack(expand=True, fill=BOTH) #.grid(row=0,column=0)
+    #canvas created and added to frame
+    canvas=Canvas(frame_buttons,bg='#FFFFFF',width=300,height=300,scrollregion=(0,0,500,500))
+    bar=Scrollbar(frame_buttons,orient=VERTICAL)
+    bar.pack(side=RIGHT,fill=Y)
+    bar.config(command=canvas.yview)
+    canvas.config(width=50,height=300)
+    canvas.config(yscrollcommand=bar.set)
+    canvas.pack(side=LEFT,expand=True,fill=BOTH)
+   
+    frame_buttons_1 = Frame(base_window)
+   
+    canvas.create_window(0, 0, anchor='nw', window=frame_buttons_1)
+   
+   
+    
+    
+    
+    """
+    h = Scrollbar(base_window, orient = 'horizontal')
+    # attach Scrollbar to root window at
+    # the bootom
+    h.pack(side = BOTTOM, fill = X)
+    # create a vertical scrollbar-no need
+        # to write orient as it is by
+        # default vertical
+    v = Scrollbar(base_window)
+    v.pack(side = RIGHT, fill = Y)
+    #widget where the buttons will be stored
+    # here xscrollcomannd is used to attach Frame
+        # widget to the horizontal scrollbar
+        # here yscrollcomannd is used to attach Frame
+        # widget to the vertical scrollbar
+    frame_buttons = Frame(base_window, xscrollcommand = h.set,
+                 yscrollcommand = v.set)
+    # attach Frame widget to root window at top
+    frame_buttons.pack(side=TOP, fill=X)
+    h.config(command=frame_buttons.xview)
+  
+        # here command represents the method to
+        # be executed yview is executed on
+        # object 't' Here t may represent any
+        # widget
+    v.config(command=frame_buttons.yview)"""
+    
+    
+    retrieve_battle(name, frame_buttons_1, user_id)
     pass
 
 
