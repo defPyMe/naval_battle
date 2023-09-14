@@ -4,9 +4,9 @@ from user_page_module import build_user_page
 from sql_queries_ import checking_credentials
 
 
-def logging_in(text_box):
+def logging_in(name_input):
     #need to add a connection to the list of users here 
-    name_input = str(text_box.get("1.0", "end")).strip()
+
     #should look here into the users table
     print("name input --> ",name_input)
     if checking_credentials(name_input):
@@ -17,7 +17,8 @@ def logging_in(text_box):
 
 
 
-
+#ent = Entry(top)
+#ent.bind("<Return>", (lambda event: reply(ent.get())))
 
 def build_first_screen():  
     root=Tk()
@@ -27,9 +28,11 @@ def build_first_screen():
     label1 = Label(text = "insert username")
     label_space = Label(text = "", width=1, height=1)
     label_space1 = Label(text = "", width=1, height=1)
-    text_box = Text(height=1,width=10)
+    text_box = Entry(root)
     #giving the function som earguments without executing it directly with lambd
-    button_log = Button(text = "log in", command = lambda: logging_in(text_box))
+    button_log = Button(text = "log in", command = lambda: logging_in(text_box.get().strip()))
+    #lambda needs lambda event here to work
+    text_box.bind('<Return>',  lambda event: logging_in(text_box.get().strip()))
     label.pack()
     label1.pack()
     label_space.pack()

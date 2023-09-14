@@ -1,0 +1,4 @@
+#event to enter when entering
+#spacing between retrieved battles
+#chanpion toplevel
+#adding a more fluid navigation , expanding current windows

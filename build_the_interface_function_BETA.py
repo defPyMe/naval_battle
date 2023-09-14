@@ -1,11 +1,21 @@
-import customtkinter
-#defaults to the user one, otherwise if we specify one it will always stay the same 
-customtkinter.set_appearance_mode("dark")#system, dark, light
-customtkinter.set_default_color_theme("dark-blue")#blue, green, dark-blue
+from tkinter import *
+
+root = Tk()
+def retrieve(text):
+    print(text.get())
+
+tex = Entry(root)
+b = Button(root, text="click", command = lambda : retrieve(tex))
 
 
-root = customtkinter.Ctk()
-root.geometry("500x300")
+root.bind("<Return>", retrieve(tex))
+
+
+
+
+
+tex.pack()
+b.pack()
 
 
 root.mainloop()
