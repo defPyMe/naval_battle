@@ -1,24 +1,23 @@
 from tkinter import *
 from tkinter import messagebox
 from user_page_module import build_user_page
-from sql_queries_ import checking_credentials
+from sql_queries_ import checking_credentials, delete_widgets
 
 
-def logging_in(name_input):
+def logging_in(name_input, root):
     #need to add a connection to the list of users here 
 
     #should look here into the users table
     print("name input --> ",name_input)
     if checking_credentials(name_input):
         messagebox.showinfo("log_info", "log in successful")
-        build_user_page(name_input)
+        #here called with the delete widget function
+        build_user_page(delete_widgets(root),name_input, root )
     else:
         messagebox.showwarning("log_info", "wrong credentials")
 
 
 
-#ent = Entry(top)
-#ent.bind("<Return>", (lambda event: reply(ent.get())))
 
 def build_first_screen():  
     root=Tk()
@@ -30,9 +29,9 @@ def build_first_screen():
     label_space1 = Label(text = "", width=1, height=1)
     text_box = Entry(root)
     #giving the function som earguments without executing it directly with lambd
-    button_log = Button(text = "log in", command = lambda: logging_in(text_box.get().strip()))
+    button_log = Button(text = "log in", command = lambda: logging_in(text_box.get().strip(), root))
     #lambda needs lambda event here to work
-    text_box.bind('<Return>',  lambda event: logging_in(text_box.get().strip()))
+    text_box.bind('<Return>',  lambda event: logging_in(text_box.get().strip(), root))
     label.pack()
     label1.pack()
     label_space.pack()

@@ -7,13 +7,26 @@ from tkinter import *
 from tkinter import messagebox
 import string
 import sys , os
-import user_page_module
 import ast
 import time
 
 
 path_to_db = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\naval_battle.db"
 translator = str.maketrans("","", string.punctuation)
+
+#but2 = Button(root, text="button 2", command = lambda :  delete_widgets(root) )
+
+def delete_widgets(root):
+    #need to check if there are any widgets
+    if len(root.winfo_children())>0:
+        [i.destroy() for i in root.winfo_children()]
+    else:
+        pass
+
+
+def delete_widgets_access_previous(funct, *args):
+    #calling the other screen , passing in some arguments 
+    funct(args)
 
 
 #refreshing_function 
@@ -619,139 +632,11 @@ def boom_trial(j, frame,  all_ships_opponent, id_opponent, id_of_battle, id_play
    
     
 
-            
-#needs id of th eplayer , user_id should be the one playing
-def loading_battle(id_of_battle, user_id, flag, name):
-    #what is it that i am passing 
-    #this needs to return all teh needed info to be accessed by its name 
-    fetching_positions = fetching_the_battle(id_of_battle, user_id[0])
-    #if all ships are positioned for me then i can load the battle with no names and buttons
-    #all values for the player
-    result = processing_fetched_results(fetching_positions, 0)
-   # need to get the opponent id here 
-    id_opponent = getting_opponent_id_from_battle_id(id_of_battle[0], user_id)
-    #print("opponent id in the loading battle --> ", id_opponent)
-    fetching_positions_opponent = fetching_the_battle(id_of_battle, id_opponent)
-    #getting results for opponent , flag 1 for opponent
-    result_opponent = processing_fetched_results(fetching_positions_opponent, 1)
-    #one of the two battles has ended
-    #print("fetching_positions_player ", fetching_positions,"id_of_battle", id_of_battle,"user_id[0]" , user_id[0],
-    #      "id_opponent ", id_opponent ," fetching_positions_opponent",  fetching_positions_opponent, "result_opponent", result_opponent, "now playing")
-    #print("why the algorithm is not working at the moment ----->", result_opponent, "result ----->",  result)
-    #taken into account when the player has no ships placed , should load the full field (maybe save should close the field)
-    #needs result as the result is ships of the current player 
-    print("result ------------------>", len([i for i in result["all_ships_player"] if i!=""]))
-    if len([i for i in result["all_ships_player"] if i!=""])<10:
-        
-        #if no partial positioning is possible thanks to the save button 
-        #zero a s flag as it is a new battle
-        user_page_module.new_battle(name, 3, [], [],  result_opponent["all_ships_opponent"], id_opponent, id_of_battle, user_id[0])
-        
-        
-        
-    else:
-        if len(checking_ast(result_opponent['all_hits_opponent']))==10 or len(checking_ast(result['all_hits_player']))==10:        
-            #print("entering opponent won")
-        #opponent won
-        #id_of_battle[2][0] --> opponent _name
-        #all hits palyer shold show what i have hit in te opponent field 
-        #    print("ONE OF THE BATTLES HAS ENEDED FOR SURE")
-        #COMMENTING OUT
-        
-        
-        
-        
-        
-            user_page_module.new_battle(id_of_battle[2][0], 2,result['all_hits_player'], result['all_misses_player'],result_opponent['all_ships_opponent'],  id_opponent, id_of_battle, user_id)
-            #base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
-        #elif len(result['all_common_player_no_null'])==10:
-            #print("entering player won")
-            #player won
-            #user_page_module.new_battle(name[0], 2,result['all_hits_player'], result['all_misses_player'] ,
-            #                            result_opponent['all_ships_opponent'],  id_opponent, id_of_battle, user_id)
-            #case of non ended game, just started or not started
-        else:  
-        #need to take into consideration here what happens when the turn is not right
-            print("confrontation between the user ids:     ", user_id[0], type(user_id[0]), result["player_now_playing"], type(result["player_now_playing"]) )
-            if user_id[0] == int(result["player_now_playing"]):
-                print("user playing the same playing in db")
-        #result opponent {'all_ships_opponent': ['21', '39', '29', '35', '25', '15', '76', '75', '74', '73'], 'all_hits_opponent': [''], 'all_misses_opponent': [''], 
-        #'all_ships_opponents_tuples': [('21',), ('39', '29'), ('35', '25', '15'), ('76', '75', '74', '73')], 'all_common_opponent_no_null': []
-        #result {'all_ships_player': ['21', '39', '29', '35', '25', '15', '76', '75', '74', '73'], 'all_hits_player': [''], 'all_misses_player': [''],
-        #'all_ships_tuples': [('21',), ('39', '29'), ('35', '25', '15'), ('76', '75', '74', '73')], 'all_common_player_no_null': []}
-        #"""
-                # [[all_ships_player, all_hits_player, all_misses_player, all_ships_tuples, all_common_player_no_null] ]
-                #(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
-                wid = user_page_module.new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
-                                                id_opponent, id_of_battle, user_id)
-                #print("entering battle still ongoing",result['all_hits_player'], result_opponent['all_hits_opponent'], result['all_misses_player'], result_opponent['all_misses_opponent'], 
-                #      result_opponent['all_ships_opponent'],id_opponent, id_of_battle)
-                #print("waht we are pasing to coloring", result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'])
-                #coloring as it is ongoing
-                coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 3,"")
-    
-            else:
-                print("user playing different from the one in db")
-                wid = user_page_module.new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
-                                                id_opponent, id_of_battle, user_id)
-        #need probably to introduce a new instance in coloring to disable all the field , coloring darker grey the misses, dark grey the misses and light grey all the others
-                coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 0,"")
-                pass
 
 
 
 
 
 
-
-
-
-
-def retrieve_battle(name, frame, user_id):
-    #print("user_id----------->    ", user_id)
-    #need here to get the values of the battle back and get them displayed in a playable field
-    #the battles need to be index in case there is more than one 
-    #getting the battles, all the battle s of a player
-    with sqlite3.connect(path_to_db) as conn:
-        command = "SELECT * FROM Ships_1 WHERE  user_id = (?)"
-        result_of_name_fetch = conn.execute(command, (str(*user_id)))
-        fetching_the_result = result_of_name_fetch.fetchall()
-        conn.commit()
-    #print("fetching the result", fetching_the_result)
-    #the result i get i sthe following
-    # [(5, 2, "['25']", "['42', '32']", "['39', '29', '19']", "['56', '46', '36', '26']", '', '', '', '', '', '2'), 
-    # (6, 2, "['34']", "['22','23']", "['56','65','75']", "['13',14'','15','16']", None, None, None, None, None, '2')]
-    # columns are --> battle_id, user_id, ship_1, ship_2, ship_3, ship_4, ship_1_hit, ship_2_hit, ship_3_hit, ship_4_hit, palyer_now_playing
-    #getting the names 
-    with sqlite3.connect(path_to_db) as conn:
-        list_of_battles_ids = [i[0] for i in fetching_the_result]
-        query = 'SELECT name,opponent FROM battle_table WHERE battle_id IN ({})'.format(', '.join('?' for _ in list_of_battles_ids))
-        ids = conn.execute(query, list_of_battles_ids)
-        #first i sname of opponent and the other the one of the creator 
-        #making the list without parenthesis and other strange punctuation
-        #needs an obj to be iterable
-        fetched = ids.fetchall()
-        #print("fetche ----->d", fetched)
-        battle_names  = [i[0] for i in fetched] 
-        opponent_ids = [i[1] for i in fetched]
-        #getting who is playing now with the id
-        player_now_playing = [i[8] for i in fetching_the_result]
-        
-  
-        #getting the lenght of teh list 
-        #PROCESSED VALUES
-        
-    for i in range(len(battle_names)):
-        #getting the name from the id
-        opponent_current_battle = getting_name_from_id(opponent_ids[i])
-        #i have the different ids right here in the first index ??
-        #which one is the name of the chosen battle
-        #f is now a tuple with the name and id
-        button = Button(frame, text=battle_names[i],width=60, height=5, padx=20, pady=3,bg="orange", 
-                        
-                        command=lambda f=(fetching_the_result[i][0],battle_names[i],opponent_current_battle): loading_battle(f , user_id, 0, name))
-        # attach Text widget to root window at top
-        button.pack()#side=TOP, fill=X)#.grid(row=i, column=0)
-    pass
                     
 
