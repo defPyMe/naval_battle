@@ -515,6 +515,7 @@ def SaveBattle(toplevel, name_creator, field, text, options, flag):
     #needs to go back to the main window 
     #trying to call the closing window
     #object ev ent is not callable
+    messagebox.showinfo("battle added", "battle added successfully")
     delete_widgets(toplevel)
     build_user_page("",  name_creator, toplevel)
 
