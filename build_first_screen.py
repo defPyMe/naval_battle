@@ -38,10 +38,15 @@ def build_first_screen():
     text_box.pack()
     label_space1.pack()
     button_log.pack()
+    #root.configure(background='blue')
+    #addding an icon here? is it working
+    photo = PhotoImage(file = r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\pngwing.com.png")
+    root.iconphoto(False, photo)
     root.mainloop()
-
-
+    
+    
 build_first_screen()
 
 
-#change the loading battle back
+#need to change the user picture frames as they are not showing the correct info 
+#adding some images to teh build user page 

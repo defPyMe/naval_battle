@@ -239,25 +239,35 @@ def check_if_image(name):
             
 #retrieving the image
 def retrieve_image(name, current_window ):
-    with sqlite3.connect(path_to_db) as conn:
-                            command = "SELECT user_pic FROM users WHERE  name = (?)"
-                            img = conn.execute(command, (name,))
-                            #returns a tuple here
-                            photo_tuple = img.fetchone()
-                            #print("photo tuple", photo_tuple)
-                            
-                            photo = photo_tuple[0]
-    fp = io.BytesIO(photo)
-    image = PIL.Image.open(fp)
-                    # convert the image : ata to file object
-    render = ImageTk.PhotoImage(image)
-                    #displaying it 
-                    # Create a Label Widget to display the text or Image
-    label_picture = Label( current_window, image = render, width=350, height=350)
-                    #needs to be recalled here as well
-    label_picture.image = render # keep a reference!
+    try:
+        with sqlite3.connect(path_to_db) as conn:
+                                command = "SELECT user_pic FROM users WHERE  name = (?)"
+                                img = conn.execute(command, (name,))
+                                #returns a tuple here
+                                photo_tuple = img.fetchone()
+                                #print("photo tuple", photo_tuple)
+                                
+                                photo = photo_tuple[0]
+        fp = io.BytesIO(photo)
+        image = PIL.Image.open(fp)
+                        # convert the image : ata to file object
+        render = ImageTk.PhotoImage(image)
+                        #displaying it 
+                        # Create a Label Widget to display the text or Image
+        label_picture = Label( current_window, image = render, width=100, height=100)
+                        #needs to be recalled here as well
+        label_picture.image = render # keep a reference!
+    except:
+        image = PIL.Image.open(r"C:\Users\cavazzinil\Dropbox\naval battle code + ideas\naval_battle\download.png")
+                        # convert the image : ata to file object
+        render = ImageTk.PhotoImage(image)
+                        #displaying it 
+                        # Create a Label Widget to display the text or Image
+        label_picture = Label( current_window, image = render, width=100, height=100)
+                        #needs to be recalled here as well
+        label_picture.image = render # keep a reference!
     #should i grid always in the same position so that i do not have any problems when using this in different screens 
-    label_picture.grid(row=1, column=0)
+    label_picture.grid(row=0, column=0)
     
  
 

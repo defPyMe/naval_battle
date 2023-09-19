@@ -566,6 +566,12 @@ def build_user_page(funct,  name, root):
     frame_buttons = Frame(base_window)
     frame_pic.grid(row=0, column=0)
     frame_buttons.grid(row=0, column=1)
+    #need to reduce the padding here to add the images 
+    #also retrieving picture from here 
+    
+    retrieve_image(name, frame_pic)
+    
+    
     label_player_name = Label(frame_pic, text=name, width=7, padx=(70, ))
     #retrieve_image(name)
     #funct is the delete widgets at calling, needs to be different here
@@ -574,7 +580,7 @@ def build_user_page(funct,  name, root):
     button_show_champions = Button(frame_buttons, text="show champions",width=15, height=2,bg="red", command="")
     button_change_profile = Button(frame_buttons, text="change profile",width=15, height=2,bg="red", command=lambda: build_modify_profile(name, root))
     
-    label_player_name.grid(row=0, column=0)
+    label_player_name.grid(row=1, column=0)
     button_new_battle.grid(row=0, column=0,padx=(150,10), pady=20)
     button_old_battles.grid(row=1, column=0,padx=(150,10), pady=10 )
     button_show_champions.grid(row=2, column=0,padx=(150,10), pady=10)
