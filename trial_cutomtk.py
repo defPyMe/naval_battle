@@ -1,11 +1,20 @@
+import sys
+import math
+from contextlib import redirect_stdout
 
 
-def funct(*args):
-    print(args)
 
-def delete_widgets_access_previous(root, funct, *args):
-    print(args)
-    #calling the other screen , passing in some arguments 
-    print(funct(args))
+def compute_closest_to_zero(ts):
+    print(ts)
+    if 0<len(ts)<=10000:
+        #creating dicitionary
+        dict_variables ={abs(i): i for i in ts}
+        print(dict_variables)
+        min_key = min(dict_variables.keys())
+        max_value = max(dict_variables.values())
+        return max_value
+    else:
+        return 0
     
-delete_widgets_access_previous("root", "funct", "name", "root")
+ts = [1, -2, -8, 4, 5]
+compute_closest_to_zero(ts)

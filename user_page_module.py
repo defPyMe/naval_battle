@@ -87,6 +87,13 @@ def create_field(frame, flag, all_hits, all_misses,  all_ships_opponent, id_oppo
 def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player, root, funct):
     print("deleting widgets new battle")
     #lambda arg=master: self.onclosing(arg)
+    #caling the clean screen 
+    
+    
+    
+    
+    
+    
     root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
     base_window = root
     frame_field = Frame(base_window)
@@ -244,7 +251,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
         save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(base_window, name, frame_field, insert_battle_name, selected_option, 1))
         save_button.grid(row=6, column=1, pady=(30,))
         
-    
+    root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
     return frame_field
             
 
@@ -542,7 +549,7 @@ def retrieving_battles(name, user_id, root, funct):
     canvas.pack(side=LEFT,expand=True,fill=BOTH)
     frame_buttons_1 = Frame(base_window, padx = 10)
     canvas.create_window(0, 0, anchor='nw', window=frame_buttons_1)
-    retrieve_battle(name, frame_buttons_1, user_id, root)
+    retrieve_battle(name, frame_buttons_1, user_id, root, funct)
     pass
 
 
@@ -572,7 +579,7 @@ def build_user_page(funct,  name, root):
     #exiting last window
     root.protocol('WM_DELETE_WINDOW',lambda : exit_root(root))
     
-def retrieve_battle(name, frame, user_id, root):
+def retrieve_battle(name, frame, user_id, root, funct):
     #print("user_id----------->    ", user_id)
     #need here to get the values of the battle back and get them displayed in a playable field
     #the battles need to be index in case there is more than one 
@@ -614,7 +621,7 @@ def retrieve_battle(name, frame, user_id, root):
         #f is now a tuple with the name and id
         button = Button(frame, text=battle_names[i],width=60, height=5, padx=20, pady=3,bg="orange", 
                         
-                        command=lambda f=(fetching_the_result[i][0],battle_names[i],opponent_current_battle): loading_battle(f , user_id, 0, name, root))
+                        command=lambda f=(fetching_the_result[i][0],battle_names[i],opponent_current_battle): loading_battle(f , user_id, 0, name, root, delete_widgets(root)))
         # attach Text widget to root window at top
         button.pack()#side=TOP, fill=X)#.grid(row=i, column=0)
     pass   
@@ -623,6 +630,7 @@ def retrieve_battle(name, frame, user_id, root):
             
 #needs id of th eplayer , user_id should be the one playing
 def loading_battle(id_of_battle, user_id, flag, name, root, funct):
+    print("funct   -> ", funct)
     #what is it that i am passing 
     #this needs to return all teh needed info to be accessed by its name 
     fetching_positions = fetching_the_battle(id_of_battle, user_id[0])
@@ -698,6 +706,7 @@ def loading_battle(id_of_battle, user_id, flag, name, root, funct):
         #need probably to introduce a new instance in coloring to disable all the field , coloring darker grey the misses, dark grey the misses and light grey all the others
                 coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 0,"")
                 pass
+        
 
 
 

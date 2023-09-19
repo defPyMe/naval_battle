@@ -42,3 +42,6 @@ def build_first_screen():
 
 
 build_first_screen()
+
+
+#change the loading battle back
