@@ -528,6 +528,7 @@ def SaveBattle(toplevel, name_creator, field, text, options, flag):
 
     
 def retrieving_battles(name, user_id, root, funct):
+    print("name in retrieving battles", name)
     root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
     base_window = root
     base_window.geometry("500x300")
@@ -549,6 +550,8 @@ def retrieving_battles(name, user_id, root, funct):
     canvas.pack(side=LEFT,expand=True,fill=BOTH)
     frame_buttons_1 = Frame(base_window, padx = 10)
     canvas.create_window(0, 0, anchor='nw', window=frame_buttons_1)
+    #retrieve_battle(name, frame, user_id, root, funct)
+    print("user_id   -->", user_id)
     retrieve_battle(name, frame_buttons_1, user_id, root, funct)
     pass
 
@@ -556,7 +559,7 @@ def retrieving_battles(name, user_id, root, funct):
 def build_user_page(funct,  name, root):
     user_id = getting_user_id_from_name(name)
     base_window= root
-    print("root", root)
+    print("root", root, "name in build user page", name)
     base_window.geometry("500x300")
     base_window.title("Military Base : " + name )
     frame_pic = Frame(base_window)
@@ -580,6 +583,7 @@ def build_user_page(funct,  name, root):
     root.protocol('WM_DELETE_WINDOW',lambda : exit_root(root))
     
 def retrieve_battle(name, frame, user_id, root, funct):
+    print("name in retrieve battles", name)
     #print("user_id----------->    ", user_id)
     #need here to get the values of the battle back and get them displayed in a playable field
     #the battles need to be index in case there is more than one 
@@ -630,6 +634,7 @@ def retrieve_battle(name, frame, user_id, root, funct):
             
 #needs id of th eplayer , user_id should be the one playing
 def loading_battle(id_of_battle, user_id, flag, name, root, funct):
+    print("name in loading battle", name)
     print("funct   -> ", funct)
     #what is it that i am passing 
     #this needs to return all teh needed info to be accessed by its name 
@@ -654,7 +659,7 @@ def loading_battle(id_of_battle, user_id, flag, name, root, funct):
         
         #if no partial positioning is possible thanks to the save button 
         #zero a s flag as it is a new battle
-       new_battle(name, 3, [], [],  result_opponent["all_ships_opponent"], id_opponent, id_of_battle, user_id[0], root, funct)
+       new_battle(name, 3, [], [],  result_opponent["all_ships_opponent"], id_opponent, id_of_battle, user_id[0], root, delete_widgets(root))
         
         
         
@@ -669,9 +674,9 @@ def loading_battle(id_of_battle, user_id, flag, name, root, funct):
         
         
         
+
         
-        
-            new_battle(id_of_battle[2][0], 2,result['all_hits_player'], result['all_misses_player'],result_opponent['all_ships_opponent'],  id_opponent, id_of_battle, user_id, root, funct)
+            new_battle(id_of_battle[2][0], 2,result['all_hits_player'], result['all_misses_player'],result_opponent['all_ships_opponent'],  id_opponent, id_of_battle, user_id, root, delete_widgets(root))
             #base_window.title("Winner  of the battle is: " + id_of_battle[2][0])
         #elif len(result['all_common_player_no_null'])==10:
             #print("entering player won")
@@ -691,8 +696,8 @@ def loading_battle(id_of_battle, user_id, flag, name, root, funct):
         #"""
                 # [[all_ships_player, all_hits_player, all_misses_player, all_ships_tuples, all_common_player_no_null] ]
                 #(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
-                wid = new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
-                                                id_opponent, id_of_battle, user_id, root, funct)
+                wid = new_battle(name, 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
+                                                id_opponent, id_of_battle, user_id, root, delete_widgets(root))
                 #print("entering battle still ongoing",result['all_hits_player'], result_opponent['all_hits_opponent'], result['all_misses_player'], result_opponent['all_misses_opponent'], 
                 #      result_opponent['all_ships_opponent'],id_opponent, id_of_battle)
                 #print("waht we are pasing to coloring", result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'])
@@ -701,8 +706,8 @@ def loading_battle(id_of_battle, user_id, flag, name, root, funct):
     
             else:
                 print("user playing different from the one in db")
-                wid = new_battle(name[0], 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
-                                                id_opponent, id_of_battle, user_id, root, funct)
+                wid = new_battle(name, 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
+                                                id_opponent, id_of_battle, user_id, root, delete_widgets(root))
         #need probably to introduce a new instance in coloring to disable all the field , coloring darker grey the misses, dark grey the misses and light grey all the others
                 coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 0,"")
                 pass
