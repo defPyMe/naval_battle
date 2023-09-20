@@ -216,18 +216,17 @@ def insert_image(filename, name):
                         conn.execute(command, (empPhoto, name))
                         conn.commit()
                         
-                        
+#????????????????????????''             
 #checking here if i have any picture loaded for a certain name 
+#if none is found then we upload the default picture
 def check_if_image(name):
     with sqlite3.connect(path_to_db) as conn:
         command = "SELECT user_pic FROM users WHERE  name = (?)"
         img = conn.execute(command, (name,))
         #returns a tuple here
         photo_tuple = img.fetchone()
+        print("photo tuple to check if the db has something", photo_tuple )
     if photo_tuple == None:
-        pass
-        #need to add a default pic
-    else:
         img="download.png"
         empPhoto = convertToBinaryData(img)
         #here i update a different pic
@@ -236,6 +235,9 @@ def check_if_image(name):
                 command = "UPDATE users SET user_pic = (?)  WHERE name = (?)"
                 conn.execute(command, (empPhoto, name))
                 conn.commit()  
+        #need to add a default pic
+    else:pass
+       
             
 #retrieving the image
 def retrieve_image(name, current_window ):

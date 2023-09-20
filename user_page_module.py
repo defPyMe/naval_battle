@@ -366,7 +366,7 @@ def build_modify_profile(name, root, funct):
     label_username.grid(row=0, column=1)
     username.grid(row=1, column=1)
     button_edit.grid(row=2, column=1)
-    button_save_changes.grid(row=3, column=1)
+    button_save_changes.grid(row=2, column=2)
     root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
 
     
@@ -376,7 +376,7 @@ def buld_champion_interface(name, root, funct):
     label_champions = Label(text="Player Classification")
     #GETTING ALL THE PLAYERS 
     root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
-    
+    #needs a new sql query that calculates the total battles for each player 
 
 
 
