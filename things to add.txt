@@ -37,16 +37,28 @@ all_y is not working, goes through the other lists and doesn t enter the correct
 
 
 
-calculate cases -
-                checkig_first_button
-                avoiding_skipping_rows
-                                        checking_lines
-                                        most_frequent
+calculate cases(x, y,colored_buttons_singular, all_colored, total_ships)
+                checkig_first_button(trying_x, trying_y, x, y,all_x, all_y)
+                avoiding_skipping_rows(input_x)
+                                        checking_lines()
+                                        most_frequent(List)
 
 
 
 
- --> 
+ 
+
+
+ possible cases 
+
+
+
+
+
+
+
+
+ 
 
 
 

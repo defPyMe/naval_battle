@@ -42,15 +42,16 @@ def create_tuple(all_colored,input_no_skip, pressed):
     #all colored
     #all__ = [74,23,25,33,45]# here i have two collisions that are the 333 and teh 35
     #all possible x
+    all_colored_ = [int(i) for i in all_colored]
     #all_ = [32,33,34,35,36] #case of x
     g = [[],[]]
     #getting all the collisions 
-    f = [i for i in input_no_skip if i in all_colored ]
+    f = [i for i in input_no_skip if i in all_colored_]
     #this is teh smallest one so zero is a good guess
-    print(f)
-    g[0]= [ 0 if len(f) == 0 else 0 if len(f)==1 and pressed < f[0] else min([i for i in input_no_skip if i in all_colored])] #what happens here if something is found or nothing isfound smaller number 0 or number 
+    print("f ----------------->",f, all_colored_, input_no_skip, pressed)
+    g[0]= [ 0 if len(f) == 0 else 0 if len(f)==1 and pressed[0] < f[0] else min([i for i in input_no_skip if i in all_colored_])] #what happens here if something is found or nothing isfound smaller number 0 or number 
     # if[] then 0, if one number add also the pressed needs to see if bigger or smaller than pressed, if two keep smaller  
-    g[1]= [ 100 if len(f) == 0 else 100 if len(f)==1 and pressed > f[0]  else max([i for i in input_no_skip if i in all_colored])]
+    g[1]= [ 100 if len(f) == 0 else 100 if len(f)==1 and pressed[0] > f[0]  else max([i for i in input_no_skip if i in all_colored_])]
     #not working here as well as we are missing some values 
     
     
@@ -65,6 +66,8 @@ def create_tuple(all_colored,input_no_skip, pressed):
 #all colored = all teh buttons colored for all teh ships
 #total ships = all teh ships to place for teh specific ship
 def getting_possible_collision(all_colored, no_skip_x,no_skip_y, pressed):
+    #changing to int as they will be analyzed as integers
+    
     #getting all_x and y ordered if there are any collisions
     #print("(all_colored, no_skip_x,no_skip_y, pressed", all_colored, no_skip_x,no_skip_y, pressed)
     collisions_x = sorted([i for i in no_skip_x if i in all_colored])
@@ -85,7 +88,7 @@ def getting_possible_collision(all_colored, no_skip_x,no_skip_y, pressed):
     #[29, 39, 49] [[0], [100]] [38, 39] [[0], [100]] <class 'list'> <class 'list'> <class 'list'> <class 'list'>
     result_possible = [i for i in no_skip_y if i > y_collision[0][0] and i < y_collision[1][0]] + [i for i in no_skip_x if i > x_collision[0][0] and i < x_collision[1][0]]
     #result_possible_ = [str(i) for i in result_possible]
-    print("result_possible, result_possible_", result_possible, result_possible)
+    #print("result_possible, result_possible_", result_possible, result_possible)
     return result_possible
     
     
@@ -108,17 +111,18 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
         all_y = [ int(str(int(y+i))+(str(x))) for i in range (-diff, diff+1)] #could be out here as well
         # all_x, all_y corrected, removing values that are not in the row
         #sorting the two rows
-        print("all_x, all_y, x_y_column_row", x_y_column_row)
+        #print("all_x, all_y, x_y_column_row", x_y_column_row)
         all_x_no_skip = sorted([i for i in all_x if i in x_y_column_row[1][0]])
         all_y_no_skip = sorted([i for i in all_y if i in x_y_column_row[0][0]])
-        print(" all_x, all_y, all_x_no_skip,  all_y_no_skip", all_x, all_y, all_x_no_skip,  all_y_no_skip)
+        #print(" all_x, all_y, all_x_no_skip,  all_y_no_skip", all_x, all_y, all_x_no_skip,  all_y_no_skip)
         #removing also the ships collision
         #it shouldnt go over the ship if crossed  
+        
         #getting if there is a collision , should return a tuple, for y and x
         results_pre = getting_possible_collision(all_colored,   all_x_no_skip , all_y_no_skip, pressed)
         #i need to color the buttons now
         results = [['{:02d}'.format(i) for i in  results_pre], diff, colored_buttons_singular]
-        print("results i am getting now", results)    
+        #print("results i am getting now", results)    
 #adding a flag to see if it is coloring a retrieve dbattle ot a new one , also if it is ongoing
 
 
