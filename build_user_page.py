@@ -5,7 +5,7 @@ from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
 from tkinter import messagebox
 from sql_queries_ import  *
-from access_app_BETA import calculate_cases
+from checking_function import calculate_cases
 #added for the function refresh
 from sql_queries_ import refresh
 import threading
@@ -156,10 +156,50 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
     elif flag == 1:
             # empty arguments as the battle has not ended
             #print("all misses, all hits in new battle", all_hits, all_misses)
+            
             create_field(frame_field, 1, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
             #print("flag==1")
             #with args[0]=id_of_battle, args[1][0]=user_id[0]
             #adding some threading part, not sure of what it does
+            #ONGOING GAME HERE
+            #initializing frame
+            #needs to go to root so base windo
+            frame_buttons_2 = Frame(base_window)
+            frame_buttons_2.grid(row=0, column=1, padx=10, pady=10)
+            frame_buttons = Frame(frame_buttons_2)
+            #adding some propertiees 
+            frame_buttons.pack(expand=True, fill=BOTH) #.grddddid(row=0,column=0)
+            #canvas created and added to frame
+            canvas=Canvas(frame_buttons,bg='#FFFFFF',width=350,height=300,scrollregion=(0,0,500,500))
+            bar=Scrollbar(frame_buttons,orient=VERTICAL)
+            bar.pack(side=RIGHT,fill=Y)
+            bar.config(command=canvas.yview)
+            canvas.config(width=200,height=200)
+            canvas.config(yscrollcommand=bar.set)
+            canvas.pack(side=LEFT,expand=True,fill=BOTH)
+            frame_buttons_1 = Frame(base_window, padx = 10)
+            canvas.create_window(0, 0, anchor='nw', window=frame_buttons_1)
+            
+            #retrieve_battle(name, frame, user_id, root, funct)
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            #adding a scrollabe canvas on which to diplsay the labels
+            
+            #separate table / same table for the messages 
+            
+            #separating them in lists so that they are retrieved one by one 
+            
+            
+            
+            
+            
             t = threading.Thread(target=lambda: refresh(id_of_battle, id_player, frame_field))
             t.daemon = True
             t.start()

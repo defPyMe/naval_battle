@@ -1,7 +1,15 @@
 from tkinter import *
 from tkinter import messagebox
-from user_page_module import build_user_page
+from build_user_page import build_user_page
 from sql_queries_ import checking_credentials, delete_widgets
+
+#adding a chat on the right side of the screen in the battle playing 
+#adding a checking mechanism for the sinking of the ship
+
+
+
+
+
 
 
 def logging_in(name_input, root):
