@@ -179,6 +179,18 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             canvas.pack(side=LEFT,expand=True,fill=BOTH)
             frame_buttons_1 = Frame(base_window, padx = 10)
             canvas.create_window(0, 0, anchor='nw', window=frame_buttons_1)
+            #creating a new frame here to position teh text and button
+            frame_buttons_4 = Frame(frame_buttons_2)
+            #positions it underneath
+            frame_buttons_4.pack()
+            
+            text_message = Text(frame_buttons_4, width=20, height = 1)
+            
+            send_message = Button(frame_buttons_4, text="send")
+            
+            text_message.grid(row = 0, column=0, padx=6)
+            send_message.grid(row = 0, column=1)
+            
             
             #retrieve_battle(name, frame, user_id, root, funct)
             
