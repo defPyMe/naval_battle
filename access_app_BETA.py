@@ -20,7 +20,7 @@ def create_columns(x):
     #all vertical lines 
     for j in range(10):
         l = []
-        for i in [0,2,3,4,5,6,7,8,9]:
+        for i in [0,1,2,3,4,5,6,7,8,9]:
             l.append(int(str(i)+str(j)))
         vertical.append(l)
         
@@ -31,9 +31,9 @@ def create_columns(x):
     all_x_hor = [i for i in horizontal if x in i]
 
     #returning the two lists with the possible values
-        
+
     
-        
+    print("all_y_vert, all_x_vert", all_y_vert,  all_x_hor )
     return all_y_vert, all_x_hor
 
 
@@ -51,6 +51,14 @@ def create_tuple(all_colored,input_no_skip, pressed):
     g[0]= [ 0 if len(f) == 0 else 0 if len(f)==1 and pressed < f[0] else min([i for i in input_no_skip if i in all_colored])] #what happens here if something is found or nothing isfound smaller number 0 or number 
     # if[] then 0, if one number add also the pressed needs to see if bigger or smaller than pressed, if two keep smaller  
     g[1]= [ 100 if len(f) == 0 else 100 if len(f)==1 and pressed > f[0]  else max([i for i in input_no_skip if i in all_colored])]
+    #not working here as well as we are missing some values 
+    
+    
+    
+    
+    
+    
+    
     return g
 
 #teh colored_buttons_singular = all teh current ships colored
@@ -76,8 +84,9 @@ def getting_possible_collision(all_colored, no_skip_x,no_skip_y, pressed):
     #remove the values using teh limits 
     #[29, 39, 49] [[0], [100]] [38, 39] [[0], [100]] <class 'list'> <class 'list'> <class 'list'> <class 'list'>
     result_possible = [i for i in no_skip_y if i > y_collision[0][0] and i < y_collision[1][0]] + [i for i in no_skip_x if i > x_collision[0][0] and i < x_collision[1][0]]
-    result_possible_ = [str(i) for i in result_possible]
-    return result_possible_
+    #result_possible_ = [str(i) for i in result_possible]
+    print("result_possible, result_possible_", result_possible, result_possible)
+    return result_possible
     
     
 
@@ -108,10 +117,9 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
         #getting if there is a collision , should return a tuple, for y and x
         results_pre = getting_possible_collision(all_colored,   all_x_no_skip , all_y_no_skip, pressed)
         #i need to color the buttons now
-        results = [results_pre, diff, colored_buttons_singular]
+        results = [['{:02d}'.format(i) for i in  results_pre], diff, colored_buttons_singular]
         print("results i am getting now", results)    
 #adding a flag to see if it is coloring a retrieve dbattle ot a new one , also if it is ongoing
-        # 
 
 
 
