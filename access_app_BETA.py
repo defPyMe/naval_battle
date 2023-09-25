@@ -12,7 +12,7 @@ def create_columns(x):
     for i in range(10):
         l = []
         for j in range(10):
-            l.append(str(i)+str(j))
+            l.append(int(str(i)+str(j)))
         horizontal.append(l)
 
 
@@ -21,7 +21,7 @@ def create_columns(x):
     for j in range(10):
         l = []
         for i in [0,2,3,4,5,6,7,8,9]:
-            l.append(str(i)+str(j))
+            l.append(int(str(i)+str(j)))
         vertical.append(l)
         
         
@@ -48,9 +48,9 @@ def create_tuple(all_colored,input_no_skip, pressed):
     f = [i for i in input_no_skip if i in all_colored ]
     #this is teh smallest one so zero is a good guess
     print(f)
-    g[0]= [ 0 if len(f) == 0 else 0 if len(f)==1 and pressed < f[0] else min([i for i in input_no_skip if i in all_colored ])] #what happens here if something is found or nothing isfound smaller number 0 or number 
+    g[0]= [ 0 if len(f) == 0 else 0 if len(f)==1 and pressed < f[0] else min([i for i in input_no_skip if i in all_colored])] #what happens here if something is found or nothing isfound smaller number 0 or number 
     # if[] then 0, if one number add also the pressed needs to see if bigger or smaller than pressed, if two keep smaller  
-    g[1]= [ 100 if len(f) == 0 else 100 if len(f)==1 and pressed > f[0]  else max([i for i in input_no_skip if i in all_colored ])]
+    g[1]= [ 100 if len(f) == 0 else 100 if len(f)==1 and pressed > f[0]  else max([i for i in input_no_skip if i in all_colored])]
     return g
 
 #teh colored_buttons_singular = all teh current ships colored
@@ -58,8 +58,9 @@ def create_tuple(all_colored,input_no_skip, pressed):
 #total ships = all teh ships to place for teh specific ship
 def getting_possible_collision(all_colored, no_skip_x,no_skip_y, pressed):
     #getting all_x and y ordered if there are any collisions
-    collisions_x = [i for i in no_skip_x if i in all_colored].sort()
-    collisions_y = [i for i in no_skip_y if i in all_colored].sort()
+    #print("(all_colored, no_skip_x,no_skip_y, pressed", all_colored, no_skip_x,no_skip_y, pressed)
+    collisions_x = sorted([i for i in no_skip_x if i in all_colored])
+    collisions_y = sorted([i for i in no_skip_y if i in all_colored])
     #here i can have no collision, up down in both, only up/only down , no collision
     #the lists should do nothing if empty, approach either from top or bottom 
     #[33,36], [], [33]
@@ -71,9 +72,12 @@ def getting_possible_collision(all_colored, no_skip_x,no_skip_y, pressed):
     x_collision = create_tuple(all_colored, no_skip_x, pressed)#creating for x
     y_collision =  create_tuple(all_colored, no_skip_y, pressed)
     #result above [[33], [100]], [[0],[100]]
+    print(no_skip_y, y_collision, no_skip_x, x_collision , type(no_skip_y), type(y_collision), type(no_skip_x), type(x_collision))
     #remove the values using teh limits 
-    result_possible = [i for i in no_skip_y if i > y_collision[0] and i < y_collision[1]] + [i for i in no_skip_x if i > x_collision[0] and i < x_collision[1]]
-    return result_possible
+    #[29, 39, 49] [[0], [100]] [38, 39] [[0], [100]] <class 'list'> <class 'list'> <class 'list'> <class 'list'>
+    result_possible = [i for i in no_skip_y if i > y_collision[0][0] and i < y_collision[1][0]] + [i for i in no_skip_x if i > x_collision[0][0] and i < x_collision[1][0]]
+    result_possible_ = [str(i) for i in result_possible]
+    return result_possible_
     
     
 
@@ -86,24 +90,26 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
     all_values_allowed = [i for i in range(0, 11)]
     #ex = 4- positioned 
     diff = total_ships - (len(colored_buttons_singular) + 1)
-    pressed = [str(y)+str(x)]
+    pressed = [int(str(y)+str(x))]
     if diff > 0:
     #the first list is the y while the second is the x
-        x_y_column_row = create_columns(x)
+        x_y_column_row = create_columns(pressed[0])
         #creating the possible values using the diff
         all_x = [int(str(y)+(str(int(x+i)))) for i in range (-diff, diff+1)] #could be out of teh border
         all_y = [ int(str(int(y+i))+(str(x))) for i in range (-diff, diff+1)] #could be out here as well
         # all_x, all_y corrected, removing values that are not in the row
         #sorting the two rows
-        all_x_no_skip = [i for i in all_x if i in x_y_column_row[1]].sort()
-        all_y_no_skip = [i for i in all_y if i in x_y_column_row[0]].sort()
+        print("all_x, all_y, x_y_column_row", x_y_column_row)
+        all_x_no_skip = sorted([i for i in all_x if i in x_y_column_row[1][0]])
+        all_y_no_skip = sorted([i for i in all_y if i in x_y_column_row[0][0]])
+        print(" all_x, all_y, all_x_no_skip,  all_y_no_skip", all_x, all_y, all_x_no_skip,  all_y_no_skip)
         #removing also the ships collision
         #it shouldnt go over the ship if crossed  
         #getting if there is a collision , should return a tuple, for y and x
-        results = getting_possible_collision(all_colored,   all_x_no_skip , all_y_no_skip, pressed )
+        results_pre = getting_possible_collision(all_colored,   all_x_no_skip , all_y_no_skip, pressed)
         #i need to color the buttons now
-        
-            
+        results = [results_pre, diff, colored_buttons_singular]
+        print("results i am getting now", results)    
 #adding a flag to see if it is coloring a retrieve dbattle ot a new one , also if it is ongoing
         # 
 
@@ -113,7 +119,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
 
         # 
     else:
-        results = []
+        results = [[],diff,[]]
     return results
     
     

@@ -1,4 +1,5 @@
 
-     
-pressed = 43
-print(min(pressed, [54]))
+
+f = [i for i in range(1, 40)]
+f.sort()
+print(f)

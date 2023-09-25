@@ -5,7 +5,7 @@ from tkinter import filedialog
 #from retrieve_user_image import retrieve_image
 from tkinter import messagebox
 from sql_queries_ import  *
-from checking_function import calculate_cases
+from access_app_BETA import calculate_cases
 #added for the function refresh
 from sql_queries_ import refresh
 import threading
@@ -276,6 +276,7 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
     #getting the possible actions 
     #the below returns a list and a tuple 
     possible_actions =  calculate_cases(x, y,colored_buttons, all_colored, total_ships) 
+    print("possible actions , to see what i produce at he moment ----------------->", possible_actions)
     #lets see it printed 
     #print("possible actions + color", possible_actions, color)
     #diff  != 0 and list =[] cannot position
