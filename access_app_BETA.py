@@ -49,9 +49,9 @@ def create_tuple(all_colored,input_no_skip, pressed):
     f = [i for i in input_no_skip if i in all_colored_]
     #this is teh smallest one so zero is a good guess
     print("f ----------------->",f, all_colored_, input_no_skip, pressed)
-    g[0]= [ 0 if len(f) == 0 else 0 if len(f)==1 and pressed[0] < f[0] else min([i for i in input_no_skip if i in all_colored_])] #what happens here if something is found or nothing isfound smaller number 0 or number 
+    g[0]= [ 0 if len(f) == 0 else 0 if len(f)==1 and pressed[0] < f[0] else max(max([i for i in input_no_skip if i in all_colored_]), pressed[0])] #what happens here if something is found or nothing isfound smaller number 0 or number 
     # if[] then 0, if one number add also the pressed needs to see if bigger or smaller than pressed, if two keep smaller  
-    g[1]= [ 100 if len(f) == 0 else 100 if len(f)==1 and pressed[0] > f[0]  else max([i for i in input_no_skip if i in all_colored_])]
+    g[1]= [ 100 if len(f) == 0 else 100 if len(f)==1 and pressed[0] > f[0]  else max(max([i for i in input_no_skip if i in all_colored_]), pressed[0])]
     #not working here as well as we are missing some values 
     
     
