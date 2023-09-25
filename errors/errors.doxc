@@ -1,0 +1,12 @@
+what the correct collisons are [27] [25, 26, 27, 28, 29]
+correct tuple collision ['25', '26', '27', '28', '29'] ['27']
+all_x, all_y, all_x is worked with the all skipping rows function [25, 26, 27, 28, 29] [8, 18, 28, 38, 48, 58]
+trying_x, trying_y that go into checking_first_button [25, 26, 29] []
+all_x, all_y [25, 26, 27, 28, 29] [8, 18, 28, 38, 48, 58]
+trial_x, trial_y, len_x_y_cleaned [25, 26, 29] [] [2, 0]
+results [[[25, 29]], [[0, 100]]]
+case7 28 25 [25, 26, 27, 28, 29] [8, 18, 28, 38, 48, 58]
+case7 28 25 [25, 26, 27, 28, 29] [8, 18, 28, 38, 48, 58]
+what the correct collisons are [28] [26, 27, 28, 29]
+correct tuple collision ['26', '27', '28', '29'] ['28']
+

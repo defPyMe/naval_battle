@@ -1,9 +1,4 @@
-#event to enter when entering  --- added
-#spacing between retrieved battles  
-#chanpion toplevel
-#adding a more fluid navigation , expanding current windows
-#adding a events enter to other other buttons
-#adding scrolling farme to the retrieved battles
+issue : it seems it is not checking the 
 
 
 
@@ -11,23 +6,52 @@
 
 
 
-----------------------------------------------------------------------------------------------------------------------
 
 
-from tkinter import *
-root=Tk()
-frame=Frame(root,width=300,height=300)
-frame.pack(expand=True, fill=BOTH) #.grid(row=0,column=0)
-canvas=Canvas(frame,bg='#FFFFFF',width=300,height=300,scrollregion=(0,0,500,500))
-hbar=Scrollbar(frame,orient=HORIZONTAL)
-hbar.pack(side=BOTTOM,fill=X)
-hbar.config(command=canvas.xview)
-vbar=Scrollbar(frame,orient=VERTICAL)
-vbar.pack(side=RIGHT,fill=Y)
-vbar.config(command=canvas.yview)
-canvas.config(width=300,height=300)
-canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
-canvas.pack(side=LEFT,expand=True,fill=BOTH)
+colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
 
-root.mainloop()
-        
+#print("secopnd time here should be the prevbioud button", colored_buttons)
+
+all_colored = [i["text"] for i in frame.grid_slaves() if i["bg"] in colors]
+
+
+when called i get the different coordinates of teh pressed buttons, 
+colored buttons (color of teh single ship) , 
+all_colored (other ships),
+total_ships (total number of ships to place)
+
+
+
+
+
+
+
+
+
+
+possible_actions =  calculate_cases(x, y,colored_buttons, all_colored, total_ships) 
+
+all_y is not working, goes through the other lists and doesn t enter the correct column when needed 
+
+
+
+
+
+calculate cases -
+                checkig_first_button
+                avoiding_skipping_rows
+                                        checking_lines
+                                        most_frequent
+
+
+
+
+ --> 
+
+
+
+
+
+
+
+

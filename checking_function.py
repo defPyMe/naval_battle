@@ -1,10 +1,10 @@
 def most_frequent(List):
     counter = 0
     num = List[0]
-     
+    # returns the most frequent
     for i in List:
         curr_frequency = List.count(i)
-        if(curr_frequency> counter):
+        if(curr_frequency > counter):
             counter = curr_frequency
             num = i
  
@@ -26,18 +26,17 @@ def checking_lines():
         horizontal.append(l)
 
 
-    #SHOULDN T BE NEEDED HERE 
+  
     #all vertical lines 
-    #for j in range(10):
-    #    l = []
-    #    for i in [0,2,3,4,5,6,7,8,9]:
-    #    
-    #        l.append(str(i)+str(j))
-    #    vertical.append(l)
+    for j in range(10):
+       l = []
+       for i in [0,2,3,4,5,6,7,8,9]:
+    
+        l.append(str(i)+str(j))
+        vertical.append(l)
     
         
-    return horizontal   
-    #return vertical, horizontal
+    return vertical, horizontal
 
 
 #creating a function that takes the input and then we spit out the corrected possibilites 
@@ -49,25 +48,16 @@ def  avoiding_skipping_rows(input_x):
     #correcting the difference 
     correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  input_x]
     #correct_collision_interval_y_str = ['{:02d}'.format(i) for i in  correct_collision_interval_y]
-
     indices = []
     for i, sublist in enumerate(l):
         element_found =  [(i,j) for j in correct_collision_interval_x_str if j in sublist]
-    
         if element_found !=[]:
             indices = indices + element_found
         else:
             pass
-        
     #need to get the main component of the list 
     result_most_common = (most_frequent(indices))[0]
-    #going back to integer
- 
-
-    
-    
-    
-    
+    #going back to integer    
     return [ i[1] for i in indices if i[0] == result_most_common ]
 
 
@@ -172,10 +162,10 @@ def checking_first_button(trial_x, trial_y, x, y,all_x, all_y):
                 correct_collision_interval_y = [i for i in all_y if i > results[1][0][0] and i < results[1][0][1]]
             
                     
-                    
+        #neeeds an outer circle where the cases of x [0,100] and cases y [0, 100] is gotten        
  
     #outside of all the ifs i use a conversion
-    print("what the correct collisons are", correct_collision_interval_x, correct_collision_interval_y)
+    print("what the correct collisons are", correct_collision_interval_y, correct_collision_interval_x)
     correct_collision_interval_x_str = ['{:02d}'.format(i) for i in  correct_collision_interval_x]
     correct_collision_interval_y_str = ['{:02d}'.format(i) for i in  correct_collision_interval_y]
     #this is a list with all the chosen values 
@@ -191,6 +181,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
     #print(x, y,colored_buttons_singular, all_colored, total_ships)
         #generating the list of numbers
     all_values_allowed = [i for i in range(0, 11)]
+    #ex = 4- positioned 
     diff = total_ships - (len(colored_buttons_singular) + 1)
     pressed = [str(y)+str(x)]
     #print("diff----->", diff)
@@ -206,6 +197,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             all_y = [ int(str(int(y+i))+(str(x))) for i in range (-diff, diff+1) if y+i in all_values_allowed]
             
             
+            
             #ADDING THE CHaECKING FUNCTION TO SEE IF ALL_X IS THE PROBLEM
             
             
@@ -215,7 +207,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             all_x = [int(i) for i in avoiding_skipping_rows(all_x_)]
          
             
-            
+            print("all_x, all_y, all_x is worked with the all skipping rows function", all_x, all_y)
             
             
             
@@ -227,6 +219,10 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
             #the below should work as we have all integers in both
             trying_x = [i for i in all_x if i in all_colored_int]
             trying_y = [i for i in all_y if i in all_colored_int]
+            
+            print("trying_x, trying_y that go into checking_first_button", trying_x, trying_y)
+            
+            
             #pressed buttons
             #should put the new function here as the elements are all calculated , here an obj is returned 
             tuple_result = checking_first_button(trying_x, trying_y, x, y,all_x, all_y)
@@ -337,7 +333,7 @@ def calculate_cases(x, y,colored_buttons_singular, all_colored, total_ships):
     
     
     
-    
+    print("cases_list_str, diff, colored_buttons_singular",cases_list_str, diff, colored_buttons_singular)
     
     return cases_list_str, diff, colored_buttons_singular
 

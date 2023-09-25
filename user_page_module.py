@@ -344,28 +344,34 @@ def ship_click(color, frame, button, total):
 
 #funct clearing widgets called at initiation
 def build_modify_profile(name, root, funct):
-    base_window =root
+    base_window = root
+    base_window.geometry("300x200")
     base_window.title("Profile detail : "+ name)
     label_username = Label(base_window, text="Name of the user")
-    label_picture = Label(base_window,text="picture of the user")
+    label_picture = Label(base_window, padx=4)
+    label_picture_name = Label(base_window, text="user picture", padx=4)
     username = Text(base_window,height=1,width=10)
     username.insert("1.0", name)
-    pic_to_change = Button(base_window,text="Select picture to change", command=lambda: open(name, base_window))
+    pic_to_change = Button(base_window,text="Select picture", command=lambda: open(name, base_window))
     #these two should stay as not editable until we press button
     pic_to_change["state"] = DISABLED 
-    username.state = DISABLED
-    button_edit = Button(base_window, text="edit", command=lambda: make_editable(username, pic_to_change))
-    button_save_changes = Button(base_window, text="Save", command=lambda: update_name(username, name, base_window))
+    username["state"] = DISABLED
+    button_edit = Button(base_window, text="edit",  command=lambda: make_editable(username, pic_to_change))
+    button_save_changes = Button(base_window, text="Save",padx=40,  command=lambda: update_name(username, name, base_window))
     #adding a default if none is present 
     check_if_image(name)
     #now i have to display the image here as well
-    label_picture.grid(row=0, column=0)
     retrieve_image(name, base_window)
-    pic_to_change.grid(row=2, column=0)
+    #label picture beneath
+    label_picture_name.grid(row=1, column=0)
+    #label pic cannot be moved, it is the same in the other screens via retrieve image function
+    label_picture.grid(row=0, column=0)
+
+    pic_to_change.grid(row=2, column=1)
     #all the widgets in the second column 
-    label_username.grid(row=0, column=1)
+    label_username.grid(row=1, column=0)
     username.grid(row=1, column=1)
-    button_edit.grid(row=2, column=1)
+    button_edit.grid(row=2, column=0,padx=5)
     button_save_changes.grid(row=2, column=2)
     root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
 
@@ -464,7 +470,8 @@ def SaveBattle(toplevel, name_creator, field, text, options, flag):
                                 #here something happening differently if is the opponent or the user inserting , as i do not need to qupdate the information i have already there
                                 # info already inserted = battle_id, user_id, player now playing
                                 command = "UPDATE Ships_1 SET user_id = (?) , ship_1 = (?), ship_2 = (?), ship_3 = (?), ship_4 = (?), player_now_playing = (?) WHERE battle_id = (?)"
-                                conn.execute(command, (str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched))
+                                #print("adding the id in the addition of the battle ", str(ids_int[1]).translate(translator), name_creator, *getting_user_id_from_name(name_creator))
+                                conn.execute(command, (*getting_user_id_from_name(name_creator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched))
                                 #adding also the battle of the opponent 
                                 #print("first insertion",(str(ids_int[1]).translate(translator),str(ship_1), str(ship_2), str(ship_3), str(ship_4), str(ids_int[1]).translate(translator), *id_fetched) )
                                 conn.commit()
@@ -490,7 +497,7 @@ def SaveBattle(toplevel, name_creator, field, text, options, flag):
                         try:
                             if flag==0:
                                 command = "INSERT INTO Ships_1(battle_id, user_id, ship_1, ship_2, ship_3, ship_4, player_now_playing) VALUES(?,?,?,?,?,?,?)"
-                                conn.execute(command, (*id_fetched, str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator)))
+                                conn.execute(command, (*id_fetched, str(ids_int[1]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator)))
                                 #print("second insertion",((str(ids_int[0]).translate(translator),"", "", "", "", str(ids_int[1]).translate(translator), *id_fetched) ))
                                 conn.commit()
                                
