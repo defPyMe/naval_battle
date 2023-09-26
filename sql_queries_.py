@@ -16,6 +16,62 @@ translator = str.maketrans("","", string.punctuation)
 
 #but2 = Button(root, text="button 2", command = lambda :  delete_widgets(root) )
 
+def message_history(battle_id, frame):
+    #getting the messages stored in the db as teh table
+    with sqlite3.connect(path_to_db) as conn:
+        # getting the messages from the table
+        command = "SELECT messages FROM battle_table WHERE battle_id = (?)"
+        # if no messages are found we return an empty string 
+        result_of_battle_fetch = conn.execute(command, (str(battle_id),))
+        fetching_the_message =result_of_battle_fetch.fetchone()
+        if fetching_the_battle!="":
+            #"[(1, adding first message),(2, adding second),(1, adding message),(2, adding reply),(1, adding message),(2, adding reply)]"
+            processing = fetching_the_battle.replace("[", "").replace("]", "").replace(")", "").replace("(", "").split(",")
+            processing_list = [((processing[i]).strip(), (processing[i+1]).strip()) for i in range(0,len(processing)-1,2)]
+            #placing the widgets both on the right and left
+            
+            
+            pass
+        else:pass
+        conn.commit()
+    
+
+
+
+
+def send_message_funct(text, battle_id, user_id):
+    print("text, battle_id, user_id", text, battle_id[0], user_id[0])
+    #getting the text of the widget 
+    message = str(user_id[0])+","+text.get("1.0", END).strip()
+    if message!="":
+        #register the message 
+        with sqlite3.connect(path_to_db) as conn:
+            command = f"UPDATE battle_table SET messages = (?) WHERE battle_id = (?)"
+            adding_message = conn.execute(command,  (message,  battle_id[0]))
+        #saving the messsage to teh db, appending it in a list so that i can retrieve the single items 
+        #opponent messages and my messages are on the same list in the battle_table
+        #the id of the opponent and mine areused to place them either on the right side or the left
+        #should be stored in a tuple as [(1,message),(2,reply),(1, message),(2,reply)]
+         #setting the user_id equal to the opponent_id
+         #updating the battle table so that i have all teh conversation in one plac
+        #column passed in directly in teh function?
+        #printing out teh values passd 
+        #print("values passed on to the command  ",column,value,  type(value), type(id_of_battle), id_of_battle, type(opponent_id), opponent_id )
+        #changing teh column in teh opponent battle
+            conn.commit()
+            
+            
+            
+            
+        pass
+    else:pass
+    
+
+
+
+
+
+
 def delete_widgets(root):
     #need to check if there are any widgets
     if len(root.winfo_children())>0:

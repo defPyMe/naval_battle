@@ -186,7 +186,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             
             text_message = Text(frame_buttons_4, width=20, height = 1)
             
-            send_message = Button(frame_buttons_4, text="send")
+            send_message = Button(frame_buttons_4, text="send", command = lambda : send_message_funct(text_message, id_of_battle, id_player))
             
             text_message.grid(row = 0, column=0, padx=6)
             send_message.grid(row = 0, column=1)
@@ -194,7 +194,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             
             #retrieve_battle(name, frame, user_id, root, funct)
             
-            
+            #insert message, retrieve messages , display messages 
             
             
             
