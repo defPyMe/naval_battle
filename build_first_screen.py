@@ -30,7 +30,7 @@ def logging_in(name_input, root):
 def build_first_screen():  
     root=Tk()
     root.geometry("200x200")
-    root.resizable(False, False)
+    #root.resizable(False, False)
     label = Label(text = "", width=3, height=3)
     label1 = Label(text = "insert username")
     label_space = Label(text = "", width=1, height=1)

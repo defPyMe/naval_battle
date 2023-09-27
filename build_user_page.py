@@ -165,32 +165,42 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             #initializing frame
             #needs to go to root so base windo
             frame_buttons_2 = Frame(base_window)
-            frame_buttons_2.grid(row=0, column=1, padx=10, pady=10)
-            frame_buttons = Frame(frame_buttons_2)
-            #adding some propertiees 
-            frame_buttons.pack(expand=True, fill=BOTH) #.grddddid(row=0,column=0)
-            #canvas created and added to frame
-            canvas=Canvas(frame_buttons,bg='#FFFFFF',width=350,height=300,scrollregion=(0,0,500,500))
-            bar=Scrollbar(frame_buttons,orient=VERTICAL)
-            bar.pack(side=RIGHT,fill=Y)
-            bar.config(command=canvas.yview)
-            canvas.config(width=200,height=200)
-            canvas.config(yscrollcommand=bar.set)
-            canvas.pack(side=LEFT,expand=True,fill=BOTH)
-            frame_buttons_1 = Frame(base_window, padx = 10)
-            canvas.create_window(0, 0, anchor='nw', window=frame_buttons_1)
-            #creating a new frame here to position teh text and button
+            frame_buttons_2.grid(row=0, column=1,  padx=10)
+            #frame_buttons_2 as main second frame, frame_buttons_4 as container for text and buttns
             frame_buttons_4 = Frame(frame_buttons_2)
-            #positions it underneath
-            frame_buttons_4.pack()
-            
+            #putting the frame under the fame one 
+            frame_buttons_4.grid(row=1, column=0,  padx=10)
+            frame_buttons_3 = Frame(frame_buttons_2)
+            frame_buttons_3.grid(row=0, column=0,  padx=10)
+            container = Frame( frame_buttons_3)#frame_buttons
+            canvas = Canvas(container, width=200,height=210)#canvas = canvas
+            scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+            scrollable_frame = Frame(canvas, width=100, height=100)
+
+            scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+            )
+            )
+
+            canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            #for i in range(50):
+            #ttk.Label(scrollable_frame, text="Sample scrolling label").pack()
+
+            container.pack()#--
+            canvas.pack(side="left", fill="both", expand=True)
+            scrollbar.pack(side="right", fill="y")
             text_message = Text(frame_buttons_4, width=20, height = 1)
-            
+
             send_message = Button(frame_buttons_4, text="send", command = lambda : send_message_funct(text_message, id_of_battle, id_player))
-            
+
             text_message.grid(row = 0, column=0, padx=6)
             send_message.grid(row = 0, column=1)
-            
+            message_history(id_of_battle,scrollable_frame, id_player)
             
             #retrieve_battle(name, frame, user_id, root, funct)
             

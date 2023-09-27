@@ -16,7 +16,7 @@ translator = str.maketrans("","", string.punctuation)
 
 #but2 = Button(root, text="button 2", command = lambda :  delete_widgets(root) )
 
-def message_history(battle_id, frame):
+def message_history(battle_id, frame, id_player):
     #getting the messages stored in the db as teh table
     with sqlite3.connect(path_to_db) as conn:
         # getting the messages from the table
@@ -25,20 +25,31 @@ def message_history(battle_id, frame):
         result_of_battle_fetch = conn.execute(command, (str(battle_id[0]),))
         fetching_the_message =result_of_battle_fetch.fetchone()
         #cleaning from commas 
-        fetching_the_message_ = (str(fetching_the_message).replace(")", "").replace("\"","").replace("(","").replace("'", "").replace(",", "").replace(":",",")).split("-")
+       
+
+        if fetching_the_message!="":
+            fetching_the_message_ = (str(fetching_the_message).replace(")", "").replace("\"","").replace("(","").replace("'", "").replace(",", "").replace(":",",")).split("-")
         #replacing the : with a comma to create a tuple 
         #creating the tuples , by slicing each string
-        fetching_the_message_tuples = [(i[0:1], i[1:]) for i in fetching_the_message_]
-        print("fetching_the_message in the message history", fetching_the_message_tuples)
-        if fetching_the_battle!="":
+            fetching_the_message_tuples = [(i[0:1], i[1:]) for i in fetching_the_message_ if i!=""]
+            print("fetching_the_message_tuples", fetching_the_message_tuples)
+            #ADDING HERE the buttons based on id
             #"[(1, adding first message),(2, adding second),(1, adding message),(2, adding reply),(1, adding message),(2, adding reply)]"
-            processing = fetching_the_battle.replace("[", "").replace("]", "").replace(")", "").replace("(", "").split(",")
-            processing_list = [((processing[i]).strip(), (processing[i+1]).strip()) for i in range(0,len(processing)-1,2)]
             #placing the widgets both on the right and left
+            for i in fetching_the_message_tuples:
+                print("i", type(i[0]), type(id_player[0]))
+                #putting them on the right if equal to id player
+                #one of them is a string and the other is an ints
+                if i!="":
+                    if int(i[0]) == id_player[0]:
+                        print("entering the loop as the two variables are teh same")
+                        button = Button(frame, text=i[1], bg="green", width=25).pack()
+                     
+                    else:        print("not entering the loop as the two variables are not teh same")
+                    
             
-            
-            pass
-        else:pass
+                    
+                else:pass
         conn.commit()
     
 
@@ -77,7 +88,7 @@ def send_message_funct(text, battle_id, user_id):
         #changing teh column in teh opponent battle
             conn.commit()
         text.delete("1.0","end")
-        message_history(battle_id, "")   
+       
             
             
             
