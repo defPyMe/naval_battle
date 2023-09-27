@@ -33,7 +33,7 @@ def create_columns(x):
     #returning the two lists with the possible values
 
     
-    print("all_y_vert, all_x_vert", all_y_vert,  all_x_hor )
+    #print("all_y_vert, all_x_vert", all_y_vert,  all_x_hor )
     return all_y_vert, all_x_hor
 
 
@@ -48,7 +48,7 @@ def create_tuple(all_colored,input_no_skip, pressed):
     #getting all the collisions 
     f = [i for i in input_no_skip if i in all_colored_]
     #this is teh smallest one so zero is a good guess
-    print("f ----------------->",f, all_colored_, input_no_skip, pressed)
+    #print("f ----------------->",f, all_colored_, input_no_skip, pressed)
     g[0]= [ 0 if len(f) == 0 else 0 if len(f)==1 and pressed[0] < f[0] else max(max([i for i in input_no_skip if i in all_colored_]), pressed[0])] #what happens here if something is found or nothing isfound smaller number 0 or number 
     # if[] then 0, if one number add also the pressed needs to see if bigger or smaller than pressed, if two keep smaller  
     g[1]= [ 100 if len(f) == 0 else 100 if len(f)==1 and pressed[0] > f[0]  else max(max([i for i in input_no_skip if i in all_colored_]), pressed[0])]
@@ -83,7 +83,7 @@ def getting_possible_collision(all_colored, no_skip_x,no_skip_y, pressed):
     x_collision = create_tuple(all_colored, no_skip_x, pressed)#creating for x
     y_collision =  create_tuple(all_colored, no_skip_y, pressed)
     #result above [[33], [100]], [[0],[100]]
-    print(no_skip_y, y_collision, no_skip_x, x_collision , type(no_skip_y), type(y_collision), type(no_skip_x), type(x_collision))
+    #print(no_skip_y, y_collision, no_skip_x, x_collision , type(no_skip_y), type(y_collision), type(no_skip_x), type(x_collision))
     #remove the values using teh limits 
     #[29, 39, 49] [[0], [100]] [38, 39] [[0], [100]] <class 'list'> <class 'list'> <class 'list'> <class 'list'>
     result_possible = [i for i in no_skip_y if i > y_collision[0][0] and i < y_collision[1][0]] + [i for i in no_skip_x if i > x_collision[0][0] and i < x_collision[1][0]]

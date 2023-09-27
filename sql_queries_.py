@@ -40,14 +40,25 @@ def message_history(battle_id, frame):
 
 
 def send_message_funct(text, battle_id, user_id):
-    print("text, battle_id, user_id", text, battle_id[0], user_id[0])
     #getting the text of the widget 
-    message = str(user_id[0])+","+text.get("1.0", END).strip()
+    #adding here a semicolon so that the replace method is not compromised
+    message = str(user_id[0])+":"+text.get("1.0", END).strip()
     if message!="":
-        #register the message 
+        #register the message , not working here 
         with sqlite3.connect(path_to_db) as conn:
+            command = f"SELECT messages FROM battle_table WHERE battle_id = (?)"
+            result_of_history_fetched = conn.execute(command, (str(battle_id[0]),))
+            result_of_history_fetched_ = result_of_history_fetched.fetchone()
+            #cleaning the result 
+            if result_of_history_fetched_ == ("",):
+                result_of_history_fetched_= ""
+                result_of_history_fetched_ = message + "-"  #i use here a separator that is not added directy  
+            else:
+                result_of_history_fetched_ = str(result_of_history_fetched_).replace("'", "").replace("(", "").replace(")", "").replace(",", "")  #('1,Second message',)
+                result_of_history_fetched_ = str(result_of_history_fetched_) + message + "-"
+            #updating the messages of the battle_table
             command = f"UPDATE battle_table SET messages = (?) WHERE battle_id = (?)"
-            adding_message = conn.execute(command,  (message,  battle_id[0]))
+            adding_message = conn.execute(command,  ( str(result_of_history_fetched_),  battle_id[0]))
         #saving the messsage to teh db, appending it in a list so that i can retrieve the single items 
         #opponent messages and my messages are on the same list in the battle_table
         #the id of the opponent and mine areused to place them either on the right side or the left
@@ -59,12 +70,13 @@ def send_message_funct(text, battle_id, user_id):
         #print("values passed on to the command  ",column,value,  type(value), type(id_of_battle), id_of_battle, type(opponent_id), opponent_id )
         #changing teh column in teh opponent battle
             conn.commit()
+        text.delete("1.0","end")
             
             
             
             
         pass
-    else:pass
+    else:print("no message to displayu")
     
 
 
@@ -137,7 +149,7 @@ def refresh(*args):
         if len(result_opponent["all_hits_opponent"])==10:
             pass
         else:
-            print("result_opponent ------>     ", result_opponent)
+            #print("result_opponent ------>     ", result_opponent)
         #here result or result opponent are the same, as we write in both when pressing
             if args[1][0] == int(result_opponent["player_now_playing"]):
                 #in this case then also the difference is to be colored 
@@ -161,16 +173,9 @@ def refresh(*args):
                         coloring(args[2], result_opponent['all_ships_opponent'],diff_hit ,diff_miss,  0,"")
                     else:pass
                     
-            
-                
-                
-                
-                
-                
-                
                 
             #print("in refreshing, player equal from the one that has played in db", args[1][0] ,result_opponent["player_now_playing"])
-        print("refreshed ", result_opponent["player_now_playing"], args[1][0])
+        #print("refreshed ", result_opponent["player_now_playing"], args[1][0])
     
 
 #user id here is the player id, so we can get the opposite 

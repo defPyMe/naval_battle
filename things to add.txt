@@ -1,4 +1,3 @@
-issue : it seems it is not checking the 
 
 
 
@@ -6,50 +5,15 @@ issue : it seems it is not checking the
 
 
 
-
-
-colored_buttons = [i for i in frame.grid_slaves() if i["bg"]==color]
-
-#print("secopnd time here should be the prevbioud button", colored_buttons)
-
-all_colored = [i["text"] for i in frame.grid_slaves() if i["bg"] in colors]
-
-
-when called i get the different coordinates of teh pressed buttons, 
-colored buttons (color of teh single ship) , 
-all_colored (other ships),
-total_ships (total number of ships to place)
-
-
-
-
-
-
-
-
-
-
-possible_actions =  calculate_cases(x, y,colored_buttons, all_colored, total_ships) 
-
-all_y is not working, goes through the other lists and doesn t enter the correct column when needed 
-
-
-
-
-
-calculate cases(x, y,colored_buttons_singular, all_colored, total_ships)
-                checkig_first_button(trying_x, trying_y, x, y,all_x, all_y)
-                avoiding_skipping_rows(input_x)
-                                        checking_lines()
-                                        most_frequent(List)
-
-
-
-
- 
-
-
- possible cases 
+  if hit_or_misses == "":
+        hit_or_misses = []
+    else:
+        hit_or_misses=hit_or_misses
+    try:
+            hit_or_misses = ast.literal_eval(hit_or_misses)
+            hit_or_misses.append(value)
+    except:
+            hit_or_misses.append(value)
 
 
 

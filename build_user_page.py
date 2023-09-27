@@ -328,7 +328,7 @@ def button_click(button_grid, color, total_ships, frame):#need to start adding h
     #getting the possible actions 
     #the below returns a list and a tuple 
     possible_actions =  calculate_cases(x, y,colored_buttons, all_colored, total_ships) 
-    print("possible actions , to see what i produce at he moment ----------------->", possible_actions)
+    #print("possible actions , to see what i produce at he moment ----------------->", possible_actions)
     #lets see it printed 
     #print("possible actions + color", possible_actions, color)
     #diff  != 0 and list =[] cannot position
@@ -468,7 +468,7 @@ def SaveBattle(toplevel, name_creator, field, text, options, flag):
             #inn  this case it is the name of battle and opponent 
             #['jjjjjj', 'Simona']
             name_opponent_and_battle = [options] + [text] 
-            print("name opponent and battle in sql query ", name_opponent_and_battle)
+            #print("name opponent and battle in sql query ", name_opponent_and_battle)
             selection_var = text
         
         #here we pass the test if all the fields are filled and all the ships positioned 
@@ -590,7 +590,7 @@ def SaveBattle(toplevel, name_creator, field, text, options, flag):
 
     
 def retrieving_battles(name, user_id, root, funct):
-    print("name in retrieving battles", name)
+    #print("name in retrieving battles", name)
     root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
     base_window = root
     base_window.geometry("500x300")
@@ -613,7 +613,7 @@ def retrieving_battles(name, user_id, root, funct):
     frame_buttons_1 = Frame(base_window, padx = 10)
     canvas.create_window(0, 0, anchor='nw', window=frame_buttons_1)
     #retrieve_battle(name, frame, user_id, root, funct)
-    print("user_id   -->", user_id)
+    #print("user_id   -->", user_id)
     retrieve_battle(name, frame_buttons_1, user_id, root, funct)
     pass
 
@@ -621,7 +621,7 @@ def retrieving_battles(name, user_id, root, funct):
 def build_user_page(funct,  name, root):
     user_id = getting_user_id_from_name(name)
     base_window= root
-    print("root", root, "name in build user page", name)
+    #print("root", root, "name in build user page", name)
     base_window.geometry("500x300")
     base_window.title("Military Base : " + name )
     frame_pic = Frame(base_window)
@@ -651,7 +651,7 @@ def build_user_page(funct,  name, root):
     root.protocol('WM_DELETE_WINDOW',lambda : exit_root(root))
     
 def retrieve_battle(name, frame, user_id, root, funct):
-    print("name in retrieve battles", name)
+    #print("name in retrieve battles", name)
     #print("user_id----------->    ", user_id)
     #need here to get the values of the battle back and get them displayed in a playable field
     #the battles need to be index in case there is more than one 
@@ -702,8 +702,8 @@ def retrieve_battle(name, frame, user_id, root, funct):
             
 #needs id of th eplayer , user_id should be the one playing
 def loading_battle(id_of_battle, user_id, flag, name, root, funct):
-    print("name in loading battle", name)
-    print("funct   -> ", funct)
+    #print("name in loading battle", name)
+    #print("funct   -> ", funct)
     #what is it that i am passing 
     #this needs to return all teh needed info to be accessed by its name 
     fetching_positions = fetching_the_battle(id_of_battle, user_id[0])
@@ -722,7 +722,7 @@ def loading_battle(id_of_battle, user_id, flag, name, root, funct):
     #print("why the algorithm is not working at the moment ----->", result_opponent, "result ----->",  result)
     #taken into account when the player has no ships placed , should load the full field (maybe save should close the field)
     #needs result as the result is ships of the current player 
-    print("result ------------------>", len([i for i in result["all_ships_player"] if i!=""]))
+    #print("result ------------------>", len([i for i in result["all_ships_player"] if i!=""]))
     if len([i for i in result["all_ships_player"] if i!=""])<10:
         
         #if no partial positioning is possible thanks to the save button 
@@ -754,9 +754,9 @@ def loading_battle(id_of_battle, user_id, flag, name, root, funct):
             #case of non ended game, just started or not started
         else:  
         #need to take into consideration here what happens when the turn is not right
-            print("confrontation between the user ids:     ", user_id[0], type(user_id[0]), result["player_now_playing"], type(result["player_now_playing"]) )
+            #print("confrontation between the user ids:     ", user_id[0], type(user_id[0]), result["player_now_playing"], type(result["player_now_playing"]) )
             if user_id[0] == int(result["player_now_playing"]):
-                print("user playing the same playing in db")
+                #print("user playing the same playing in db")
         #result opponent {'all_ships_opponent': ['21', '39', '29', '35', '25', '15', '76', '75', '74', '73'], 'all_hits_opponent': [''], 'all_misses_opponent': [''], 
         #'all_ships_opponents_tuples': [('21',), ('39', '29'), ('35', '25', '15'), ('76', '75', '74', '73')], 'all_common_opponent_no_null': []
         #result {'all_ships_player': ['21', '39', '29', '35', '25', '15', '76', '75', '74', '73'], 'all_hits_player': [''], 'all_misses_player': [''],
@@ -773,7 +773,7 @@ def loading_battle(id_of_battle, user_id, flag, name, root, funct):
                 coloring(wid, result_opponent['all_ships_opponent'], result_opponent['all_hits_opponent'], result_opponent['all_misses_opponent'], 3,"")
     
             else:
-                print("user playing different from the one in db")
+                #print("user playing different from the one in db")
                 wid = new_battle(name, 1,result_opponent['all_hits_opponent'],result_opponent['all_misses_opponent'], result_opponent['all_ships_opponent'],
                                                 id_opponent, id_of_battle, user_id, root, delete_widgets(root))
         #need probably to introduce a new instance in coloring to disable all the field , coloring darker grey the misses, dark grey the misses and light grey all the others
