@@ -16,41 +16,47 @@ translator = str.maketrans("","", string.punctuation)
 
 #but2 = Button(root, text="button 2", command = lambda :  delete_widgets(root) )
 
-def message_history(battle_id, frame, id_player):
-    #getting the messages stored in the db as teh table
-    with sqlite3.connect(path_to_db) as conn:
+
+def getting_messages_in_DB(battle_id):
+     with sqlite3.connect(path_to_db) as conn:
         # getting the messages from the table
         command = "SELECT messages FROM battle_table WHERE battle_id = (?)"
         # if no messages are found we return an empty string 
         result_of_battle_fetch = conn.execute(command, (str(battle_id[0]),))
-        fetching_the_message =result_of_battle_fetch.fetchone()
-        #cleaning from commas 
-       
-
-        if fetching_the_message!="":
-            fetching_the_message_ = (str(fetching_the_message).replace(")", "").replace("\"","").replace("(","").replace("'", "").replace(",", "").replace(":",",")).split("-")
+        fetching_the_message = result_of_battle_fetch.fetchone()
+        if  fetching_the_message!="":
+            fetching_the_message_ = (str( fetching_the_message).replace(")", "").replace("\"","").replace("(","").replace("'", "").replace(",", "").replace(":",",")).split("-")
         #replacing the : with a comma to create a tuple 
         #creating the tuples , by slicing each string
             fetching_the_message_tuples = [(i[0:1], i[1:]) for i in fetching_the_message_ if i!=""]
-            print("fetching_the_message_tuples", fetching_the_message_tuples)
-            #ADDING HERE the buttons based on id
-            #"[(1, adding first message),(2, adding second),(1, adding message),(2, adding reply),(1, adding message),(2, adding reply)]"
-            #placing the widgets both on the right and left
-            for i in fetching_the_message_tuples:
-                print("i", type(i[0]), type(id_player[0]))
-                #putting them on the right if equal to id player
-                #one of them is a string and the other is an ints
-                if i!="":
-                    if int(i[0]) == id_player[0]:
-                        print("entering the loop as the two variables are teh same")
-                        button = Button(frame, text=i[1], bg="green", width=25).pack()
-                     
-                    else:        print("not entering the loop as the two variables are not teh same")
-                    
-            
-                    
-                else:pass
+        else :pass
         conn.commit()
+        return fetching_the_message_tuples
+
+
+
+
+
+
+def message_history(battle_id, frame, id_player):
+    #getting the messages stored in the db as teh tables
+        result_fetch_message = getting_messages_in_DB(battle_id)
+        #cleaning from commas 
+        for i in result_fetch_message:
+            #putting them on the right if equal to id player
+            #one of them is a string and the other is an ints
+            if i!="":
+                if int(i[0]) == id_player[0]:
+                    print("entering the loop as the two variables are teh same")
+                    button = Button(frame, text=i[1], bg="green", width=25).pack()
+                    
+                else:        
+                    button = Button(frame, text=i[1], bg="red", width=25).pack()
+        
+                
+            else:pass
+        print("all widgets in frame", len(frame.grid_slaves()))
+    
     
 
 
@@ -147,8 +153,26 @@ def refresh(*args):
     #
     #
     #
-    #
-    
+    #refresh(id_of_battle, id_player, frame_field, scrollable_frame))
+
+        #need to get the difference of the messages as well otherwise it is always updating , and need to delete the widgets already there 
+        #1) getting the lenght of the messages list
+        #differences are the widgets that are in the message frame and the ones in the db i have added earlier
+        #if len[frame]<db = destroy and add
+        #if len[frame]==len(db) == do nothing
+        #the frame can never have more as th elogic is first add to db and then proceed
+        # 
+        #steps o take
+        # making a function to retrieve the db vaòlues for messages (already there)
+        all_messages = getting_messages_in_DB(args[0])
+        #now i need to get all the messages in the frame
+        all_messages_in_frame = args[3].pack_slaves()
+        #now i need to calculate the difference, if there are more it is positive, if it is zero then no action
+        diff_messages = len(all_messages) - len(all_messages_in_frame)
+        
+        
+        
+        
         diff_hit = [i for i in [str(i["text"]) for i in args[2].grid_slaves() if i["bg"]=="red"] if i not in result_opponent['all_hits_opponent']]
         diff_miss = [i for i in [str(i["text"]) for i in args[2].grid_slaves() if i["bg"]=="gray27"] if i not in result_opponent['all_misses_opponent']]
         #print("diff_miss, diff_hits    ", diff_miss, diff_hit, "all_hits_opponent",  result_opponent['all_hits_opponent'], "all_misses_opponent", result_opponent['all_misses_opponent'])
@@ -162,8 +186,9 @@ def refresh(*args):
         #not colored in  frame.grid_slaves, result[] are the updated values 
         #all_able_buttons_before_addition = [str(i["text"]) for i in args[2].grid_slaves(
         #it does nothing if the user id is the same as that of the player now playingz
-        time.sleep(3)
+        time.sleep(1)
         if len(result_opponent["all_hits_opponent"])==10:
+            #shuld probably disable the chat here
             pass
         else:
             #print("result_opponent ------>     ", result_opponent)
@@ -171,6 +196,13 @@ def refresh(*args):
             if args[1][0] == int(result_opponent["player_now_playing"]):
                 #in this case then also the difference is to be colored 
                 if diff_miss!=[] and diff_hit!=[]:
+                    #how to add the args hewere?
+                    
+                    
+                    
+                    
+                    
+                    
                     #frame field as args[2], current user id is --> args[1][0]
                     #print("in refreshing, player different from the one that has played in db",  args[1][0] ,type(args[1][0]),
                     #      result_opponent["player_now_playing"], type(result_opponent["player_now_playing"]))
@@ -189,7 +221,10 @@ def refresh(*args):
                     if diff_miss!=[] and diff_hit!=[]:
                         coloring(args[2], result_opponent['all_ships_opponent'],diff_hit ,diff_miss,  0,"")
                     else:pass
-                    
+        print("len(all_messages),len(all_messages_in_frame), diff_messages", len(all_messages),len(all_messages_in_frame), diff_messages)
+        if diff_messages > 0:
+            message_history(args[0], args[3], args[1])
+        else:pass           
                 
             #print("in refreshing, player equal from the one that has played in db", args[1][0] ,result_opponent["player_now_playing"])
         #print("refreshed ", result_opponent["player_now_playing"], args[1][0])

@@ -26,9 +26,9 @@ canvas.pack(side="left", fill="both", expand=True)
 scrollbar.pack(side="right", fill="y")
 
 for i in range(50):
-    ttk.Label(scrollable_frame, text="Sample scrolling label").pack()
+    ttk.Button(scrollable_frame, text="Sample scrolling label").pack()
 
-
+print(scrollable_frame.pack_slaves())
 
 root.mainloop()
 

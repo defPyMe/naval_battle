@@ -200,8 +200,9 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
 
             text_message.grid(row = 0, column=0, padx=6)
             send_message.grid(row = 0, column=1)
+            #loading messages at opening 
             message_history(id_of_battle,scrollable_frame, id_player)
-            
+            print("all widgets in frame", len(scrollable_frame.grid_slaves()))
             #retrieve_battle(name, frame, user_id, root, funct)
             
             #insert message, retrieve messages , display messages 
@@ -219,10 +220,15 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             #separating them in lists so that they are retrieved one by one 
             
             
+            #NEEDS TO BE PUT INSIDE THE FUNCTION AS IS IS CALLED PRIOOR OTHERWISE
             
             
             
-            t = threading.Thread(target=lambda: refresh(id_of_battle, id_player, frame_field))
+            
+            
+            
+            
+            t = threading.Thread(target=lambda: refresh(id_of_battle, id_player, frame_field, scrollable_frame))
             t.daemon = True
             t.start()
             
