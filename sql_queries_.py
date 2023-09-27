@@ -22,8 +22,14 @@ def message_history(battle_id, frame):
         # getting the messages from the table
         command = "SELECT messages FROM battle_table WHERE battle_id = (?)"
         # if no messages are found we return an empty string 
-        result_of_battle_fetch = conn.execute(command, (str(battle_id),))
+        result_of_battle_fetch = conn.execute(command, (str(battle_id[0]),))
         fetching_the_message =result_of_battle_fetch.fetchone()
+        #cleaning from commas 
+        fetching_the_message_ = (str(fetching_the_message).replace(")", "").replace("\"","").replace("(","").replace("'", "").replace(",", "").replace(":",",")).split("-")
+        #replacing the : with a comma to create a tuple 
+        #creating the tuples , by slicing each string
+        fetching_the_message_tuples = [(i[0:1], i[1:]) for i in fetching_the_message_]
+        print("fetching_the_message in the message history", fetching_the_message_tuples)
         if fetching_the_battle!="":
             #"[(1, adding first message),(2, adding second),(1, adding message),(2, adding reply),(1, adding message),(2, adding reply)]"
             processing = fetching_the_battle.replace("[", "").replace("]", "").replace(")", "").replace("(", "").split(",")
@@ -71,7 +77,7 @@ def send_message_funct(text, battle_id, user_id):
         #changing teh column in teh opponent battle
             conn.commit()
         text.delete("1.0","end")
-            
+        message_history(battle_id, "")   
             
             
             
