@@ -14,7 +14,6 @@ from sql_queries_ import checking_credentials, delete_widgets
 
 def logging_in(name_input, root):
     #need to add a connection to the list of users here 
-
     #should look here into the users table
     print("name input in logging in --> ",name_input)
     if checking_credentials(name_input):

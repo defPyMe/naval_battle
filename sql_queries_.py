@@ -175,7 +175,7 @@ def refresh(*args):
         #now i need to get all the messages in the frame
         all_messages_in_frame = args[3].pack_slaves()
         #now i need to calculate the difference, if there are more it is positive, if it is zero then no action
-        diff_messages = len(all_messages) - len(all_messages_in_frame)
+        diff_messages = len(all_messages) + 1 - len(all_messages_in_frame)#needs the +1 as i have added the label and i count the widgets 
         
         
         
