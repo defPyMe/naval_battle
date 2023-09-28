@@ -46,7 +46,8 @@ def message_history(battle_id, frame, id_player, canvas):
         for i in result_fetch_message:
             #putting them on the right if equal to id player
             #one of them is a string and the other is an ints
-            if i!="":
+            print("getting what i is in this case ----------->", i)
+            if i!=None:
                 if int(i[0]) == id_player[0]:
                     print("entering the loop as the two variables are teh same")
                     button = tk.Message(frame, text=i[1], bg="green", width=95, relief=RAISED).pack(ipadx=10,pady=1, anchor=tk.E)

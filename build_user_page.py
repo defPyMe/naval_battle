@@ -402,11 +402,11 @@ def build_modify_profile(name, root, funct):
     root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
 
     
-def buld_champion_interface(name, root, funct):
+def build_champion_interface(name, root, funct):
     #name,delete_widgets(root), root
     base_window = root
     label_champions = Label(text="Player Classification")
-    #GETTING ALL THE PLAYERS 
+    #getting back to teh main window
     root.protocol('WM_DELETE_WINDOW',lambda funct = delete_widgets, name=name, root=root, :  build_user_page(funct(root),  name, root))
     #needs a new sql query that calculates the total battles for each player 
 
@@ -612,7 +612,7 @@ def build_user_page(funct,  name, root):
     #funct is the delete widgets at calling, needs to be different here
     button_new_battle = Button(frame_buttons, text="new battle",width=15, height=2,bg="red", command =lambda: new_battle(name, 0, "", "", "", "", "","", root, delete_widgets(root)))
     button_old_battles = Button(frame_buttons, text="show battles",width=15, height=2,bg="red", command=lambda: retrieving_battles(name, user_id, root, delete_widgets(root)))
-    button_show_champions = Button(frame_buttons, text="show champions",width=15, height=2,bg="red", command = lambda: buld_champion_interface(name, root, delete_widgets(root)))
+    button_show_champions = Button(frame_buttons, text="show champions",width=15, height=2,bg="red", command = lambda: build_champion_interface(name, root, delete_widgets(root)))
     button_change_profile = Button(frame_buttons, text="change profile",width=15, height=2,bg="red", command=lambda: build_modify_profile(name, root, delete_widgets(root)))
     
     label_player_name.grid(row=1, column=0)
