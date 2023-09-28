@@ -49,10 +49,10 @@ def message_history(battle_id, frame, id_player, canvas):
             if i!="":
                 if int(i[0]) == id_player[0]:
                     print("entering the loop as the two variables are teh same")
-                    button = tk.Button(frame, text=i[1], bg="green", width=15).pack(ipadx=20,pady=1, anchor=tk.E)
+                    button = tk.Message(frame, text=i[1], bg="green", width=95, relief=RAISED).pack(ipadx=10,pady=1, anchor=tk.E)
                     
                 else:        
-                    button = tk.Button(frame, text=i[1], bg="red", width=15).pack(ipadx=20,pady=1, anchor=tk.W )
+                    button = tk.Message(frame, text=i[1], bg="red", width=95, relief=RAISED).pack(ipadx=10,pady=1, anchor=tk.W )
         
                 
             else:pass
