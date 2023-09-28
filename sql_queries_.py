@@ -5,6 +5,7 @@ from PIL import ImageTk,  ImageFont, ImageDraw
 import PIL.Image
 from tkinter import *
 from tkinter import messagebox
+import tkinter as tk
 import string
 import sys , os
 import ast
@@ -48,15 +49,18 @@ def message_history(battle_id, frame, id_player, canvas):
             if i!="":
                 if int(i[0]) == id_player[0]:
                     print("entering the loop as the two variables are teh same")
-                    button = Button(frame, text=i[1], bg="green", width=25).pack()
+                    button = tk.Button(frame, text=i[1], bg="green", width=15).pack(ipadx=20,pady=1, anchor=tk.E)
                     
                 else:        
-                    button = Button(frame, text=i[1], bg="red", width=25).pack()
+                    button = tk.Button(frame, text=i[1], bg="red", width=15).pack(ipadx=20,pady=1, anchor=tk.W )
         
                 
             else:pass
+        #adding the separation label as last
+        separation_label = Label(frame,text="               ", width=10).pack(ipadx=64, anchor=tk.W, expand=True)
         canvas.update_idletasks()
         canvas.yview_moveto("1.0")
+        
         
         print("all widgets in frame", len(frame.grid_slaves()))
     

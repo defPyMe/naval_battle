@@ -1,4 +1,4 @@
-import tkinter as tk
+"""import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 root = tk.Tk()
@@ -30,7 +30,7 @@ for i in range(50):
 
 print(scrollable_frame.pack_slaves())
 
-root.mainloop()
+root.mainloop()"""
 
 
 
@@ -81,3 +81,71 @@ print("in creating the chat the first time", id_of_battle)"""
 
 
 
+import tkinter as tk
+from tkinter import *
+
+
+
+
+root = tk.Tk()
+root.title('Pack Demo')
+root.geometry("350x200")
+
+frame_buttons_2 = Frame(root)
+frame_buttons_2.grid(row=0, column=1,  padx=10)
+#frame_buttons_2 as main second frame, frame_buttons_4 as container for text and buttns
+frame_buttons_4 = Frame(frame_buttons_2)
+#putting the frame under the fame one 
+frame_buttons_4.grid(row=1, column=0,  padx=10)
+frame_buttons_3 = Frame(frame_buttons_2)
+frame_buttons_3.grid(row=0, column=0,  padx=10)
+container = Frame( frame_buttons_3)#frame_buttons
+canvas = Canvas(container, width=200,height=210)#canvas = canvas
+scrollbar = Scrollbar(container, orient="vertical", command=canvas.yview)
+scrollable_frame = Frame(canvas)#, width=100, height=100)
+
+scrollable_frame.bind(
+"<Configure>",
+lambda e: canvas.configure(
+scrollregion=canvas.bbox("all")
+)
+)
+
+canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+canvas.configure(yscrollcommand=scrollbar.set)
+
+#for i in range(50):
+#ttk.Label(scrollable_frame, text="Sample scrolling label").pack()
+
+container.pack()#--
+canvas.pack(side="left", fill="both")
+scrollbar.pack(side="right", fill="y")
+
+canvas.update_idletasks()
+canvas.yview_moveto("1.0")
+
+
+# box 1
+box1 = tk.Button(scrollable_frame, text="Box 1sdfddfsdfsdfsdfsdfsdfsdfsdf", bg="green", fg="white")
+box1.pack(anchor=tk.E,  expand=True)
+
+# box 2
+box2 = tk.Button(scrollable_frame, text="Box 2", bg="red", fg="white")
+box2.pack( anchor=tk.W, expand=True)
+box8 = tk.Button(scrollable_frame, text="Box 1", bg="green", fg="white")
+box8.pack (anchor=tk.E,  expand=True)
+
+# box 2
+box3 = tk.Button(scrollable_frame, text="Box 2", bg="red", fg="white")
+box3.pack( anchor=tk.W, expand=True)
+
+box4 = tk.Button(scrollable_frame, text="Box 1", bg="green", fg="white")
+box4.pack( anchor=tk.E,  expand=True)
+
+# box 2
+box5 = tk.Label(scrollable_frame, text="                       ",  fg="white")
+box5.pack(ipadx=64, anchor=tk.W, expand=True)
+
+
+root.mainloop()

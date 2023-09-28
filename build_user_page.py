@@ -204,31 +204,6 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             canvas.yview_moveto("1.0")
             #loading messages at opening 
             message_history(id_of_battle,scrollable_frame, id_player, canvas)
-           
-            #retrieve_battle(name, frame, user_id, root, funct)
-            
-            #insert message, retrieve messages , display messages 
-            
-            
-            
-            
-            
-            
-            
-            #adding a scrollabe canvas on which to diplsay the labels
-            
-            #separate table / same table for the messages 
-            
-            #separating them in lists so that they are retrieved one by one 
-            
-            
-            #NEEDS TO BE PUT INSIDE THE FUNCTION AS IS IS CALLED PRIOOR OTHERWISE
-            
-            
-            
-            
-            
-            
             
             t = threading.Thread(target=lambda: refresh(id_of_battle, id_player, frame_field, scrollable_frame, canvas))
             t.daemon = True
@@ -241,19 +216,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             create_field(frame_field, 2, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
             #trying to return the widget so as to access it in loading
             #case in which i need to position the ships 
-    else:
-        #flag 3 for the buttons 
-        #opponent opponent and battle name to be selected here 
-        
-        
-        #id of battle -------------> (25, 'jjjjjj', ('Simona',))
-        
-        #phony variables here as they are not created or used in teh save battle operations 
- 
-        
-        
-        
-        
+    else:        
         
         create_field(frame_field, 3, all_hits, all_misses,  all_ships_opponent, id_opponent, id_of_battle, id_player)
         player_frame.grid(row=0, column=1)
@@ -309,14 +272,6 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
         ship_3.grid(row=4, column=0, columnspan=2)
         ship_4.grid(row=5, column=0, columnspan=2)
 #in the save button i can pass the name as argument so that i get teh db save
-
-#save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(name, frame_field, insert_battle_name, selected_option))
-#save_button.grid(row=6, column=1, pady=(30,))
-
-
-        #print("what is passed to saved button ----> ",insert_battle_name, selected_option)
-        #what is passed to saved button ---->  jjjjjj Simona
-        #adding a flag here to skip creation in battle table , otherwise unique constarint error
         #leaving 
         save_button = Button(player_frame, text="Save", bg="green", command=lambda: SaveBattle(base_window, name, frame_field, insert_battle_name, selected_option, 1))
         save_button.grid(row=6, column=1, pady=(30,))
