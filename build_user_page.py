@@ -200,9 +200,11 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
 
             text_message.grid(row = 0, column=0, padx=6)
             send_message.grid(row = 0, column=1)
+            canvas.update_idletasks()
+            canvas.yview_moveto("1.0")
             #loading messages at opening 
-            message_history(id_of_battle,scrollable_frame, id_player)
-            print("all widgets in frame", len(scrollable_frame.grid_slaves()))
+            message_history(id_of_battle,scrollable_frame, id_player, canvas)
+           
             #retrieve_battle(name, frame, user_id, root, funct)
             
             #insert message, retrieve messages , display messages 
@@ -228,7 +230,7 @@ def new_battle(name, flag, all_hits, all_misses,  all_ships_opponent, id_opponen
             
             
             
-            t = threading.Thread(target=lambda: refresh(id_of_battle, id_player, frame_field, scrollable_frame))
+            t = threading.Thread(target=lambda: refresh(id_of_battle, id_player, frame_field, scrollable_frame, canvas))
             t.daemon = True
             t.start()
             

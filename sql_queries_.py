@@ -38,7 +38,7 @@ def getting_messages_in_DB(battle_id):
 
 
 
-def message_history(battle_id, frame, id_player):
+def message_history(battle_id, frame, id_player, canvas):
     #getting the messages stored in the db as teh tables
         result_fetch_message = getting_messages_in_DB(battle_id)
         #cleaning from commas 
@@ -55,6 +55,9 @@ def message_history(battle_id, frame, id_player):
         
                 
             else:pass
+        canvas.update_idletasks()
+        canvas.yview_moveto("1.0")
+        
         print("all widgets in frame", len(frame.grid_slaves()))
     
     
@@ -223,7 +226,8 @@ def refresh(*args):
                     else:pass
         print("len(all_messages),len(all_messages_in_frame), diff_messages", len(all_messages),len(all_messages_in_frame), diff_messages)
         if diff_messages > 0:
-            message_history(args[0], args[3], args[1])
+            delete_widgets(args[3])
+            message_history(args[0], args[3], args[1], args[4])
         else:pass           
                 
             #print("in refreshing, player equal from the one that has played in db", args[1][0] ,result_opponent["player_now_playing"])
